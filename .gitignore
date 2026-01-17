@@ -8,6 +8,8 @@ backend/help.md
 .idea/
 *.iml
 *.class
+**/application-dev.yml
+**/application-prod.yml
 
 ### React / Node.js (Frontend) ###
 frontend/node_modules/
