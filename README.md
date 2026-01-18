@@ -3,5 +3,11 @@
 
 ---
 
+# Skills
+- Frontend: React.js, tailwindcss
+- Backend: Java, Spring Boot, MySQL, Spring Data JPA, Spring Security
+
+---
+
 # DB Table
 ![erd](./project-img/AB%20Auction.png)
