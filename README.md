@@ -10,4 +10,4 @@
 ---
 
 # DB Table
-![erd](./project-img/AB%20Auction.png)
+![erd](./project-img/auction_table.png)
