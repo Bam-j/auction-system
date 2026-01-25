@@ -5,16 +5,38 @@ import {
   Typography, Input, Checkbox, Button,
 } from "@material-tailwind/react";
 
+import {login} from "../api/authApi";
+
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    //TODO: 백엔드 로그인 API 연동
-    console.log("로그인 시도:", email, password);
-    navigate("/");  //임시 홈 이동
+
+    if (!userId || !password) {
+      alert("아이디와 비밀번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const loginData = {userId, password};
+      const response = await login(loginData);
+
+      console.log("로그인 성공:", response);
+
+      // TODO: 로그인 성공 시 받은 토큰(Access Token)을 저장하기
+
+      alert(`${userId}님 환영합니다!`);
+      navigate("/");
+
+    } catch (error) {
+      console.error("로그인 실패:", error);
+
+      const message = error.response?.data?.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
+      alert(message);
+    }
   };
 
   return (
@@ -32,10 +54,10 @@ const LoginForm = () => {
         <form onSubmit={handleLogin}>
           <CardBody className="flex flex-col gap-4">
             <Input
-                label="이메일 (ID)"
+                label="아이디"
                 size="lg"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
             />
             <Input
                 label="비밀번호"
