@@ -1,20 +1,34 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+
 import Layout from './components/Layout';
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import MyPage from './pages/MyPage';
+import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
       <BrowserRouter>
         <Routes>
+          {/* 전체 레이아웃 */}
           <Route element={<Layout/>}>
-            <Route path="/" element={<div className="text-center text-2xl mt-10">홈 페이지</div>}/>
-
-            {/* 로그인 & 회원가입 라우트 연결 */}
+            <Route path="/" element={<HomePage/>}/>
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
 
-            <Route path="/mypage" element={<div>마이 페이지</div>}/>
+            {/* 마이 페이지 라우팅 */}
+            <Route path="/mypage" element={<MyPage/>}>
+              <Route index element={<></>}/>
+              <Route path="" element={<></>}/>
+            </Route>
+
+            {/* 관리자 페이지 라우팅 */}
+            <Route path="/admin" element={<AdminPage/>}>
+              <Route index element={<></>}/>
+              <Route path="products" element={<></>}/>
+            </Route>
+
           </Route>
         </Routes>
       </BrowserRouter>
