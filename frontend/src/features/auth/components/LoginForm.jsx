@@ -24,13 +24,16 @@ const LoginForm = () => {
       const loginData = {userId, password};
       const response = await login(loginData);
 
-      console.log("로그인 성공:", response);
+      const userInfo = {
+        userId: userId,
+        nickname: response.nickname || userId,
+        role: userId === 'admin' ? 'ADMIN' : 'USER'
+      };
 
-      // TODO: 로그인 성공 시 받은 토큰(Access Token)을 저장하기
-
+      localStorage.setItem("user", JSON.stringify(userInfo));
       alert(`${userId}님 환영합니다!`);
       navigate("/");
-
+      window.location.reload();
     } catch (error) {
       console.error("로그인 실패:", error);
 
