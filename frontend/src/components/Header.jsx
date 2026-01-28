@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
-import { Navbar, Typography, Button } from "@material-tailwind/react";
-import { logoutUser } from "../features/auth/api/authApi";
+import {useEffect, useState} from "react";
+import {Link, useNavigate} from 'react-router-dom';
+import {Navbar, Typography, Button} from "@material-tailwind/react";
+import {logoutUser} from "../features/auth/api/authApi";
+import {PlusIcon} from "@heroicons/react/24/outline";
 
 const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-
-  //TODO: 구조 완성 후 전역 상태 관리 적용하기
+  //TODO: 화면 개발 후 전역 상태 관리로 변경
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -16,13 +16,10 @@ const Header = () => {
     }
   }, []);
 
-  // 로그아웃 핸들러
   const handleLogout = async () => {
     await logoutUser();
-
     localStorage.removeItem("user");
     setUser(null);
-
     alert("로그아웃 되었습니다.");
     navigate("/");
     window.location.reload();
@@ -59,6 +56,18 @@ const Header = () => {
                     {user.nickname}님
                   </Typography>
 
+                  <Button
+                      variant="gradient"
+                      size="sm"
+                      color="green"
+                      className="flex items-center gap-2 hidden lg:inline-block"
+                      //TODO: 상품 등록 화면으로 navigate
+                      onClick={() => navigate('/')}
+                  >
+                    <PlusIcon strokeWidth={2} className="h-4 w-4"/>
+                    상품 등록
+                  </Button>
+
                   {user.role === 'ADMIN' ? (
                       <Button
                           variant="text"
@@ -66,7 +75,7 @@ const Header = () => {
                           color="blue-gray"
                           onClick={() => navigate('/admin')}
                       >
-                        관리자 페이지
+                        관리자
                       </Button>
                   ) : (
                       <Button
@@ -75,7 +84,7 @@ const Header = () => {
                           color="blue-gray"
                           onClick={() => navigate('/mypage')}
                       >
-                        마이 페이지
+                        마이페이지
                       </Button>
                   )}
 
