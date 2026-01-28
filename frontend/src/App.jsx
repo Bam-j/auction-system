@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import AdminPage from './pages/AdminPage';
+import ProductRegisterPage from './pages/ProductRegisterPage';
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
               <Route path="products" element={<></>}/>
             </Route>
 
+            {/* 상품 등록 라우팅 */}
+            <Route path="/products/register" element={<ProductRegisterPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
