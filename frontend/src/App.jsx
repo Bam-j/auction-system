@@ -18,16 +18,20 @@ function App() {
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
 
-            {/* 마이 페이지 라우팅 */}
+            {/* 마이 페이지 라우팅  */}
             <Route path="/mypage" element={<MyPage/>}>
-              <Route index element={<></>}/>
-              <Route path="" element={<></>}/>
+              <Route index path="products" element={</>}/>
+              <Route path="purchases" element={</>}/>
+              <Route path="bids" element={</>}/>
+              <Route path="profile" element={</>}/>
             </Route>
 
             {/* 관리자 페이지 라우팅 */}
             <Route path="/admin" element={<AdminPage/>}>
-              <Route index element={<></>}/>
-              <Route path="products" element={<></>}/>
+              <Route index path="products" element={</>}/>
+              <Route path="purchases" element={</>}/>
+              <Route path="bids" element={</>}/>
+              <Route path="users" element={</>}/>
             </Route>
 
             {/* 상품 등록 라우팅 */}
