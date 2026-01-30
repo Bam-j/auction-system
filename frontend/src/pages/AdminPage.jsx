@@ -1,16 +1,19 @@
 import React from "react";
 import SideNavLayout from "../components/SideNavLayout";
 import {
-  UsersIcon, MegaphoneIcon,
-  ClipboardDocumentListIcon,
+  UsersIcon, ClipboardDocumentListIcon,
+  ShoppingBagIcon, CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 
 const AdminPage = () => {
   const adminMenus = [
-    { name: "테스트 문구(관리자 페이지)", path: "", icon: UsersIcon },
+    {name: "회원 관리", path: "/admin", icon: UsersIcon},
+    {name: "전체 상품 관리", path: "/admin/products", icon: ClipboardDocumentListIcon},
+    {name: "전체 구매 기록", path: "/admin/purchases", icon: ShoppingBagIcon},
+    {name: "전체 입찰 기록", path: "/admin/bids", icon: CurrencyDollarIcon},
   ];
 
-  return <SideNavLayout title="관리자 센터" menuItems={adminMenus} />;
+  return <SideNavLayout title="관리자 센터" menuItems={adminMenus}/>;
 };
 
 export default AdminPage;

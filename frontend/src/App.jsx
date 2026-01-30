@@ -15,6 +15,10 @@ import MyProfileEdit from './features/mypage/components/MyProfileEdit';
 
 //관리자 페이지
 import AdminPage from './pages/AdminPage';
+import AdminProductList from './features/admin/components/AdminProductList';
+import AdminPurchaseHistory from './features/admin/components/AdminPurchaseHistory';
+import AdminBidHistory from './features/admin/components/AdminBidHistory';
+import AdminUserList from './features/admin/components/AdminUserList';
 
 //상품 등록
 import ProductRegisterPage from './pages/ProductRegisterPage';
@@ -39,10 +43,10 @@ function App() {
 
             {/* 관리자 페이지 라우팅 */}
             <Route path="/admin" element={<AdminPage/>}>
-              <Route index path="products" element={</>}/>
-              <Route path="purchases" element={</>}/>
-              <Route path="bids" element={</>}/>
-              <Route path="users" element={</>}/>
+              <Route index path="products" element={<AdminProductList/>}/>
+              <Route path="purchases" element={<AdminPurchaseHistory/>}/>
+              <Route path="bids" element={<AdminBidHistory/>}/>
+              <Route path="users" element={<AdminUserList/>}/>
             </Route>
 
             {/* 상품 등록 라우팅 */}
