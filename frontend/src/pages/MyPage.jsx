@@ -7,7 +7,10 @@ import {
 
 const MyPage = () => {
   const myPageMenus = [
-    {name: "테스트 문구", path: "", icon: UserCircleIcon},
+    {name: "내 정보 수정", path: "/mypage", icon: UserCircleIcon},
+    {name: "내 판매 상품", path: "/mypage/products", icon: CubeIcon},
+    {name: "구매 기록", path: "/mypage/purchases", icon: ShoppingBagIcon},
+    {name: "입찰 기록", path: "/mypage/bids", icon: CurrencyDollarIcon},
   ];
 
   return <SideNavLayout title="마이 페이지" menuItems={myPageMenus}/>;
