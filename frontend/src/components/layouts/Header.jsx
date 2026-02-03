@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from 'react-router-dom';
 import {Navbar, Typography, Button} from "@material-tailwind/react";
-import {logoutUser} from "../features/auth/api/authApi";
+import {logoutUser} from "../../features/auth/api/authApi.js";
 import {PlusIcon} from "@heroicons/react/24/outline";
 
 const Header = () => {

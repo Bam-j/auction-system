@@ -1,5 +1,5 @@
 import React from "react";
-import SideNavLayout from "../components/SideNavLayout";
+import SideNavLayout from "../components/layouts/SideNavLayout.jsx";
 import {
   UserCircleIcon, ShoppingBagIcon,
   CurrencyDollarIcon, CubeIcon,
