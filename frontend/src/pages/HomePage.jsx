@@ -7,8 +7,11 @@ import CommonSearchInput from "../components/ui/CommonSearchInput";
 import PriceTag from "../components/ui/PriceTag";
 import StatusBadge from "../components/ui/StatusBadge";
 import EmptyState from "../components/ui/EmptyState";
+import ProductDetailModal from "../features/product/components/ProductDetailModal";
 
 const HomePage = () => {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [products] = useState([
     {
       id: 1,
@@ -43,6 +46,11 @@ const HomePage = () => {
     console.log("메인 검색:", keyword);
   };
 
+  const handleCardClick = (product) => {
+    setSelectedProduct(product);
+    setOpenModal(true);
+  };
+
   return (
       <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
 
@@ -63,7 +71,8 @@ const HomePage = () => {
         ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product) => (
-                  <Card key={product.id} className="w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                  <Card key={product.id} onClick={() => handleCardClick(product)}
+                        className="w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
                     <CardHeader floated={false} color="blue-gray" className="relative h-48 m-0 rounded-b-none">
                       <img src={product.image} alt={product.title} className="w-full h-full object-cover"/>
                       <div className="absolute top-2 right-2">
@@ -100,6 +109,11 @@ const HomePage = () => {
               ))}
             </div>
         )}
+        <ProductDetailModal
+            open={openModal}
+            handleOpen={() => setOpenModal(!openModal)}
+            product={selectedProduct}
+        />
       </div>
   );
 };
