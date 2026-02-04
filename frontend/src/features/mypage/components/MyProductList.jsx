@@ -6,50 +6,99 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
+import ProductManagementModal from "../../product/components/ProductManagementModal";
 
 const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"];
 
 const MyProductList = () => {
   const [page, setPage] = useState(1);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const products = [
-    {id: 101, title: "다이아몬드 검", date: "2026-01-20", price: 5000, stock: 10, status: "SELLING"},
-    {id: 102, title: "철 갑옷 세트", date: "2026-01-18", price: 3000, stock: 0, status: "SOLD_OUT"},
-    {id: 103, title: "황금 사과", date: "2026-01-15", price: 15000, stock: 5, status: "AUCTION"},
+    {
+      id: 101,
+      title: "다이아몬드 검",
+      date: "2026-01-20",
+      price: 5000,
+      stock: 10,
+      status: "SELLING",
+      type: "FIXED",
+      seller: "Me",
+      image: "https://placehold.co/150",
+      description: "직접 인챈트한 검입니다."
+    },
+    {
+      id: 102,
+      title: "철 갑옷 세트",
+      date: "2026-01-18",
+      price: 3000,
+      stock: 0,
+      status: "SOLD_OUT",
+      type: "FIXED",
+      seller: "Me",
+      image: "https://placehold.co/150",
+      description: "내구도가 조금 닳았습니다."
+    },
+    {
+      id: 103,
+      title: "황금 사과",
+      date: "2026-01-15",
+      startPrice: 1000,
+      bidIncrement: 100,
+      stock: 5,
+      status: "AUCTION",
+      type: "AUCTION",
+      seller: "Me",
+      image: "https://placehold.co/150",
+      description: "경매로 올린 사과입니다."
+    },
   ];
+
+  const handleViewDetail = (product) => {
+    setSelectedProduct(product);
+    setOpenModal(true);
+  };
 
   if (products.length === 0) {
     return <EmptyState message="등록한 상품이 없습니다."/>;
   }
 
   return (
-      <CommonTable
-          title="내 등록 상품 목록"
-          headers={TABLE_HEAD}
-          pagination={<Pagination active={page} total={3} onChange={setPage}/>}
-      >
-        {products.map(({id, title, date, price, stock, status}) => (
-            <tr key={id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-              <td className="p-4 text-gray-600">{id}</td>
-              <td className="p-4 font-bold text-blue-gray-900">{title}</td>
-              <td className="p-4 text-gray-600">{date}</td>
-              <td className="p-4">
-                <PriceTag price={price}/>
-              </td>
-              <td className="p-4 text-gray-600">{stock}개</td>
-              <td className="p-4">
-                <StatusBadge status={status}/>
-              </td>
-              <td className="p-4">
-                <TableActionButtons
-                    onView={() => console.log("상세보기", id)}
-                    onDelete={() => console.log("판매종료", id)}
-                    deleteLabel="판매종료"
-                />
-              </td>
-            </tr>
-        ))}
-      </CommonTable>
+      <>
+        <CommonTable
+            title="내 등록 상품 목록"
+            headers={["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"]}
+            pagination={<Pagination active={page} total={3} onChange={setPage}/>}
+        >
+          {products.map((product) => (
+              <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
+                <td className="p-4 text-gray-600">{product.id}</td>
+                <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
+                <td className="p-4 text-gray-600">{product.date}</td>
+                <td className="p-4">
+                  {/* 경매일 경우 시작가 표시, 아니면 판매가 표시 */}
+                  <PriceTag price={product.type === "AUCTION" ? product.startPrice : product.price}/>
+                </td>
+                <td className="p-4 text-gray-600">{product.stock}개</td>
+                <td className="p-4"><StatusBadge status={product.status}/></td>
+                <td className="p-4">
+                  <TableActionButtons
+                      onView={() => handleViewDetail(product)}
+                      onDelete={() => console.log("판매종료", product.id)}
+                      deleteLabel="판매종료"
+                  />
+                </td>
+              </tr>
+          ))}
+        </CommonTable>
+
+        <ProductManagementModal
+            open={openModal}
+            handleOpen={() => setOpenModal(!openModal)}
+            product={selectedProduct}
+        />
+      </>
   );
 };
 

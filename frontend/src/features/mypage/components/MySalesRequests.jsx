@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
-
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
 import EmptyState from "../../../components/ui/EmptyState";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
+import ProductManagementModal from "../../product/components/ProductManagementModal";
 
 const TABLE_HEAD = ["ID", "상품명", "요청자", "수량", "제안가 (입찰/즉시)", "상태", "상세", "관리"];
 
@@ -135,7 +135,7 @@ const MySalesRequests = () => {
           ))}
         </CommonTable>
 
-        <ProductDetailModal
+        <ProductManagementModal
             open={openDetail}
             handleOpen={() => setOpenDetail(!openDetail)}
             product={selectedProduct}
