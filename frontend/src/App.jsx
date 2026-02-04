@@ -12,6 +12,7 @@ import MyProductList from './features/mypage/components/MyProductList';
 import MyPurchaseHistory from './features/mypage/components/MyPurchaseHistory';
 import MyBidHistory from './features/mypage/components/MyBidHistory';
 import MyProfileEdit from './features/mypage/components/MyProfileEdit';
+import MySalesRequests from './features/mypage/components/MySalesRequests'; // ★ import
 
 //관리자 페이지
 import AdminPage from './pages/AdminPage';
@@ -36,6 +37,7 @@ function App() {
             {/* 마이 페이지 라우팅  */}
             <Route path="/mypage" element={<MyPage/>}>
               <Route index path="products" element={<MyProductList/>}/>
+              <Route path="requests" element={<MySalesRequests/>}/>
               <Route path="purchases" element={<MyPurchaseHistory/>}/>
               <Route path="bids" element={<MyBidHistory/>}/>
               <Route path="profile" element={<MyProfileEdit/>}/>
