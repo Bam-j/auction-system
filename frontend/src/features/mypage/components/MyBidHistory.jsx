@@ -1,42 +1,25 @@
 import React, {useState} from "react";
-import {Typography, Chip, IconButton} from "@material-tailwind/react";
-import {EyeIcon} from "@heroicons/react/24/outline";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
+import StatusBadge from "../../../components/ui/StatusBadge";
+import PriceTag from "../../../components/ui/PriceTag";
+import TableActionButtons from "../../../components/ui/TableActionButtons";
+import EmptyState from "../../../components/ui/EmptyState";
 
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 
 const MyBidHistory = () => {
   const [page, setPage] = useState(1);
 
-  //TODO: 프론트엔드 렌더링 테스트용 가짜 데이터, 개발 후 삭제
   const bids = [
-    {id: 301, title: "곡괭이", date: "2026-01-26", price: 50000, result: "WIN"},
+    {id: 301, title: "전설의 곡괭이", date: "2026-01-26", price: 50000, result: "WIN"},
     {id: 302, title: "드래곤 알", date: "2026-01-22", price: 120000, result: "LOSE"},
     {id: 303, title: "비콘", date: "2026-01-28", price: 30000, result: "ING"},
   ];
 
-  const getResultColor = (result) => {
-    switch (result) {
-      case "WIN":
-        return "green";
-      case "LOSE":
-        return "red";
-      default:
-        return "blue";
-    }
-  };
-
-  const getResultText = (result) => {
-    switch (result) {
-      case "WIN":
-        return "낙찰 성공";
-      case "LOSE":
-        return "패찰";
-      default:
-        return "진행중";
-    }
-  };
+  if (bids.length === 0) {
+    return <EmptyState message="입찰 참여 내역이 없습니다."/>;
+  }
 
   return (
       <CommonTable
@@ -46,24 +29,17 @@ const MyBidHistory = () => {
       >
         {bids.map(({id, title, date, price, result}) => (
             <tr key={id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-              <td className="p-4"><Typography variant="small" className="text-gray-600">{id}</Typography></td>
-              <td className="p-4"><Typography variant="small" color="blue-gray"
-                                              className="font-bold">{title}</Typography></td>
-              <td className="p-4"><Typography variant="small" className="text-gray-600">{date}</Typography></td>
-              <td className="p-4"><Typography variant="small"
-                                              className="text-gray-600">{price.toLocaleString()}원</Typography></td>
+              <td className="p-4 text-gray-600">{id}</td>
+              <td className="p-4 font-bold text-blue-gray-900">{title}</td>
+              <td className="p-4 text-gray-600">{date}</td>
               <td className="p-4">
-                <Chip
-                    size="sm" variant="ghost"
-                    value={getResultText(result)}
-                    color={getResultColor(result)}
-                    className="w-max"
-                />
+                <PriceTag price={price}/>
               </td>
               <td className="p-4">
-                <IconButton size="sm" variant="text" color="blue-gray">
-                  <EyeIcon className="h-4 w-4"/>
-                </IconButton>
+                <StatusBadge status={result}/>
+              </td>
+              <td className="p-4">
+                <TableActionButtons onView={() => console.log("입찰상세", id)}/>
               </td>
             </tr>
         ))}

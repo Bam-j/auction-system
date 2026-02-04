@@ -1,125 +1,105 @@
-import {useState, useEffect} from "react";
-import {Tabs, TabsHeader, Tab} from "@material-tailwind/react";
-
-import ProductCard from "../features/product/components/ProductCard";
-import ProductFilter from "../features/product/components/ProductFilter";
-import Pagination from "../components/ui/Pagination";
+import React, {useState} from "react";
+import {
+  Card, CardHeader, CardBody, CardFooter,
+  Typography, Button
+} from "@material-tailwind/react";
+import CommonSearchInput from "../components/ui/CommonSearchInput";
+import PriceTag from "../components/ui/PriceTag";
+import StatusBadge from "../components/ui/StatusBadge";
+import EmptyState from "../components/ui/EmptyState";
 
 const HomePage = () => {
-  const [activeTab, setActiveTab] = useState("all");
-  const [activePage, setActivePage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(50);
+  const [products] = useState([
+    {
+      id: 1,
+      title: "전설의 다이아몬드 검",
+      seller: "Steve",
+      price: 5000,
+      image: "https://placehold.co/300x200",
+      status: "SELLING",
+      type: "FIXED"
+    },
+    {
+      id: 2,
+      title: "황금 사과 세트",
+      seller: "Alex",
+      price: 1200,
+      image: "https://placehold.co/300x200",
+      status: "AUCTION",
+      type: "AUCTION"
+    },
+    {
+      id: 3,
+      title: "겉날개 (내구성 III)",
+      seller: "Trader",
+      price: 30000,
+      image: "https://placehold.co/300x200",
+      status: "SOLD_OUT",
+      type: "FIXED"
+    },
+  ]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 960) {
-        setItemsPerPage(20);
-      } else {
-        setItemsPerPage(50);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    setActivePage(1);
-  }, [activeTab]);
-
-  // TODO: 화면 구성 확인용 Mock 데이터 지우기
-  const mockProducts = Array.from({length: 200}).map((_, index) => ({
-    id: index,
-    title: `마인크래프트 아이템 #${index + 1}`,
-    price: (Math.floor(Math.random() * 100) + 1) * 1000,
-    quantity: Math.floor(Math.random() * 10) + 1,
-    seller: `User${index}`,
-    type: index % 2 === 0 ? "AUCTION" : "FIXED",
-    status: ["SELLING", "SOLD_OUT", "BIDDING", "CLOSED"][Math.floor(Math.random() * 4)],
-    image: null,
-  }));
-
-  const filteredProducts = mockProducts.filter((item) => {
-    if (activeTab === "all") {
-      return true;
-    }
-    if (activeTab === "fixed") {
-      return item.type === "FIXED";
-    }
-    if (activeTab === "auction") {
-      return item.type === "AUCTION";
-    }
-    return true;
-  });
-
-  const lastItemIndex = activePage * itemsPerPage;
-  const firstItemIndex = lastItemIndex - itemsPerPage;
-  const currentProducts = filteredProducts.slice(firstItemIndex, lastItemIndex);
-
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const handleSearch = (keyword) => {
+    console.log("메인 검색:", keyword);
+  };
 
   return (
-      <div className="w-full">
-        <div className="bg-white shadow-sm mb-6">
-          <div className="container mx-auto px-4 py-2">
-            <Tabs value={activeTab} className="w-full md:w-max">
-              <TabsHeader
-                  className="bg-transparent"
-                  indicatorProps={{className: "bg-blue-500/10 shadow-none !text-blue-500"}}
-              >
-                <Tab
-                    value="all"
-                    onClick={() => setActiveTab("all")}
-                    className={activeTab === "all" ? "text-blue-600 font-bold" : ""}
-                >
-                  전체 상품
-                </Tab>
-                <Tab
-                    value="fixed"
-                    onClick={() => setActiveTab("fixed")}
-                    className={activeTab === "fixed" ? "text-blue-600 font-bold" : ""}
-                >
-                  일반 판매
-                </Tab>
-                <Tab
-                    value="auction"
-                    onClick={() => setActiveTab("auction")}
-                    className={activeTab === "auction" ? "text-blue-600 font-bold" : ""}
-                >
-                  경매 상품
-                </Tab>
-              </TabsHeader>
-            </Tabs>
+      <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
+
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+          <div>
+            <Typography variant="h3" color="blue-gray" className="font-bold">
+              경매장
+            </Typography>
+            <Typography className="text-gray-600 mt-1">
+              원하는 아이템을 검색하고 입찰에 참여해보세요!
+            </Typography>
           </div>
+          <CommonSearchInput placeholder="아이템 이름 검색..." onSearch={handleSearch} className="w-full md:w-96"/>
         </div>
 
-        <div className="container mx-auto px-4 pb-10">
-          <ProductFilter/>
+        {products.length === 0 ? (
+            <EmptyState message="등록된 상품이 없습니다."/>
+        ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                  <Card key={product.id} className="w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                    <CardHeader floated={false} color="blue-gray" className="relative h-48 m-0 rounded-b-none">
+                      <img src={product.image} alt={product.title} className="w-full h-full object-cover"/>
+                      <div className="absolute top-2 right-2">
+                        <StatusBadge status={product.status}/>
+                      </div>
+                    </CardHeader>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-8 2xl:grid-cols-10 gap-4 mb-10">
-            {currentProducts.length > 0 ? (
-                currentProducts.map((product) => (
-                    <ProductCard key={product.id} product={product}/>
-                ))
-            ) : (
-                <div className="col-span-full text-center py-20 text-gray-500">
-                  표시할 상품이 없습니다.
-                </div>
-            )}
-          </div>
+                    <CardBody className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <Typography variant="small" className="font-bold text-gray-500">
+                          {product.type === "AUCTION" ? "경매" : "일반 판매"}
+                        </Typography>
+                        <Typography variant="small" className="text-gray-400">
+                          판매자: {product.seller}
+                        </Typography>
+                      </div>
+                      <Typography variant="h6" color="blue-gray" className="mb-1 truncate">
+                        {product.title}
+                      </Typography>
+                      <PriceTag price={product.price} className="text-lg text-blue-600"/>
+                    </CardBody>
 
-          {filteredProducts.length > 0 && (
-              <div className="flex justify-center mt-8">
-                <Pagination
-                    active={activePage}
-                    total={totalPages}
-                    onChange={setActivePage}
-                />
-              </div>
-          )}
-        </div>
+                    <CardFooter className="pt-0 px-4 pb-4">
+                      <Button
+                          fullWidth
+                          variant={product.status === "SOLD_OUT" ? "outlined" : "gradient"}
+                          color={product.status === "SOLD_OUT" ? "gray" : "blue"}
+                          disabled={product.status === "SOLD_OUT"}
+                      >
+                        {product.status === "SOLD_OUT" ? "판매 완료" : "상세 보기"}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+              ))}
+            </div>
+        )}
       </div>
   );
 };
