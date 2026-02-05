@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Typography, Button, Input, Chip} from "@material-tailwind/react";
 import {CubeIcon, UserCircleIcon, CalendarDaysIcon} from "@heroicons/react/24/outline";
+import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
@@ -36,10 +37,9 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
       >
         <div className="flex flex-col gap-6 p-2">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 1-1. 좌측: 상품 이미지 (크게) */}
             <div className="md:col-span-1">
               <img
-                  src={product.image || "https://placehold.co/400x400?text=No+Image"}
+                  src={product.image || defaultImage}
                   alt={product.title}
                   className="w-full h-64 md:h-full object-cover rounded-lg border border-gray-200 shadow-sm"
               />

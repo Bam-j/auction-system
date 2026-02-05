@@ -2,6 +2,7 @@ import {
   Card, CardHeader, CardBody, CardFooter,
   Typography, Chip,
 } from "@material-tailwind/react";
+import defaultImage from "@/assets/images/general/grass_block.jpeg";
 
 const ProductCard = ({product}) => {
   const getStatusInfo = (status) => {
@@ -25,7 +26,7 @@ const ProductCard = ({product}) => {
       <Card className="w-full shadow-md hover:shadow-xl transition-shadow cursor-pointer">
         <CardHeader floated={false} className="h-40 overflow-hidden relative">
           <img
-              src={product.image || {/* 이미지 없을 때의 기본 이미지 넣기 */}}
+              src={product.image || defaultImage}
               alt={product.title}
               className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
           />

@@ -8,17 +8,20 @@ import PriceTag from "../components/ui/PriceTag";
 import StatusBadge from "../components/ui/StatusBadge";
 import EmptyState from "../components/ui/EmptyState";
 import ProductDetailModal from "../features/product/components/ProductDetailModal";
+import defaultImage from "@/assets/images/general/grass_block.jpeg";
 
 const HomePage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+
   const [products] = useState([
     {
       id: 1,
       title: "전설의 다이아몬드 검",
       seller: "Steve",
       price: 5000,
-      image: "https://placehold.co/300x200",
+      image: null,
       status: "SELLING",
       type: "FIXED"
     },
@@ -27,7 +30,7 @@ const HomePage = () => {
       title: "황금 사과 세트",
       seller: "Alex",
       price: 1200,
-      image: "https://placehold.co/300x200",
+      image: null,
       status: "AUCTION",
       type: "AUCTION"
     },
@@ -70,9 +73,13 @@ const HomePage = () => {
               {products.map((product) => (
                   <Card key={product.id} onClick={() => handleCardClick(product)}
                         className="w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                    <CardHeader floated={false} color="blue-gray" className="relative h-48 m-0 rounded-b-none">
-                      <img src={product.image} alt={product.title} className="w-full h-full object-cover"/>
-                      <div className="absolute top-2 right-2">
+                    <CardHeader floated={false} color="blue-gray" className="relative h-42 m-0 rounded-b-none">
+                      <img
+                          src={product.image || defaultImage}
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 z-10">
                         <StatusBadge status={product.status}/>
                       </div>
                     </CardHeader>
