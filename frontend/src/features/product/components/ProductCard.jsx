@@ -52,7 +52,7 @@ const ProductCard = ({product}) => {
         </CardBody>
 
         <CardFooter className="pt-0 pb-4 px-4 border-t border-gray-100 flex justify-between items-center mt-auto">
-          <Typography className="text-xs text-gray-500">
+          <Typography className="text-xs text-blue-700">
             판매자: {product.seller}
           </Typography>
         </CardFooter>

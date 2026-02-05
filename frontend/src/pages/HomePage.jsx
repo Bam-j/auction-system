@@ -57,10 +57,7 @@ const HomePage = () => {
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
             <Typography variant="h3" color="blue-gray" className="font-bold">
-              경매장
-            </Typography>
-            <Typography className="text-gray-600 mt-1">
-              원하는 아이템을 검색하고 입찰에 참여해보세요!
+              거래소
             </Typography>
           </div>
           <CommonSearchInput placeholder="아이템 이름 검색..." onSearch={handleSearch} className="w-full md:w-96"/>
@@ -82,10 +79,10 @@ const HomePage = () => {
 
                     <CardBody className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <Typography variant="small" className="font-bold text-gray-500">
+                        <Typography variant="small" className="font-bold text-gray-900">
                           {product.type === "AUCTION" ? "경매" : "일반 판매"}
                         </Typography>
-                        <Typography variant="small" className="text-gray-400">
+                        <Typography variant="small" className="font-normal text-blue-900">
                           판매자: {product.seller}
                         </Typography>
                       </div>

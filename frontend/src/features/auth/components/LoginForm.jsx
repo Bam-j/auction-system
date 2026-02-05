@@ -44,15 +44,9 @@ const LoginForm = () => {
 
   return (
       <Card className="w-96 shadow-lg">
-        <CardHeader
-            variant="gradient"
-            color="blue"
-            className="mb-4 grid h-28 place-items-center"
-        >
-          <Typography variant="h3" color="white">
-            로그인
-          </Typography>
-        </CardHeader>
+        <Typography variant="h3" color="blue" className="mt-3 mb-3 grid h-20 place-items-center">
+          로그인
+        </Typography>
 
         <form onSubmit={handleLogin}>
           <CardBody className="flex flex-col gap-4">

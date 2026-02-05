@@ -35,7 +35,7 @@ const Header = () => {
               variant="h5"
               className="mr-4 cursor-pointer py-1.5 font-bold text-blue-600"
           >
-            MC Auction
+            어비스 거래소
           </Typography>
 
           <div className="flex items-center gap-4">

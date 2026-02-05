@@ -4,7 +4,7 @@ import {Chip} from "@material-tailwind/react";
 const STATUS_CONFIG = {
   SELLING: {color: "green", label: "판매중"},
   SOLD_OUT: {color: "blue-gray", label: "판매완료"},
-  AUCTION: {color: "deep-orange", label: "경매중"},
+  AUCTION: {color: "blue", label: "경매중"},
   BLOCKED: {color: "red", label: "판매중지"},
 
   WIN: {color: "green", label: "낙찰 성공"},
