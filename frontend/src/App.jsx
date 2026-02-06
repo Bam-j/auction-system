@@ -1,4 +1,5 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import TitleUpdater from './components/shared/TitleUpdater';
 
 //기본 페이지
 import Layout from './components/layouts/Layout.jsx';
@@ -12,7 +13,7 @@ import MyProductList from './features/mypage/components/MyProductList';
 import MyPurchaseHistory from './features/mypage/components/MyPurchaseHistory';
 import MyBidHistory from './features/mypage/components/MyBidHistory';
 import MyProfileEdit from './features/mypage/components/MyProfileEdit';
-import MySalesRequests from './features/mypage/components/MySalesRequests'; // ★ import
+import MySalesRequests from './features/mypage/components/MySalesRequests';
 
 //관리자 페이지
 import AdminPage from './pages/AdminPage';
@@ -27,6 +28,8 @@ import ProductRegisterPage from './pages/ProductRegisterPage';
 function App() {
   return (
       <BrowserRouter>
+        <TitleUpdater/>
+
         <Routes>
           {/* 전체 레이아웃 */}
           <Route element={<Layout/>}>
