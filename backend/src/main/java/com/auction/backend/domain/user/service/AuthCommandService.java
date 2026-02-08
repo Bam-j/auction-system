@@ -27,12 +27,12 @@ public class AuthCommandService {
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
 
-        User user = User.builder()
-                .username(signUpRequest.getUsername())
-                .nickname(signUpRequest.getNickname())
-                .password(encodedPassword)
-                .role(UserRole.USER)
-                .build();
+        User user = User.createUser(
+                signUpRequest.getUsername(),
+                signUpRequest.getNickname(),
+                encodedPassword,
+                UserRole.USER
+        );
 
         return userRepository.save(user).getUserId();
     }

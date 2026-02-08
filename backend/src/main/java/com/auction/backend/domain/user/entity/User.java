@@ -38,4 +38,13 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.role = role != null ? role : UserRole.USER;
     }
+
+    public static User createUser(String username, String nickname, String encodedPassword, UserRole role) {
+        return User.builder()
+                .username(username)
+                .nickname(nickname)
+                .password(encodedPassword)
+                .role(role)
+                .build();
+    }
 }
