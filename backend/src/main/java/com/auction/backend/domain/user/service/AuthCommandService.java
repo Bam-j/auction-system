@@ -1,10 +1,14 @@
 package com.auction.backend.domain.user.service;
 
+import com.auction.backend.domain.user.dto.LoginRequest;
+import com.auction.backend.domain.user.dto.LoginResponse;
 import com.auction.backend.domain.user.dto.SignUpRequest;
+import com.auction.backend.domain.user.dto.UserResponse;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +21,9 @@ public class AuthCommandService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
+    //회원 가입 서비스 (일반 역할 회원만 가입 가능)
     public Long save(SignUpRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             throw new DuplicateUserException("이미 존재하는 아이디입니다.");
@@ -35,5 +41,23 @@ public class AuthCommandService {
         );
 
         return userRepository.save(user).getUserId();
+    }
+
+    //회원 로그인 서비스 (일반 + 관리자 공동 사용)
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String token = jwtTokenProvider.createToken(user.getUserId(), user.getRole().name());
+
+        return LoginResponse.builder()
+                .accessToken(token)
+                .tokenType("Bearer")
+                .user(UserResponse.from(user))
+                .build();
     }
 }

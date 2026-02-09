@@ -1,7 +1,10 @@
 package com.auction.backend.domain.user.controller;
 
+import com.auction.backend.domain.user.dto.LoginRequest;
+import com.auction.backend.domain.user.dto.LoginResponse;
 import com.auction.backend.domain.user.dto.SignUpRequest;
 import com.auction.backend.domain.user.service.AuthCommandService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +21,14 @@ public class AuthController {
     private final AuthCommandService authCommandService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         authCommandService.save(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        LoginResponse response = authCommandService.login(loginRequest);
+        return ResponseEntity.ok(response);
     }
 }
