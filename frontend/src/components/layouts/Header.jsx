@@ -1,14 +1,13 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from 'react-router-dom';
 import {Navbar, Typography, Button} from "@material-tailwind/react";
-import {logoutUser} from "../../features/auth/api/authApi.js";
+import {logoutUser} from "@/features/auth/api/authApi.js";
 import {PlusIcon} from "@heroicons/react/24/outline";
 
 const Header = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  //TODO: 화면 개발 후 전역 상태 관리로 변경
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -26,33 +25,37 @@ const Header = () => {
   };
 
   return (
-      <Navbar className="mx-auto max-w-screen-xl px-4 py-3 rounded-none shadow-md bg-white border-none">
+      <Navbar className="mx-auto w-full px-4 py-3 rounded-none shadow-md bg-white border-none">
         <div className="flex items-center justify-between text-blue-gray-900">
 
           <Typography
               as={Link}
               to="/"
               variant="h5"
-              className="mr-4 cursor-pointer py-1.5 font-bold text-blue-600"
+              className="mr-2 cursor-pointer py-1.5 font-bold text-blue-600 whitespace-nowrap"
           >
             어비스 거래소
           </Typography>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
 
             {!user ? (
                 <Button
                     variant="gradient"
                     size="sm"
                     color="blue"
-                    className="hidden lg:inline-block"
+                    className="whitespace-nowrap"
                     onClick={() => navigate('/login')}
                 >
                   <span>로그인</span>
                 </Button>
             ) : (
                 <div className="flex items-center gap-2">
-                  <Typography variant="small" color="gray" className="mr-2 font-medium hidden md:block">
+                  <Typography
+                      variant="small"
+                      color="gray"
+                      className="mr-1 font-medium hidden md:block whitespace-nowrap"
+                  >
                     {user.nickname}님
                   </Typography>
 
@@ -60,12 +63,11 @@ const Header = () => {
                       variant="gradient"
                       size="sm"
                       color="green"
-                      className="flex items-center gap-2 hidden lg:inline-block"
-                      //TODO: 상품 등록 화면으로 navigate
+                      className="flex items-center gap-1 px-3 whitespace-nowrap"
                       onClick={() => navigate('/')}
                   >
                     <PlusIcon strokeWidth={2} className="h-4 w-4"/>
-                    상품 등록
+                    <span className="hidden sm:inline">상품 등록</span>
                   </Button>
 
                   {user.role === 'ADMIN' ? (
@@ -73,6 +75,7 @@ const Header = () => {
                           variant="text"
                           size="sm"
                           color="blue-gray"
+                          className="whitespace-nowrap px-3"
                           onClick={() => navigate('/admin')}
                       >
                         관리자
@@ -82,6 +85,7 @@ const Header = () => {
                           variant="text"
                           size="sm"
                           color="blue-gray"
+                          className="whitespace-nowrap px-3"
                           onClick={() => navigate('/mypage')}
                       >
                         마이페이지
@@ -92,14 +96,13 @@ const Header = () => {
                       variant="outlined"
                       size="sm"
                       color="red"
-                      className="hidden lg:inline-block border-red-200"
+                      className="border-red-200 whitespace-nowrap px-3"
                       onClick={handleLogout}
                   >
                     로그아웃
                   </Button>
                 </div>
             )}
-
           </div>
         </div>
       </Navbar>
