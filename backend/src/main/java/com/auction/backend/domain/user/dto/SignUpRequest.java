@@ -19,8 +19,8 @@ public class SignUpRequest {
     private String username;
 
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
-    @Pattern(regexp = "^[a-zA-Z_]+$",
-            message = "닉네임은 영문과 언더바(_)만 사용 가능합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$",
+            message = "닉네임은 영문, 숫자, 언더바(_)만 사용 가능합니다.")
     private String nickname;
 
     @NotBlank(message = "비밀번호는 필수 입력값입니다.")
