@@ -11,7 +11,7 @@ const SignupForm = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    userId: "",
+    username: "",
     nickname: "",
     password: "",
     confirmPassword: "",
@@ -22,7 +22,7 @@ const SignupForm = () => {
   const validateField = (name, value, allData = formData) => {
     let errorMessage = "";
     switch (name) {
-      case "userId":
+      case "username":
         if (!/^[a-zA-Z0-9]{7,}$/.test(value)) {
           errorMessage = "7자 이상, 영문 대소문자와 숫자만 사용 가능합니다.";
         }
@@ -66,21 +66,21 @@ const SignupForm = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
 
-    const userIdError = validateField("userId", formData.userId);
+    const usernameError = validateField("username", formData.username);
     const nicknameError = validateField("nickname", formData.nickname);
     const passwordError = validateField("password", formData.password);
     const confirmError = formData.password !== formData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
 
-    if (userIdError || nicknameError || passwordError || confirmError ||
-        !formData.userId || !formData.nickname || !formData.password) {
-      setErrors({userId: userIdError, nickname: nicknameError, password: passwordError, confirmPassword: confirmError});
+    if (usernameError || nicknameError || passwordError || confirmError ||
+        !formData.username || !formData.nickname || !formData.password) {
+      setErrors({username: usernameError, nickname: nicknameError, password: passwordError, confirmPassword: confirmError});
       alert("입력 정보를 다시 확인해주세요.");
       return;
     }
 
     try {
       const requestData = {
-        userId: formData.userId,
+        username: formData.username,
         nickname: formData.nickname,
         password: formData.password
       };
@@ -107,10 +107,10 @@ const SignupForm = () => {
         <form onSubmit={handleSignup}>
           <CardBody className="flex flex-col gap-4">
             <div>
-              <Input label="아이디" size="lg" name="userId" value={formData.userId} onChange={handleChange}
-                     error={!!errors.userId}/>
-              {errors.userId &&
-                  <Typography variant="small" color="red" className="mt-1 text-xs ml-1">{errors.userId}</Typography>}
+              <Input label="아이디" size="lg" name="username" value={formData.username} onChange={handleChange}
+                     error={!!errors.username}/>
+              {errors.username &&
+                  <Typography variant="small" color="red" className="mt-1 text-xs ml-1">{errors.username}</Typography>}
             </div>
             <div>
               <Input label="닉네임" size="lg" name="nickname" value={formData.nickname} onChange={handleChange}

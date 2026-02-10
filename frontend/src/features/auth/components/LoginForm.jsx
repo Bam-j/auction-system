@@ -9,7 +9,7 @@ import CommonModal from "../../../components/ui/CommonModal";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openContactModal, setOpenContactModal] = useState(false);
   const handleOpenContact = () => setOpenContactModal(!openContactModal);
@@ -17,23 +17,23 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!userId || !password) {
+    if (!username || !password) {
       alert("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
     try {
-      const loginData = {userId, password};
+      const loginData = {username: username, password};
       const response = await login(loginData);
 
       const userInfo = {
-        userId: userId,
-        nickname: response.nickname || userId,
-        role: userId === "admin" ? "ADMIN" : "USER",
+        username: username,
+        nickname: response.nickname || username,
+        role: username === "admin" ? "ADMIN" : "USER",
       };
 
       localStorage.setItem("user", JSON.stringify(userInfo));
-      alert(`${userId}님 환영합니다!`);
+      alert(`${username}님 환영합니다!`);
       navigate("/");
       window.location.reload();
     } catch (error) {
@@ -61,8 +61,8 @@ const LoginForm = () => {
               <Input
                   label="아이디"
                   size="lg"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
               />
               <Input
                   label="비밀번호"

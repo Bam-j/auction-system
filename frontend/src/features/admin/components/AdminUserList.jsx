@@ -13,8 +13,8 @@ const AdminUserList = () => {
   const [page, setPage] = useState(1);
 
   const [users, setUsers] = useState([
-    {id: 1, userId: "admin", nickname: "관리자", isBlocked: false},
-    {id: 3, userId: "badguy", nickname: "트롤러", isBlocked: true},
+    {id: 1, username: "admin", nickname: "관리자", isBlocked: false},
+    {id: 3, username: "badguy", nickname: "트롤러", isBlocked: true},
   ]);
 
   const handleSearch = (keyword) => {
@@ -40,10 +40,10 @@ const AdminUserList = () => {
             headers={TABLE_HEAD}
             pagination={<Pagination active={page} total={1} onChange={setPage}/>}
         >
-          {users.map(({id, userId, nickname, isBlocked}) => (
+          {users.map(({id, username: username, nickname, isBlocked}) => (
               <tr key={id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                 <td className="p-4 text-gray-600">{id}</td>
-                <td className="p-4 font-bold text-blue-gray-800">{userId}</td>
+                <td className="p-4 font-bold text-blue-gray-800">{username}</td>
                 <td className="p-4 text-gray-600">{nickname}</td>
                 <td className="p-4">
                   <StatusBadge status={isBlocked ? "BANNED" : "ACTIVE"}/>
