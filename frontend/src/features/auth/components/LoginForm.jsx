@@ -33,7 +33,6 @@ const LoginForm = () => {
       };
 
       localStorage.setItem("user", JSON.stringify(userInfo));
-      alert(`${username}님 환영합니다!`);
       navigate("/");
       window.location.reload();
     } catch (error) {
@@ -71,9 +70,11 @@ const LoginForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
               />
+              {/*
               <div className="-ml-2.5">
                 <Checkbox label="로그인 상태 유지"/>
               </div>
+              */}
             </CardBody>
 
             <CardFooter className="pt-0">
