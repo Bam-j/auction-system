@@ -1,17 +1,19 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {login} from "../api/authApi";
+import axios from "axios";
 import {
   Card, CardBody, CardFooter,
-  Typography, Input, Checkbox, Button,
+  Typography, Input, Button,
 } from "@material-tailwind/react";
 import CommonModal from "../../../components/ui/CommonModal";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openContactModal, setOpenContactModal] = useState(false);
+
   const handleOpenContact = () => setOpenContactModal(!openContactModal);
 
   const handleLogin = async (e) => {
@@ -23,66 +25,70 @@ const LoginForm = () => {
     }
 
     try {
-      const loginData = {username: username, password};
-      const response = await login(loginData);
+      const res = await axios.post('http://localhost:8080/api/v1/auth/login', {
+        username: username,
+        password: password
+      });
+
+      const {user, accessToken} = res.data;
 
       const userInfo = {
         username: username,
-        nickname: response.nickname || username,
-        role: username === "admin" ? "ADMIN" : "USER",
+        nickname: user.nickname,
+        role: user.role,
       };
 
       localStorage.setItem("user", JSON.stringify(userInfo));
+      localStorage.setItem("accessToken", accessToken);
+
+      //alert(`${user.nickname}님 환영합니다!`);
       navigate("/");
       window.location.reload();
+
     } catch (error) {
       console.error("로그인 실패:", error);
-      const message =
-          error.response?.data?.message ||
-          "아이디 또는 비밀번호가 일치하지 않습니다.";
+
+      const message = error.response?.data?.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
       alert(message);
     }
   };
 
   return (
       <>
-        <Card className="w-96 shadow-lg">
+        <Card className="w-96 shadow-lg bg-white">
           <Typography
               variant="h3"
               color="blue"
-              className="mt-3 mb-3 grid h-20 place-items-center"
+              className="mt-6 mb-2 grid h-16 place-items-center font-bold"
           >
             로그인
           </Typography>
 
-          <form onSubmit={handleLogin}>
-            <CardBody className="flex flex-col gap-4">
+          <form onSubmit={handleLogin} className="mt-4 mb-2 w-80 max-w-screen-lg sm:w-96">
+            <CardBody className="flex flex-col gap-6">
               <Input
-                  label="아이디"
                   size="lg"
+                  label="아이디"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  crossOrigin={undefined} // Tailwind 에러 방지용
               />
               <Input
-                  label="비밀번호"
-                  size="lg"
                   type="password"
+                  size="lg"
+                  label="비밀번호"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  crossOrigin={undefined}
               />
-              {/*
-              <div className="-ml-2.5">
-                <Checkbox label="로그인 상태 유지"/>
-              </div>
-              */}
             </CardBody>
 
             <CardFooter className="pt-0">
-              <Button variant="gradient" fullWidth type="submit">
+              <Button variant="gradient" fullWidth type="submit" color="blue">
                 로그인
               </Button>
 
-              <Typography variant="small" className="mt-6 flex justify-center">
+              <Typography variant="small" className="mt-6 flex justify-center text-blue-gray-500">
                 계정이 없으신가요?
                 <Link to="/signup">
                   <Typography
@@ -130,7 +136,7 @@ const LoginForm = () => {
         >
           <div className="py-4 text-center">
             <Typography className="text-gray-800 font-medium">
-              디스코드 문의 탭 티켓으로 넣어주세요.
+              디스코드 문의 티켓으로 문의해주세요.
             </Typography>
           </div>
         </CommonModal>

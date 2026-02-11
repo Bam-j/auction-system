@@ -84,7 +84,7 @@ const Header = () => {
                           className="whitespace-nowrap px-3"
                           onClick={() => navigate('/admin')}
                       >
-                        관리자
+                        관리자 페이지
                       </Button>
                   ) : (
                       <Button
