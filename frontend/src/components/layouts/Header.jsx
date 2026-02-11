@@ -16,12 +16,18 @@ const Header = () => {
   }, []);
 
   const handleLogout = async () => {
-    await logoutUser();
-    localStorage.removeItem("user");
-    setUser(null);
-    alert("로그아웃 되었습니다.");
-    navigate("/");
-    window.location.reload();
+    try {
+      await logoutUser();
+    } catch (error) {
+      console.warn("로그아웃 처리 중 서버 에러(무시 가능):", error);
+    } finally {
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+
+      setUser(null);
+      //alert("로그아웃 되었습니다."); alert가 번거로운 거 같아서 일단 삭제
+      navigate("/");
+    }
   };
 
   return (

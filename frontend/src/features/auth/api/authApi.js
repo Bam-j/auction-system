@@ -1,4 +1,4 @@
-import {api} from '../../../api/axios';
+import {api} from '@/api/axios.js';
 
 //회원가입
 export const signup = async (userData) => {
@@ -14,6 +14,5 @@ export const login = async (credentials) => {
 
 //로그아웃
 export const logoutUser = async () => {
-  const response = await api.post('/api/v1/auth/logout');
-  return response.data;
+  return await api.post('/api/v1/auth/logout');
 };

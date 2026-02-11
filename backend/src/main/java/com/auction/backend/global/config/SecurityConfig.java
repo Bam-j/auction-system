@@ -27,6 +27,15 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**", "/error").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"Logout success\"}");
+                        })
+                        .deleteCookies("JSESSIONID")
                 );
 
         return http.build();
