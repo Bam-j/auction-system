@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {Typography, Button, Input, Chip} from "@material-tailwind/react";
 import {CubeIcon, UserCircleIcon, CalendarDaysIcon} from "@heroicons/react/24/outline";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
@@ -7,7 +7,17 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 
 const ProductDetailModal = ({open, handleOpen, product}) => {
+  const contentRef = useRef(null);
+
   const [purchaseAmount, setPurchaseAmount] = useState(1);
+
+  useEffect(() => {
+    if (open && contentRef.current) {
+      setTimeout(() => {
+        contentRef.current.scrollTop = 0;
+      }, 10);
+    }
+  }, [open]);
 
   if (!product) {
     return null;
@@ -35,7 +45,8 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
           title={product.title}
           size="lg"
       >
-        <div className="flex flex-col gap-6 p-2">
+        <div ref={contentRef} className="flex flex-col gap-6 p-6 h-full max-h-[70vh] overflow-y-auto outline-none">
+          <div tabIndex={0} className="w-0 h-0 overflow-hidden focus:outline-none"/>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="md:col-span-1">
               <img
@@ -89,7 +100,7 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
                     <div className="col-span-2 flex items-center gap-2">
                       <CubeIcon className="h-5 w-5 text-gray-400"/>
                       <Typography>남은 재고: <span
-                          className="font-bold text-blue-gray-900">{product.stock}개</span></Typography>
+                          className="font-bold text-blue-gray-900">{product.stock} 개</span></Typography>
                     </div>
                 )}
               </div>
@@ -155,8 +166,8 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
                   )}
                 </div>
             ) : (
-                <div className="flex flex-col md:flex-row gap-3 items-end">
-                  <div className="w-full md:w-32">
+                <div className="flex gap-3 items-end">
+                  <div className="flex-[3] min-w-[80px]">
                     <Input
                         type="number"
                         label="구매 수량"
@@ -164,12 +175,13 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
                         max={product.stock}
                         value={purchaseAmount}
                         onChange={(e) => setPurchaseAmount(e.target.value)}
-                        className="text-right"
+                        className="!text-lg !font-bold text-right !pr-12 placeholder:text-blue-gray-200"
+                        containerProps={{ className: "min-w-0" }}
                     />
                   </div>
                   <Button
-                      fullWidth
-                      variant="gradient" color="blue" className="h-10 text-lg flex-1"
+                      variant="gradient" color="blue"
+                      className="h-10 text-lg flex-[7]"
                       onClick={handlePurchase}
                       disabled={product.stock <= 0}
                   >
@@ -178,7 +190,6 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
                 </div>
             )}
           </div>
-
         </div>
       </CommonModal>
   );

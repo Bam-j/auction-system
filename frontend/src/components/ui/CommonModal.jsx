@@ -26,7 +26,7 @@ const CommonModal = ({
           />
         </DialogHeader>
 
-        <DialogBody className={`overflow-y-auto max-h-[70vh] ${bodyClassName}`}>
+        <DialogBody className={`p-0 ${bodyClassName}`}>
           {children}
         </DialogBody>
 
