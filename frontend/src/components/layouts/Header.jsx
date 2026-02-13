@@ -25,7 +25,6 @@ const Header = () => {
       localStorage.removeItem("accessToken");
 
       setUser(null);
-      //alert("로그아웃 되었습니다."); alert가 번거로운 거 같아서 일단 삭제
       navigate("/");
     }
   };
@@ -47,7 +46,6 @@ const Header = () => {
 
             {!user ? (
                 <Button
-                    variant="gradient"
                     className="bg-primary text-font-white whitespace-nowrap"
                     onClick={() => navigate('/login')}
                 >
@@ -61,13 +59,15 @@ const Header = () => {
                     {user.nickname}님
                   </Typography>
 
-                  <Button
-                      className="bg-success hover:bg-success-dark text-font-white flex items-center gap-1 px-3 whitespace-nowrap"
-                      onClick={() => navigate('/')}
-                  >
-                    <PlusIcon strokeWidth={2} className="h-4 w-4"/>
-                    <span className="hidden sm:inline">상품 등록</span>
-                  </Button>
+                  {user.role !== 'ADMIN' && (
+                      <Button
+                          className="bg-success hover:bg-success-dark text-font-white flex items-center gap-1 px-3 whitespace-nowrap"
+                          onClick={() => navigate('/products/register')}
+                      >
+                        <PlusIcon strokeWidth={2} className="h-4 w-4"/>
+                        <span className="hidden sm:inline">상품 등록</span>
+                      </Button>
+                  )}
 
                   {user.role === 'ADMIN' ? (
                       <Button
@@ -88,7 +88,7 @@ const Header = () => {
                   )}
 
                   <Button
-                      className="bg-danger hover:bg-danger-dark whitespace-nowrap px-3"
+                      className="bg-danger hover:bg-danger-dark text-white whitespace-nowrap px-3"
                       onClick={handleLogout}
                   >
                     로그아웃
