@@ -28,8 +28,7 @@ const CommonTable = ({title, headers, children, pagination}) => {
                   >
                     <Typography
                         variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
+                        className="text-font-main font-normal leading-none opacity-70"
                     >
                       {head}
                     </Typography>

@@ -14,7 +14,6 @@ const HomePage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-
   const [products] = useState([
     {
       id: 1,
@@ -56,10 +55,9 @@ const HomePage = () => {
 
   return (
       <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
-
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
-            <Typography variant="h3" color="blue-gray" className="font-bold">
+            <Typography variant="h3" className="font-bold text-font-dark_blue">
               거래소
             </Typography>
           </div>
@@ -86,17 +84,17 @@ const HomePage = () => {
 
                     <CardBody className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <Typography variant="small" className="font-bold text-gray-900">
+                        <Typography variant="small" className="font-bold text-font-main">
                           {product.type === "AUCTION" ? "경매" : "일반 판매"}
                         </Typography>
-                        <Typography variant="small" className="font-normal text-blue-900">
-                          판매자: {product.seller}
+                        <Typography variant="small" className="font-normal text-font-dark_blue">
+                          판매자: <strong> {product.seller} </strong>
                         </Typography>
                       </div>
                       <Typography variant="h6" color="blue-gray" className="mb-1 truncate">
                         {product.title}
                       </Typography>
-                      <PriceTag price={product.price} className="text-lg text-blue-600"/>
+                      <PriceTag price={product.price} className="text-lg text-font-dark_blue"/>
                     </CardBody>
 
                     <CardFooter className="pt-0 px-4 pb-4">

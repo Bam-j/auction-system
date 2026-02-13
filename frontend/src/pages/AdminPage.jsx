@@ -13,7 +13,7 @@ const AdminPage = () => {
     {name: "전체 입찰 기록", path: "/admin/bids", icon: CurrencyDollarIcon},
   ];
 
-  return <SideNavLayout title="관리자 센터" menuItems={adminMenus}/>;
+  return <SideNavLayout title="관리 메뉴" menuItems={adminMenus}/>;
 };
 
 export default AdminPage;

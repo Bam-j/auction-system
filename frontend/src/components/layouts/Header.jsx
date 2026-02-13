@@ -38,7 +38,7 @@ const Header = () => {
               as={Link}
               to="/"
               variant="h5"
-              className="mr-2 cursor-pointer py-1.5 font-bold text-blue-600 whitespace-nowrap"
+              className="mr-2 cursor-pointer py-1.5 font-bold text-font-blue whitespace-nowrap"
           >
             어비스 거래소
           </Typography>
@@ -48,9 +48,7 @@ const Header = () => {
             {!user ? (
                 <Button
                     variant="gradient"
-                    size="sm"
-                    color="blue"
-                    className="whitespace-nowrap"
+                    className="bg-primary text-font-white whitespace-nowrap"
                     onClick={() => navigate('/login')}
                 >
                   <span>로그인</span>
@@ -58,18 +56,13 @@ const Header = () => {
             ) : (
                 <div className="flex items-center gap-2">
                   <Typography
-                      variant="small"
-                      color="gray"
-                      className="mr-1 font-medium hidden md:block whitespace-nowrap"
+                      className="mr-1 text-font-main font-medium hidden md:block whitespace-nowrap"
                   >
                     {user.nickname}님
                   </Typography>
 
                   <Button
-                      variant="gradient"
-                      size="sm"
-                      color="green"
-                      className="flex items-center gap-1 px-3 whitespace-nowrap"
+                      className="bg-success hover:bg-success-dark text-font-white flex items-center gap-1 px-3 whitespace-nowrap"
                       onClick={() => navigate('/')}
                   >
                     <PlusIcon strokeWidth={2} className="h-4 w-4"/>
@@ -79,9 +72,7 @@ const Header = () => {
                   {user.role === 'ADMIN' ? (
                       <Button
                           variant="text"
-                          size="sm"
-                          color="blue-gray"
-                          className="whitespace-nowrap px-3"
+                          className="text-font-main whitespace-nowrap px-3"
                           onClick={() => navigate('/admin')}
                       >
                         관리자 페이지
@@ -89,9 +80,7 @@ const Header = () => {
                   ) : (
                       <Button
                           variant="text"
-                          size="sm"
-                          color="blue-gray"
-                          className="whitespace-nowrap px-3"
+                          className="text-font-main whitespace-nowrap px-3"
                           onClick={() => navigate('/mypage')}
                       >
                         마이페이지
@@ -99,10 +88,7 @@ const Header = () => {
                   )}
 
                   <Button
-                      variant="outlined"
-                      size="sm"
-                      color="red"
-                      className="border-red-200 whitespace-nowrap px-3"
+                      className="bg-danger hover:bg-danger-dark whitespace-nowrap px-3"
                       onClick={handleLogout}
                   >
                     로그아웃
