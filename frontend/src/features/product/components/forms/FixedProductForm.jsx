@@ -4,8 +4,8 @@ const FixedProductForm = ({formData, handleChange}) => {
   return (
       <div className="grid grid-cols-2 gap-6">
         <Input
-            type="number"
-            label="판매 가격 (에메랄드)"
+            type="text"
+            label="판매 가격 (에메랄드/블록/주화)"
             name="price"
             value={formData.price}
             onChange={handleChange}
