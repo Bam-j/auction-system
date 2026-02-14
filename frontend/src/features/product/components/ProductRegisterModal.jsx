@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Typography, Textarea} from "@material-tailwind/react";
 import {PhotoIcon} from "@heroicons/react/24/outline";
-import CommonModal from "../../../components/ui/CommonModal";
+import Swal from "sweetalert2";
 
+import CommonModal from "../../../components/ui/CommonModal";
 import CommonProductForm from "./forms/CommonProductForm";
 import FixedProductForm from "./forms/FixedProductForm";
 import AuctionProductForm from "./forms/AuctionProductForm";
@@ -33,9 +34,17 @@ const ProductRegisterModal = () => {
   };
 
   const handleSubmit = () => {
-    console.log("최종 전송 데이터:", formData);
-    alert("상품이 등록되었습니다!");
     navigate("/");
+
+    setTimeout(() => {
+      Swal.fire({
+        title: "상품 등록 완료!",
+        text: "상품이 성공적으로 등록되었습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+        confirmButtonColor: "#10B981",
+      });
+    }, 100);
   };
 
   if (step === 1) {
