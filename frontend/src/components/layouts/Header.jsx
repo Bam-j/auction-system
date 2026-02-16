@@ -1,19 +1,14 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from 'react-router-dom';
 import {Navbar, Typography, Button} from "@material-tailwind/react";
-import {logoutUser} from "@/features/auth/api/authApi.js";
 import {PlusIcon} from "@heroicons/react/24/outline";
+
+import useAuthStore from "@/stores/useAuthStore.js";
+import {logoutUser} from "@/features/auth/api/authApi.js";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const {user, logout: storeLogout} = useAuthStore();
 
   const handleLogout = async () => {
     try {
@@ -21,10 +16,7 @@ const Header = () => {
     } catch (error) {
       console.warn("로그아웃 처리 중 서버 에러(무시 가능):", error);
     } finally {
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
-
-      setUser(null);
+      storeLogout();
       navigate("/");
     }
   };
@@ -61,7 +53,10 @@ const Header = () => {
 
                   {user.role !== 'ADMIN' && (
                       <Button
-                          className="bg-success hover:bg-success-dark text-font-white flex items-center gap-1 px-3 whitespace-nowrap"
+                          className={`
+                            bg-success hover:bg-success-dark text-font-white
+                            flex items-center gap-1 px-3 whitespace-nowrap
+                          `}
                           onClick={() => navigate('/products/register')}
                       >
                         <PlusIcon strokeWidth={2} className="h-4 w-4"/>

@@ -1,15 +1,14 @@
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import axios from "axios";
 import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
 import CommonModal from "../../../components/ui/CommonModal";
+import Swal from "sweetalert2";
 
-const LoginForm = () => {
-  const navigate = useNavigate();
-
+const LoginForm = ({onLoginSuccess}) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [openContactModal, setOpenContactModal] = useState(false);
@@ -20,7 +19,12 @@ const LoginForm = () => {
     e.preventDefault();
 
     if (!username || !password) {
-      alert("아이디와 비밀번호를 입력해주세요.");
+      Swal.fire({
+        icon: "warning",
+        title: "입력 오류",
+        text: "아이디와 비밀번호를 모두 입력해주세요.",
+        confirmButtonColor: "#3B82F6",
+      });
       return;
     }
 
@@ -31,25 +35,25 @@ const LoginForm = () => {
       });
 
       const {user, accessToken} = res.data;
-
       const userInfo = {
         username: username,
         nickname: user.nickname,
         role: user.role,
       };
 
-      localStorage.setItem("user", JSON.stringify(userInfo));
-      localStorage.setItem("accessToken", accessToken);
-
-      //alert(`${user.nickname}님 환영합니다!`);
-      navigate("/");
-      window.location.reload();
+      onLoginSuccess(userInfo, accessToken);
 
     } catch (error) {
       console.error("로그인 실패:", error);
 
       const message = error.response?.data?.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
-      alert(message);
+
+      Swal.fire({
+        icon: "error",
+        title: "로그인 실패",
+        text: message,
+        confirmButtonColor: "#EF4444",
+      });
     }
   };
 
@@ -71,7 +75,7 @@ const LoginForm = () => {
                   label="아이디"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  crossOrigin={undefined} // Tailwind 에러 방지용
+                  crossOrigin={undefined}
               />
               <Input
                   type="password"
