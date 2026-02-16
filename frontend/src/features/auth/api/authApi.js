@@ -1,18 +1,16 @@
-import {api} from '@/api/axios.js';
+import api from "@/api/axiosInstance";
 
-//회원가입
-export const signup = async (userData) => {
-  const response = await api.post('/api/v1/auth/signup', userData);
-  return response.data;
+// 회원가입
+export const signup = (data) => {
+  return api.post("/auth/signup", data);
 };
 
-//로그인
-export const login = async (credentials) => {
-  const response = await api.post('/api/v1/auth/login', credentials);
-  return response.data;
+// 로그인
+export const loginUser = (data) => {
+  return api.post("/auth/login", data);
 };
 
-//로그아웃
-export const logoutUser = async () => {
-  return await api.post('/api/v1/auth/logout');
+// 로그아웃
+export const logoutUser = () => {
+  return api.post("/auth/logout");
 };

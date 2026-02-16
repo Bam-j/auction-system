@@ -1,12 +1,12 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
-import axios from "axios";
 import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
-import CommonModal from "../../../components/ui/CommonModal";
 import Swal from "sweetalert2";
+import CommonModal from "../../../components/ui/CommonModal";
+import {loginUser} from "../api/authApi";
 
 const LoginForm = ({onLoginSuccess}) => {
   const [username, setUsername] = useState("");
@@ -29,11 +29,7 @@ const LoginForm = ({onLoginSuccess}) => {
     }
 
     try {
-      const res = await axios.post('http://localhost:8080/api/v1/auth/login', {
-        username: username,
-        password: password
-      });
-
+      const res = await loginUser({username, password});
       const {user, accessToken} = res.data;
       const userInfo = {
         username: username,
@@ -45,7 +41,6 @@ const LoginForm = ({onLoginSuccess}) => {
 
     } catch (error) {
       console.error("로그인 실패:", error);
-
       const message = error.response?.data?.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
 
       Swal.fire({
@@ -60,11 +55,7 @@ const LoginForm = ({onLoginSuccess}) => {
   return (
       <>
         <Card className="w-96 shadow-lg bg-white">
-          <Typography
-              variant="h3"
-              color="blue"
-              className="mt-6 mb-2 grid h-16 place-items-center font-bold"
-          >
+          <Typography variant="h3" color="blue" className="mt-6 mb-2 grid h-16 place-items-center font-bold">
             로그인
           </Typography>
 
@@ -95,12 +86,8 @@ const LoginForm = ({onLoginSuccess}) => {
               <Typography variant="small" className="mt-6 flex justify-center text-blue-gray-500">
                 계정이 없으신가요?
                 <Link to="/signup">
-                  <Typography
-                      as="span"
-                      variant="small"
-                      color="blue"
-                      className="ml-1 font-bold cursor-pointer hover:underline"
-                  >
+                  <Typography as="span" variant="small" color="blue"
+                              className="ml-1 font-bold cursor-pointer hover:underline">
                     회원가입
                   </Typography>
                 </Link>
@@ -109,10 +96,8 @@ const LoginForm = ({onLoginSuccess}) => {
               <div className="flex justify-center border-t border-gray-200 pt-4 mt-4">
                 <Typography variant="small" className="text-gray-600 font-normal">
                   아이디 또는 비밀번호를 잊으셨나요?{" "}
-                  <span
-                      className="text-blue-500 font-bold cursor-pointer hover:underline ml-1"
-                      onClick={handleOpenContact}
-                  >
+                  <span className="text-blue-500 font-bold cursor-pointer hover:underline ml-1"
+                        onClick={handleOpenContact}>
                   문의하기
                 </span>
                 </Typography>
@@ -128,11 +113,7 @@ const LoginForm = ({onLoginSuccess}) => {
             size="xs"
             footer={
               <div className="flex justify-end w-full">
-                <Button
-                    variant="gradient"
-                    color="blue-gray"
-                    onClick={handleOpenContact}
-                >
+                <Button variant="gradient" color="blue-gray" onClick={handleOpenContact}>
                   닫기
                 </Button>
               </div>

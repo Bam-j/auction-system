@@ -3,11 +3,11 @@ import {useNavigate} from "react-router-dom";
 import {Button, Typography, Textarea} from "@material-tailwind/react";
 import {PhotoIcon} from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
-
 import CommonModal from "../../../components/ui/CommonModal";
 import CommonProductForm from "./forms/CommonProductForm";
 import FixedProductForm from "./forms/FixedProductForm";
 import AuctionProductForm from "./forms/AuctionProductForm";
+import {registerProduct} from "../api/productApi";
 
 const ProductRegisterModal = () => {
   const navigate = useNavigate();
@@ -33,18 +33,34 @@ const ProductRegisterModal = () => {
     }
   };
 
-  const handleSubmit = () => {
-    navigate("/");
+  const handleSubmit = async () => {
+    console.log("최종 전송 데이터:", formData);
 
-    setTimeout(() => {
+    try {
+      await registerProduct(formData);
+      navigate("/");
+
+      setTimeout(() => {
+        Swal.fire({
+          title: "상품 등록 완료!",
+          text: "상품이 성공적으로 등록되었습니다.",
+          icon: "success",
+          confirmButtonText: "확인",
+          confirmButtonColor: "#10B981",
+        });
+      }, 100);
+
+    } catch (error) {
+      console.error("등록 실패:", error);
+      const serverMessage = error.response?.data?.message || "상품 등록 중 오류가 발생했습니다.";
+
       Swal.fire({
-        title: "상품 등록 완료!",
-        text: "상품이 성공적으로 등록되었습니다.",
-        icon: "success",
-        confirmButtonText: "확인",
-        confirmButtonColor: "#10B981",
+        icon: "error",
+        title: "등록 실패",
+        text: serverMessage,
+        confirmButtonColor: "#EF4444",
       });
-    }, 100);
+    }
   };
 
   if (step === 1) {
@@ -112,9 +128,9 @@ const ProductRegisterModal = () => {
             </div>
           }
       >
-
         <div className="flex flex-col gap-6 p-4 max-h-[65vh] overflow-y-auto pr-4">
 
+          {/* 이미지 업로드 섹션 */}
           <div className="flex flex-col gap-3">
             <Typography variant="h6" color="blue-gray" className="flex items-center gap-2">
               <PhotoIcon className="h-5 w-5"/> 상품 대표 이미지
@@ -127,11 +143,10 @@ const ProductRegisterModal = () => {
                   className={`
                     w-full
                     text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
-                    file:text-sm file:font-semibold file:bg-primary file:text-white
-                    hover:file:bg-primary-dark
+                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
+                    file:bg-primary file:text-white hover:file:bg-primary-dark
                     cursor-pointer
-                   `}
+                  `}
               />
             </div>
             {formData.image && (

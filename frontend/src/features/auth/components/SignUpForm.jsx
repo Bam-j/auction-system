@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {
-  Card, CardHeader, CardBody, CardFooter,
+  Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
-
+import Swal from "sweetalert2";
 import {signup} from "../api/authApi";
 
 const SignupForm = () => {
@@ -41,7 +41,7 @@ const SignupForm = () => {
       case "confirmPassword":
         const passwordToCompare = name === "confirmPassword" ? allData.password : value;
         const confirmToCompare = name === "confirmPassword" ? value : allData.confirmPassword;
-        if (passwordToCompare !== confirmToCompare && confirmToCompare.length > 0) {
+        if (passwordToCompare !== confirmToCompare) {
           errorMessage = "비밀번호가 일치하지 않습니다.";
         }
         break;
@@ -55,10 +55,12 @@ const SignupForm = () => {
     const {name, value} = e.target;
     const newData = {...formData, [name]: value};
     setFormData(newData);
+
     const errorMsg = validateField(name, value, newData);
     setErrors((prev) => ({...prev, [name]: errorMsg}));
-    if (name === "password") {
-      const confirmMsg = newData.confirmPassword ? (value !== newData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "") : "";
+
+    if (name === "password" && newData.confirmPassword) {
+      const confirmMsg = value !== newData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
       setErrors((prev) => ({...prev, confirmPassword: confirmMsg}));
     }
   };
@@ -73,8 +75,19 @@ const SignupForm = () => {
 
     if (usernameError || nicknameError || passwordError || confirmError ||
         !formData.username || !formData.nickname || !formData.password) {
-      setErrors({username: usernameError, nickname: nicknameError, password: passwordError, confirmPassword: confirmError});
-      alert("입력 정보를 다시 확인해주세요.");
+      setErrors({
+        username: usernameError,
+        nickname: nicknameError,
+        password: passwordError,
+        confirmPassword: confirmError
+      });
+
+      Swal.fire({
+        icon: "warning",
+        title: "입력 확인",
+        text: "입력 정보를 다시 확인해주세요.",
+        confirmButtonColor: "#F59E0B",
+      });
       return;
     }
 
@@ -87,53 +100,63 @@ const SignupForm = () => {
 
       await signup(requestData);
 
-      alert("회원가입 성공! 로그인해주세요.");
-      navigate("/login");
+      Swal.fire({
+        icon: "success",
+        title: "회원가입 성공!",
+        text: "로그인 페이지로 이동합니다.",
+        confirmButtonColor: "#10B981",
+      }).then(() => {
+        navigate("/login");
+      });
 
     } catch (error) {
       console.error("회원가입 실패:", error);
-
       const serverMessage = error.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
-      alert(serverMessage);
+      Swal.fire({
+        icon: "error",
+        title: "가입 실패",
+        text: serverMessage,
+        confirmButtonColor: "#EF4444",
+      });
     }
   };
 
   return (
-      <Card className="w-96 shadow-lg">
-        <Typography variant="h3" color="blue" className="mt-3 mb-3 grid h-20 place-items-center">
+      <Card className="w-96 shadow-lg bg-white">
+        <Typography variant="h3" color="blue" className="mt-6 mb-2 grid h-16 place-items-center font-bold">
           회원가입
         </Typography>
 
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignup} className="mt-4 mb-2 w-80 max-w-screen-lg sm:w-96">
           <CardBody className="flex flex-col gap-4">
             <div>
               <Input label="아이디" size="lg" name="username" value={formData.username} onChange={handleChange}
-                     error={!!errors.username}/>
-              {errors.username &&
-                  <Typography variant="small" color="red" className="mt-1 text-xs ml-1">{errors.username}</Typography>}
+                     error={!!errors.username} crossOrigin={undefined}/>
+              {errors.username && <Typography variant="small" color="red"
+                                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.username}</Typography>}
             </div>
             <div>
               <Input label="닉네임" size="lg" name="nickname" value={formData.nickname} onChange={handleChange}
-                     error={!!errors.nickname}/>
-              {errors.nickname &&
-                  <Typography variant="small" color="red" className="mt-1 text-xs ml-1">{errors.nickname}</Typography>}
+                     error={!!errors.nickname} crossOrigin={undefined}/>
+              {errors.nickname && <Typography variant="small" color="red"
+                                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.nickname}</Typography>}
             </div>
             <div>
               <Input label="비밀번호" size="lg" type="password" name="password" value={formData.password}
-                     onChange={handleChange} error={!!errors.password}/>
-              {errors.password &&
-                  <Typography variant="small" color="red" className="mt-1 text-xs ml-1">{errors.password}</Typography>}
+                     onChange={handleChange} error={!!errors.password} crossOrigin={undefined}/>
+              {errors.password && <Typography variant="small" color="red"
+                                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.password}</Typography>}
             </div>
             <div>
               <Input label="비밀번호 확인" size="lg" type="password" name="confirmPassword" value={formData.confirmPassword}
-                     onChange={handleChange} error={!!errors.confirmPassword}/>
+                     onChange={handleChange} error={!!errors.confirmPassword} crossOrigin={undefined}/>
               {errors.confirmPassword && <Typography variant="small" color="red"
-                                                     className="mt-1 text-xs ml-1">{errors.confirmPassword}</Typography>}
+                                                     className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.confirmPassword}</Typography>}
             </div>
           </CardBody>
           <CardFooter className="pt-0">
-            <Button variant="gradient" fullWidth type="submit">가입하기</Button>
-            <Typography variant="small" className="mt-6 flex justify-center">
+            <Button variant="gradient" fullWidth type="submit" color="blue">가입하기</Button>
+            <Typography variant="small" className="mt-6 flex justify-center text-blue-gray-500">
               이미 계정이 있으신가요?
               <Link to="/login">
                 <Typography as="span" variant="small" color="blue"
