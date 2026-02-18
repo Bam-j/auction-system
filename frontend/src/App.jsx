@@ -1,4 +1,4 @@
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import TitleUpdater from './components/shared/TitleUpdater';
 
 //기본 페이지
@@ -39,7 +39,8 @@ function App() {
 
             {/* 마이 페이지 라우팅  */}
             <Route path="/mypage" element={<MyPage/>}>
-              <Route index path="products" element={<MyProductList/>}/>
+              <Route index element={<Navigate to="products" replace/>}/>
+              <Route path="products" element={<MyProductList/>}/>
               <Route path="requests" element={<MySalesRequests/>}/>
               <Route path="purchases" element={<MyPurchaseHistory/>}/>
               <Route path="bids" element={<MyBidHistory/>}/>
@@ -48,7 +49,8 @@ function App() {
 
             {/* 관리자 페이지 라우팅 */}
             <Route path="/admin" element={<AdminPage/>}>
-              <Route index path="products" element={<AdminProductList/>}/>
+              <Route index element={<Navigate to="products" replace/>}/>
+              <Route path="products" element={<AdminProductList/>}/>
               <Route path="purchases" element={<AdminPurchaseHistory/>}/>
               <Route path="bids" element={<AdminBidHistory/>}/>
               <Route path="users" element={<AdminUserList/>}/>
