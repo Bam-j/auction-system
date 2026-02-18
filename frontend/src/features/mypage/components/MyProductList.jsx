@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Typography} from "@material-tailwind/react";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -77,7 +76,6 @@ const MyProductList = () => {
                 <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
                 <td className="p-4 text-gray-600">{product.date}</td>
                 <td className="p-4">
-                  {/* 경매일 경우 시작가 표시, 아니면 판매가 표시 */}
                   <PriceTag price={product.type === "AUCTION" ? product.startPrice : product.price}/>
                 </td>
                 <td className="p-4 text-gray-600">{product.stock}개</td>
