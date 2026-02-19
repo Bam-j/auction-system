@@ -3,11 +3,11 @@ import {
   Card, CardHeader, CardBody, CardFooter,
   Typography, Button
 } from "@material-tailwind/react";
-import CommonSearchInput from "../components/ui/CommonSearchInput";
 import PriceTag from "../components/ui/PriceTag";
 import StatusBadge from "../components/ui/StatusBadge";
 import EmptyState from "../components/ui/EmptyState";
 import ProductDetailModal from "../features/product/components/ProductDetailModal";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 
 const HomePage = () => {
@@ -44,8 +44,20 @@ const HomePage = () => {
     },
   ]);
 
-  const handleSearch = (keyword) => {
-    console.log("메인 검색:", keyword);
+  const productListFilters = [
+    {
+      id: "category",
+      label: "카테고리",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "무기/방어구", value: "WEAPON"},
+        {label: "건축 블록", value: "BLOCK"},
+      ],
+    },
+  ];
+
+  const handleSearch = (searchData) => {
+    console.log("메인 검색:", searchData);
   };
 
   const handleCardClick = (product) => {
@@ -55,13 +67,15 @@ const HomePage = () => {
 
   return (
       <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <div>
-            <Typography variant="h3" className="font-bold text-font-dark_blue">
-              거래소
-            </Typography>
-          </div>
-          <CommonSearchInput placeholder="아이템 이름 검색..." onSearch={handleSearch} className="w-full md:w-96"/>
+        <div className="flex flex-col mb-6 gap-4">
+          <Typography variant="h3" className="font-bold text-font-dark_blue px-1">
+            거래소
+          </Typography>
+          <CommonFilterBar
+              searchPlaceholder="어떤 아이템을 찾으시나요?"
+              filterConfigs={productListFilters}
+              onSearch={handleSearch}
+          />
         </div>
 
         {products.length === 0 ? (
