@@ -1,12 +1,13 @@
 import React, {useState} from "react";
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
+import Swal from "sweetalert2";
+
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
 import EmptyState from "../../../components/ui/EmptyState";
 import StatusBadge from "../../../components/ui/StatusBadge";
-import ProductDetailModal from "../../product/components/ProductDetailModal";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 
 const TABLE_HEAD = ["ID", "상품명", "요청자", "수량", "제안가 (입찰/즉시)", "상태", "상세", "관리"];
@@ -15,11 +16,10 @@ const MySalesRequests = () => {
   const [page, setPage] = useState(1);
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
   const [requests, setRequests] = useState([
     {
       id: 1, type: "FIXED", status: "WAITING",
-      productName: "다이아몬드 검", requestor: "Newbie01", amount: 2, offerPrice: 0, // 일반 판매는 제안가 '-'
+      productName: "다이아몬드 검", requestor: "Newbie01", amount: 2, offerPrice: 0,
       productDetail: {
         title: "다이아몬드 검",
         price: 5000,
@@ -32,7 +32,7 @@ const MySalesRequests = () => {
     },
     {
       id: 2, type: "AUCTION", status: "WAITING",
-      productName: "황금 사과", requestor: "RichMan", amount: 0, offerPrice: 1500, // 경매는 수량 '-'
+      productName: "황금 사과", requestor: "RichMan", amount: 0, offerPrice: 1500,
       productDetail: {
         title: "황금 사과",
         currentPrice: 1200,
@@ -45,7 +45,7 @@ const MySalesRequests = () => {
       }
     },
     {
-      id: 3, type: "AUCTION", status: "Wait_Confirm", // 즉시 구매 요청
+      id: 3, type: "AUCTION", status: "Wait_Confirm",
       productName: "겉날개", requestor: "FlyHigh", amount: 0, offerPrice: 50000,
       productDetail: {
         title: "겉날개",
@@ -65,11 +65,39 @@ const MySalesRequests = () => {
   };
 
   const handleAction = (id, action) => {
-    const actionText = action === "ACCEPT" ? "수락" : "거절";
-    if (window.confirm(`정말로 이 요청을 ${actionText}하시겠습니까?`)) {
-      alert(`요청이 ${actionText}되었습니다.`);
-      setRequests(requests.filter(req => req.id !== id));
-    }
+    const isAccept = action === "ACCEPT";
+    const actionText = isAccept ? "수락" : "거절";
+
+    Swal.fire({
+      title: `요청 ${actionText}`,
+      text: `정말로 이 요청을 ${actionText}하시겠습니까?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: actionText,
+      cancelButtonText: "취소",
+      customClass: {
+        confirmButton: isAccept
+            ? "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+            : "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setRequests(requests.filter(req => req.id !== id));
+
+        Swal.fire({
+          title: "처리 완료",
+          text: `요청이 ${actionText}되었습니다.`,
+          icon: "success",
+          confirmButtonText: "확인",
+          customClass: {
+            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          },
+          buttonsStyling: false
+        });
+      }
+    });
   };
 
   if (requests.length === 0) {
