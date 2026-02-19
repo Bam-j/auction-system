@@ -34,21 +34,17 @@ const ProductRegisterModal = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("최종 전송 데이터:", formData);
-
     try {
       await registerProduct(formData);
-      navigate("/");
 
-      setTimeout(() => {
-        Swal.fire({
-          title: "상품 등록 완료!",
-          text: "상품이 성공적으로 등록되었습니다.",
-          icon: "success",
-          confirmButtonText: "확인",
-          confirmButtonColor: "#10B981",
-        });
-      }, 100);
+      Swal.fire({
+        icon: "success",
+        title: "상품 등록 완료!",
+        text: "상품이 성공적으로 등록되었습니다.",
+        confirmButtonColor: "#10B981",
+      }).then(() => {
+        navigate("/");
+      });
 
     } catch (error) {
       console.error("등록 실패:", error);

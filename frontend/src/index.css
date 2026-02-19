@@ -7,3 +7,7 @@
     @apply text-font-main;
   }
 }
+
+.swal2-container {
+  z-index: 10000 !important;
+}
