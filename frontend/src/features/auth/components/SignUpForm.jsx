@@ -28,8 +28,8 @@ const SignupForm = () => {
         }
         break;
       case "nickname":
-        if (!/^[a-zA-Z_]+$/.test(value)) {
-          errorMessage = "영문과 언더바(_)만 사용 가능합니다.";
+        if (!/^[a-zA-Z0-9_]{3,16}$/.test(value)) {
+          errorMessage = "3자 이상 16자 이하, 영문과 숫자, 언더바(_)만 사용 가능합니다.";
         }
         break;
       case "password":
