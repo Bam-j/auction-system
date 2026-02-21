@@ -6,6 +6,7 @@ import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
+import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 
 const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"];
 
@@ -54,49 +55,82 @@ const MyProductList = () => {
     },
   ];
 
+  const filterConfigs = [
+    {
+      id: "type",
+      label: "판매 방식",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "일반 판매", value: "FIXED"},
+        {label: "경매", value: "AUCTION"},
+      ],
+    },
+    {
+      id: "status",
+      label: "상태",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "판매중", value: "SELLING"},
+        {label: "판매완료", value: "SOLD_OUT"},
+      ],
+    }
+  ];
+
+  const handleSearch = (searchData) => {
+    console.log("등록 상품 검색:", searchData);
+  };
+
   const handleViewDetail = (product) => {
     setSelectedProduct(product);
     setOpenModal(true);
   };
 
-  if (products.length === 0) {
-    return <EmptyState message="등록한 상품이 없습니다."/>;
-  }
-
   return (
-      <>
-        <CommonTable
-            title="내 등록 상품 목록"
-            headers={["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"]}
-            pagination={<Pagination active={page} total={3} onChange={setPage}/>}
-        >
-          {products.map((product) => (
-              <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-                <td className="p-4 text-gray-600">{product.id}</td>
-                <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
-                <td className="p-4 text-gray-600">{product.date}</td>
-                <td className="p-4">
-                  <PriceTag price={product.type === "AUCTION" ? product.startPrice : product.price}/>
-                </td>
-                <td className="p-4 text-gray-600">{product.stock}개</td>
-                <td className="p-4"><StatusBadge status={product.status}/></td>
-                <td className="p-4">
-                  <TableActionButtons
-                      onView={() => handleViewDetail(product)}
-                      onDelete={() => console.log("판매종료", product.id)}
-                      deleteLabel="판매종료"
-                  />
-                </td>
-              </tr>
-          ))}
-        </CommonTable>
-
-        <ProductManagementModal
-            open={openModal}
-            handleOpen={() => setOpenModal(!openModal)}
-            product={selectedProduct}
+      <div className="flex flex-col gap-4 h-full">
+        <CommonFilterBar
+            searchPlaceholder="상품명 검색"
+            filterConfigs={filterConfigs}
+            onSearch={handleSearch}
         />
-      </>
+
+        {products.length === 0 ? (
+            <EmptyState message="등록한 상품이 없습니다."/>
+        ) : (
+            <>
+              <CommonTable
+                  title="내 등록 상품 목록"
+                  headers={TABLE_HEAD}
+                  pagination={<Pagination active={page} total={3} onChange={setPage}/>}
+              >
+                {products.map((product) => (
+                    <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
+                      <td className="p-4 text-gray-600">{product.id}</td>
+                      <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
+                      <td className="p-4 text-gray-600">{product.date}</td>
+                      <td className="p-4">
+                        <PriceTag price={product.type === "AUCTION" ? product.startPrice : product.price}/>
+                      </td>
+                      <td className="p-4 text-gray-600">{product.stock}개</td>
+                      <td className="p-4"><StatusBadge status={product.status}/></td>
+                      <td className="p-4">
+                        <TableActionButtons
+                            onView={() => handleViewDetail(product)}
+                            onDelete={() => console.log("판매종료", product.id)}
+                            deleteLabel="판매종료"
+                        />
+                      </td>
+                    </tr>
+                ))}
+              </CommonTable>
+
+              <ProductManagementModal
+                  open={openModal}
+                  handleOpen={() => setOpenModal(!openModal)}
+                  product={selectedProduct}
+              />
+            </>
+        )}
+      </div>
   );
 };
 

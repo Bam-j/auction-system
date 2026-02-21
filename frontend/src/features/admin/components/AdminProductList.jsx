@@ -1,15 +1,12 @@
 import React, {useState} from "react";
-import {Button, Card, Typography} from "@material-tailwind/react";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
-import CommonSearchInput from "../../../components/ui/CommonSearchInput";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
-
-const TABLE_HEAD = ["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "관리"];
+import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 
 const AdminProductList = () => {
   const [page, setPage] = useState(1);
@@ -21,8 +18,29 @@ const AdminProductList = () => {
     {id: 102, seller: "UserB", title: "불법 아이템", date: "2026-01-21", price: 99999, stock: 1, status: "BLOCKED"},
   ];
 
-  const handleSearch = (keyword) => {
-    console.log("상품 검색:", keyword);
+  const productFilters = [
+    {
+      id: "category",
+      label: "카테고리",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+      ],
+    },
+    {
+      id: "status",
+      label: "상태",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "판매중", value: "SELLING"},
+        {label: "차단됨", value: "BLOCKED"},
+      ],
+    }
+  ];
+
+  const handleSearch = (searchData) => {
+    console.log("관리자 상품 검색:", searchData);
   };
 
   const handleViewDetail = (product) => {
@@ -32,12 +50,11 @@ const AdminProductList = () => {
 
   return (
       <div className="flex flex-col gap-4 h-full">
-        <Card className="p-4 shadow-sm border border-gray-200">
-          <div className="flex gap-4 items-center justify-between">
-            <CommonSearchInput placeholder="상품명 또는 등록자 검색" onSearch={handleSearch}/>
-            <Button variant="outlined" size="sm">상세 필터</Button>
-          </div>
-        </Card>
+        <CommonFilterBar
+            searchPlaceholder="상품명 또는 등록자 검색"
+            filterConfigs={productFilters}
+            onSearch={handleSearch}
+        />
 
         {products.length === 0 ? (
             <EmptyState message="등록된 상품이 없습니다."/>
@@ -59,7 +76,7 @@ const AdminProductList = () => {
                       <td className="p-4"><StatusBadge status={product.status}/></td>
                       <td className="p-4">
                         <TableActionButtons
-                            onView={() => handleViewDetail(product)} // ★ 모달 연결
+                            onView={() => handleViewDetail(product)}
                             onDelete={() => console.log("판매종료", product.id)}
                             deleteLabel="판매종료"
                             isBlocked={product.status === "BLOCKED"}
