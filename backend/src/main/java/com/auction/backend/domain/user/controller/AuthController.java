@@ -1,8 +1,8 @@
 package com.auction.backend.domain.user.controller;
 
-import com.auction.backend.domain.user.dto.LoginRequest;
-import com.auction.backend.domain.user.dto.LoginResponse;
-import com.auction.backend.domain.user.dto.SignUpRequest;
+import com.auction.backend.domain.user.dto.auth.LoginRequest;
+import com.auction.backend.domain.user.dto.auth.LoginResponse;
+import com.auction.backend.domain.user.dto.auth.SignUpRequest;
 import com.auction.backend.domain.user.service.AuthCommandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.auction.backend.domain.user.dto;
+package com.auction.backend.domain.user.dto.profile;
 
 import com.auction.backend.domain.user.entity.User;
 import lombok.Builder;

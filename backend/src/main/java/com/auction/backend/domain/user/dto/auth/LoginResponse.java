@@ -1,5 +1,6 @@
-package com.auction.backend.domain.user.dto;
+package com.auction.backend.domain.user.dto.auth;
 
+import com.auction.backend.domain.user.dto.profile.UserResponse;
 import lombok.Builder;
 import lombok.Getter;
 

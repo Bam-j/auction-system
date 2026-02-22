@@ -1,4 +1,4 @@
-package com.auction.backend.domain.user.dto;
+package com.auction.backend.domain.user.dto.profile;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -1,8 +1,8 @@
 package com.auction.backend.domain.user.controller;
 
-import com.auction.backend.domain.user.dto.DeleteAccountRequest;
-import com.auction.backend.domain.user.dto.UpdateNicknameRequest;
-import com.auction.backend.domain.user.dto.UpdatePasswordRequest;
+import com.auction.backend.domain.user.dto.profile.DeleteAccountRequest;
+import com.auction.backend.domain.user.dto.profile.UpdateNicknameRequest;
+import com.auction.backend.domain.user.dto.profile.UpdatePasswordRequest;
 import com.auction.backend.domain.user.service.UserCommandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

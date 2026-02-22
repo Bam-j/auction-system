@@ -1,9 +1,9 @@
 package com.auction.backend.domain.user.service;
 
-import com.auction.backend.domain.user.dto.LoginRequest;
-import com.auction.backend.domain.user.dto.LoginResponse;
-import com.auction.backend.domain.user.dto.SignUpRequest;
-import com.auction.backend.domain.user.dto.UserResponse;
+import com.auction.backend.domain.user.dto.auth.LoginRequest;
+import com.auction.backend.domain.user.dto.auth.LoginResponse;
+import com.auction.backend.domain.user.dto.auth.SignUpRequest;
+import com.auction.backend.domain.user.dto.profile.UserResponse;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.entity.UserStatus;
