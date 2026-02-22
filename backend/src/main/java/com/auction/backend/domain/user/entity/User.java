@@ -31,12 +31,17 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus status;
+
     @Builder
-    public User(String username, String password, String nickname, UserRole role) {
+    public User(String username, String password, String nickname, UserRole role, UserStatus status) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.role = role != null ? role : UserRole.USER;
+        this.status = status != null ? status : UserStatus.ACTIVE;
     }
 
     public static User createUser(String username, String nickname, String encodedPassword, UserRole role) {
@@ -45,6 +50,23 @@ public class User extends BaseTimeEntity {
                 .nickname(nickname)
                 .password(encodedPassword)
                 .role(role)
+                .status(UserStatus.ACTIVE)
                 .build();
+    }
+
+    public void updateNickname(String newNickname) {
+        this.nickname = newNickname;
+    }
+
+    public void updatePassword(String encodedNewPassword) {
+        this.password = encodedNewPassword;
+    }
+
+    public void markAsDeleted() {
+        this.status = UserStatus.DELETED;
+
+        //탈퇴 유저의 닉네임 및 비밀번호 파기
+        this.nickname = "(탈퇴한 사용자)";
+        this.password = "DELETED_USER_PASSWORD_SCRAMBLED";
     }
 }

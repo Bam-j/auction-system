@@ -96,7 +96,7 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.patch(`/users/${userId}/nickname`, {nickname: nickname});
+      await api.patch(`/users/me/nickname`, {nickname: nickname});
 
       updateNickname(nickname);
 
@@ -120,7 +120,7 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.patch(`/users/${userId}/password`, {password: password});
+      await api.patch(`/users/me/password`, {password: password});
 
       Swal.fire({icon: "success", title: "성공", text: "비밀번호가 성공적으로 변경되었습니다.", confirmButtonColor: "#10B981"});
 
@@ -141,9 +141,7 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.delete(`/users/${userId}`, {
-        data: {password: deletePassword}
-      });
+      await api.delete(`/users/me`, {data: {password: deletePassword}});
 
       Swal.fire({icon: "success", title: "탈퇴 완료", text: "회원 탈퇴가 완료되었습니다.", confirmButtonColor: "#10B981"})
           .then(() => {
