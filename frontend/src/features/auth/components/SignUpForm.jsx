@@ -5,7 +5,7 @@ import {
   Typography, Input, Button,
 } from "@material-tailwind/react";
 import Swal from "sweetalert2";
-import {signup} from "../api/authApi";
+import {signup, checkUsername, checkNickname} from "../api/authApi";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ const SignupForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [isUsernameChecked, setIsUsernameChecked] = useState(false);
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const validateField = (name, value, allData = formData) => {
     let errorMessage = "";
@@ -59,14 +61,65 @@ const SignupForm = () => {
     const errorMsg = validateField(name, value, newData);
     setErrors((prev) => ({...prev, [name]: errorMsg}));
 
+    if (name === "username") {
+      setIsUsernameChecked(false);
+    }
+    if (name === "nickname") {
+      setIsNicknameChecked(false);
+    }
+
     if (name === "password" && newData.confirmPassword) {
       const confirmMsg = value !== newData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
       setErrors((prev) => ({...prev, confirmPassword: confirmMsg}));
     }
   };
 
+  const handleCheckUsername = async () => {
+    if (errors.username || !formData.username) {
+      Swal.fire({icon: "warning", title: "알림", text: "유효한 아이디를 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      return;
+    }
+    try {
+      await checkUsername(formData.username);
+
+      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 아이디입니다.", confirmButtonColor: "#10B981"});
+      setIsUsernameChecked(true);
+    } catch (error) {
+      const msg = error.response?.data?.message || "이미 사용 중인 아이디입니다.";
+      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      setIsUsernameChecked(false);
+    }
+  };
+
+  const handleCheckNickname = async () => {
+    if (errors.nickname || !formData.nickname) {
+      Swal.fire({icon: "warning", title: "알림", text: "유효한 닉네임을 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      return;
+    }
+    try {
+      await checkNickname(formData.nickname);
+
+      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 닉네임입니다.", confirmButtonColor: "#10B981"});
+      setIsNicknameChecked(true);
+    } catch (error) {
+      const msg = error.response?.data?.message || "이미 사용 중인 닉네임입니다.";
+      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      setIsNicknameChecked(false);
+    }
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    if (!isUsernameChecked || !isNicknameChecked) {
+      Swal.fire({
+        icon: "warning",
+        title: "중복 확인 필요",
+        text: "아이디와 닉네임 중복 확인을 완료해주세요.",
+        confirmButtonColor: "#F59E0B",
+      });
+      return;
+    }
 
     const usernameError = validateField("username", formData.username);
     const nicknameError = validateField("nickname", formData.nickname);
@@ -80,13 +133,6 @@ const SignupForm = () => {
         nickname: nicknameError,
         password: passwordError,
         confirmPassword: confirmError
-      });
-
-      Swal.fire({
-        icon: "warning",
-        title: "입력 확인",
-        text: "입력 정보를 다시 확인해주세요.",
-        confirmButtonColor: "#F59E0B",
       });
       return;
     }
@@ -112,12 +158,7 @@ const SignupForm = () => {
     } catch (error) {
       console.error("회원가입 실패:", error);
       const serverMessage = error.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
-      Swal.fire({
-        icon: "error",
-        title: "가입 실패",
-        text: serverMessage,
-        confirmButtonColor: "#EF4444",
-      });
+      Swal.fire({icon: "error", title: "가입 실패", text: serverMessage, confirmButtonColor: "#EF4444"});
     }
   };
 
@@ -130,17 +171,43 @@ const SignupForm = () => {
         <form onSubmit={handleSignup} className="mt-4 mb-2 w-80 max-w-screen-lg sm:w-96">
           <CardBody className="flex flex-col gap-4">
             <div>
-              <Input label="아이디" size="lg" name="username" value={formData.username} onChange={handleChange}
-                     error={!!errors.username} crossOrigin={undefined}/>
-              {errors.username && <Typography variant="small" color="red"
-                                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.username}</Typography>}
+              <div className="flex gap-2">
+                <Input label="아이디" size="lg" name="username" value={formData.username} onChange={handleChange}
+                       error={!!errors.username} crossOrigin={undefined}/>
+                <Button variant="outlined" size="sm" color="blue" className="shrink-0"
+                        onClick={handleCheckUsername} disabled={!formData.username || !!errors.username}>
+                  중복 확인
+                </Button>
+              </div>
+              {errors.username ? (
+                  <Typography variant="small" color="red"
+                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.username}</Typography>
+              ) : (
+                  isUsernameChecked &&
+                  <Typography variant="small" color="green" className="mt-1 text-xs ml-1 flex items-center gap-1">✅ 확인
+                                                                                                                  완료</Typography>
+              )}
             </div>
+
             <div>
-              <Input label="닉네임" size="lg" name="nickname" value={formData.nickname} onChange={handleChange}
-                     error={!!errors.nickname} crossOrigin={undefined}/>
-              {errors.nickname && <Typography variant="small" color="red"
-                                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.nickname}</Typography>}
+              <div className="flex gap-2">
+                <Input label="닉네임" size="lg" name="nickname" value={formData.nickname} onChange={handleChange}
+                       error={!!errors.nickname} crossOrigin={undefined}/>
+                <Button variant="outlined" size="sm" color="blue" className="shrink-0"
+                        onClick={handleCheckNickname} disabled={!formData.nickname || !!errors.nickname}>
+                  중복 확인
+                </Button>
+              </div>
+              {errors.nickname ? (
+                  <Typography variant="small" color="red"
+                              className="mt-1 text-xs ml-1 flex items-center gap-1">⚠️ {errors.nickname}</Typography>
+              ) : (
+                  isNicknameChecked &&
+                  <Typography variant="small" color="green" className="mt-1 text-xs ml-1 flex items-center gap-1">✅ 확인
+                                                                                                                  완료</Typography>
+              )}
             </div>
+
             <div>
               <Input label="비밀번호" size="lg" type="password" name="password" value={formData.password}
                      onChange={handleChange} error={!!errors.password} crossOrigin={undefined}/>

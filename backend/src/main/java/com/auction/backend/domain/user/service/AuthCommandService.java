@@ -25,13 +25,23 @@ public class AuthCommandService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    //회원 가입 서비스 (일반 역할 회원만 가입 가능)
-    public void save(SignUpRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+    @Transactional(readOnly = true)
+    public void checkUsername(String username) {
+        if (userRepository.existsByUsername(username)) {
             throw new DuplicateUserException("이미 존재하는 아이디입니다.");
-        } else if (userRepository.existsByNickname(signUpRequest.getNickname())) {
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void checkNickname(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
             throw new DuplicateUserException("이미 존재하는 닉네임입니다.");
         }
+    }
+
+    public void save(SignUpRequest signUpRequest) {
+        checkUsername(signUpRequest.getUsername());
+        checkNickname(signUpRequest.getNickname());
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
 
@@ -45,7 +55,7 @@ public class AuthCommandService {
         userRepository.save(user);
     }
 
-    //회원 로그인 서비스 (일반 + 관리자 공동 사용)
+    @Transactional(readOnly = true)
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
