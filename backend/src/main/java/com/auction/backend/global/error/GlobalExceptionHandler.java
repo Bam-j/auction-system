@@ -3,6 +3,7 @@ package com.auction.backend.global.error;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +38,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return ErrorResponse.toResponseEntity(
+                HttpStatus.BAD_REQUEST.value(), // CONFLICT(409) -> BAD_REQUEST(400)로 변경
+                HttpStatus.BAD_REQUEST.name(),
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException ex) {
+        return ErrorResponse.toResponseEntity(
+                HttpStatus.FORBIDDEN.value(), // 403 Forbidden 사용
+                HttpStatus.FORBIDDEN.name(),
+                ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateUserException(DuplicateUserException ex) {
+        return ErrorResponse.toResponseEntity(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.name(),
                 ex.getMessage()
@@ -52,10 +71,5 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."
         );
-    }
-
-    @ExceptionHandler(DuplicateUserException.class)
-    public ResponseEntity<String> handleDuplicateUserException(DuplicateUserException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

@@ -35,7 +35,7 @@ public class UserController {
             @Valid @RequestBody UpdatePasswordRequest request) {
 
         Long userId = Long.valueOf(userDetails.getUsername());
-        userCommandService.updatePassword(userId, request.getPassword());
+        userCommandService.updatePassword(userId, request.getNewPassword());
 
         return ResponseEntity.ok().build();
     }
