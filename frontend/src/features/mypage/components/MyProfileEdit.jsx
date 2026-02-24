@@ -137,7 +137,7 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.patch(`/users/me/nickname`, {nickname: nickname});
+      await api.patch(`/users/me/nickname`, {newNickname: nickname});
 
       updateNickname(nickname);
 
@@ -161,7 +161,7 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.patch(`/users/me/password`, {password: password});
+      await api.patch(`/users/me/password`, {newPassword: password});
 
       Swal.fire({icon: "success", title: "성공", text: "비밀번호가 성공적으로 변경되었습니다.", confirmButtonColor: "#10B981"});
 
