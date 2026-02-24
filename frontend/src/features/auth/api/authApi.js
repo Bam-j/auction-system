@@ -2,7 +2,7 @@ import api from "@/api/axiosInstance";
 
 // 회원가입
 export const signup = (data) => {
-  return api.post("/auth/signup", data);
+  return api.post("/auth/sign-up", data);
 };
 
 // 로그인
