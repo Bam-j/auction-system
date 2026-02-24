@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import CommonModal from "../../../components/ui/CommonModal";
 import api from "@/api/axiosInstance.js";
 import useAuthStore from "@/stores/useAuthStore";
+import {checkNickname} from "@/features/auth/api/authApi";
 
 const MyProfileEdit = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const MyProfileEdit = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [deletePassword, setDeletePassword] = useState("");
+  const [isNicknameChecked, setIsNicknameChecked] = useState(true);
   const [errors, setErrors] = useState({});
 
   const validateField = (name, value, allData = {}) => {
@@ -64,6 +66,12 @@ const MyProfileEdit = () => {
     setNickname(val);
     const errorMsg = validateField("nickname", val);
     setErrors((prev) => ({...prev, nickname: errorMsg}));
+
+    if (val === user?.nickname) {
+      setIsNicknameChecked(true);
+    } else {
+      setIsNicknameChecked(false);
+    }
   };
 
   const handlePasswordChange = (e) => {
@@ -85,6 +93,29 @@ const MyProfileEdit = () => {
     setErrors((prev) => ({...prev, confirmPassword: errorMsg}));
   };
 
+  const handleCheckNickname = async () => {
+    if (errors.nickname || !nickname) {
+      Swal.fire({icon: "warning", title: "알림", text: "유효한 닉네임을 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      return;
+    }
+
+    if (nickname === user?.nickname) {
+      Swal.fire({icon: "info", title: "알림", text: "기존 닉네임과 동일합니다.", confirmButtonColor: "#3B82F6"});
+      setIsNicknameChecked(true);
+      return;
+    }
+
+    try {
+      await checkNickname(nickname);
+      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 닉네임입니다.", confirmButtonColor: "#10B981"});
+      setIsNicknameChecked(true);
+    } catch (error) {
+      const msg = error.response?.data?.message || "이미 사용 중인 닉네임입니다.";
+      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      setIsNicknameChecked(false);
+    }
+  };
+
   const handleNicknameUpdate = async () => {
     if (!nickname) {
       Swal.fire({icon: "info", title: "안내", text: "변경할 새 닉네임을 입력해주세요.", confirmButtonColor: "#3B82F6"});
@@ -92,6 +123,16 @@ const MyProfileEdit = () => {
     }
     if (errors.nickname) {
       Swal.fire({icon: "warning", title: "입력 확인", text: "닉네임 형식을 확인해주세요.", confirmButtonColor: "#F59E0B"});
+      return;
+    }
+
+    if (!isNicknameChecked) {
+      Swal.fire({icon: "warning", title: "중복 확인 필요", text: "닉네임 중복 확인을 완료해주세요.", confirmButtonColor: "#F59E0B"});
+      return;
+    }
+
+    if (nickname === user?.nickname) {
+      Swal.fire({icon: "info", title: "알림", text: "기존 닉네임과 동일합니다.", confirmButtonColor: "#3B82F6"});
       return;
     }
 
@@ -141,7 +182,9 @@ const MyProfileEdit = () => {
     }
 
     try {
-      await api.delete(`/users/me`, {data: {password: deletePassword}});
+      await api.delete(`/users/me`, {
+        data: {password: deletePassword}
+      });
 
       Swal.fire({icon: "success", title: "탈퇴 완료", text: "회원 탈퇴가 완료되었습니다.", confirmButtonColor: "#10B981"})
           .then(() => {
@@ -176,13 +219,29 @@ const MyProfileEdit = () => {
                       error={!!errors.nickname}
                       crossOrigin={undefined}
                   />
-                  <Button variant="outlined" size="sm" className="shrink-0">중복 확인</Button>
+                  <Button
+                      type="button"
+                      variant="outlined"
+                      size="sm"
+                      color="blue"
+                      className="shrink-0"
+                      onClick={handleCheckNickname}
+                      disabled={!nickname || !!errors.nickname || nickname === user?.nickname}
+                  >
+                    중복 확인
+                  </Button>
                 </div>
-                {errors.nickname &&
+                {errors.nickname ? (
                     <Typography variant="small" color="red" className="mt-1 text-xs ml-1 flex items-center gap-1">
                       ⚠️ {errors.nickname}
                     </Typography>
-                }
+                ) : (
+                    isNicknameChecked && nickname !== user?.nickname && (
+                        <Typography variant="small" color="green" className="mt-1 text-xs ml-1 flex items-center gap-1">
+                          ✅ 확인 완료
+                        </Typography>
+                    )
+                )}
               </div>
               <div className="flex justify-end mt-2">
                 <Button variant="gradient" color="blue" onClick={handleNicknameUpdate}>
@@ -193,7 +252,6 @@ const MyProfileEdit = () => {
 
             <hr className="border-gray-200"/>
 
-            {/* 2. 비밀번호 변경 섹션 */}
             <div className="flex flex-col gap-4">
               <Typography variant="h6" color="blue-gray">비밀번호 변경</Typography>
 
