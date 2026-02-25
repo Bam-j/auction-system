@@ -1,0 +1,28 @@
+#예약어는 관리자 사칭 방지 또는 특정 예약어 오인 방지용도
+
+# 영문 예약어
+admin
+administrator
+manager
+system
+root
+master
+moderator
+gm
+support
+info
+help
+webmaster
+
+#한글 예약어
+운영자
+관리자
+서버장
+어드민
+매니저
+마스터
+시스템
+공지
+안내
+도우미
+고객센터

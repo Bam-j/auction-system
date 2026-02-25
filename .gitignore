@@ -46,5 +46,5 @@ pids
 .env.production.local
 
 ### Etc. ###
-*.txt
+memo.txt
 *.sql

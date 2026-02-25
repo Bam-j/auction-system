@@ -10,6 +10,7 @@ import com.auction.backend.domain.user.entity.UserStatus;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.global.jwt.JwtTokenProvider;
+import com.auction.backend.global.utils.TextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,7 @@ public class AuthCommandService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final TextFilter textFilter;
 
     @Transactional(readOnly = true)
     public void checkUsername(String username) {
@@ -42,6 +44,8 @@ public class AuthCommandService {
     public void save(SignUpRequest signUpRequest) {
         checkUsername(signUpRequest.getUsername());
         checkNickname(signUpRequest.getNickname());
+        textFilter.validateUsernameOrNickname(signUpRequest.getUsername());
+        textFilter.validateUsernameOrNickname(signUpRequest.getNickname());
 
         String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
 
