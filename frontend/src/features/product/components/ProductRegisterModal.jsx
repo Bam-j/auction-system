@@ -47,13 +47,19 @@ const ProductRegisterModal = () => {
       });
 
     } catch (error) {
-      console.error("등록 실패:", error);
+      console.error("등록 실패 상세:", error.response?.data);
       const serverMessage = error.response?.data?.message || "상품 등록 중 오류가 발생했습니다.";
+      const validationErrors = error.response?.data?.validationErrors;
+      
+      let errorText = serverMessage;
+      if (validationErrors) {
+        errorText = Object.values(validationErrors).join("\n");
+      }
 
       Swal.fire({
         icon: "error",
         title: "등록 실패",
-        text: serverMessage,
+        text: errorText,
         confirmButtonColor: "#EF4444",
       });
     }

@@ -15,11 +15,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, org.springframework.validation.BindException.class})
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(Exception ex) {
         Map<String, String> errors = new HashMap<>();
+        org.springframework.validation.BindingResult bindingResult;
 
-        ex.getBindingResult().getAllErrors().forEach(error -> {
+        if (ex instanceof MethodArgumentNotValidException) {
+            bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
+        } else {
+            bindingResult = ((org.springframework.validation.BindException) ex).getBindingResult();
+        }
+
+        bindingResult.getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
