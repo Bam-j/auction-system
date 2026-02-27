@@ -76,7 +76,7 @@ public class ProductService {
         return switch (unit) {
             case EMERALD -> "에메랄드";
             case EMERALD_BLOCK -> "에메랄드 블록";
-            case EMERALD_COIN -> "에메랄드 주화셋";
+            case EMERALD_COIN -> "에메랄드 주화";
         };
     }
 }

@@ -56,9 +56,11 @@ const HomePage = () => {
   return (
       <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
         <div className="flex flex-col mb-6 gap-4">
+          {/* 현재 단일 서비스를 제공하여 제목열을 주석 처리, 추후 확장 시 주석 해제
           <Typography variant="h3" className="font-bold text-font-dark_blue px-1">
             거래소
           </Typography>
+          */}
           <CommonFilterBar
               searchPlaceholder="어떤 아이템을 찾으시나요?"
               filterConfigs={productListFilters}

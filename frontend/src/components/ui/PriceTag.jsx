@@ -1,7 +1,7 @@
 import React from "react";
 import {Typography} from "@material-tailwind/react";
 
-const PriceTag = ({price, unit = "원", className = ""}) => {
+const PriceTag = ({price, unit = "에메랄드", className = ""}) => {
   // 숫자인지 확인
   const isNumeric = !isNaN(parseFloat(price)) && isFinite(price);
   
