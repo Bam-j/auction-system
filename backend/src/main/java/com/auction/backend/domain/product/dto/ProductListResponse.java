@@ -5,6 +5,8 @@ import com.auction.backend.global.enums.ProductCategory;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 public class ProductListResponse {
@@ -17,4 +19,14 @@ public class ProductListResponse {
     private SalesStatus status;
     private String type; // "FIXED" or "AUCTION"
     private ProductCategory category;
+    private String description;
+    private Integer stock;
+    private LocalDateTime createdAt;
+    
+    // Auction specific
+    private LocalDateTime endedAt;
+    private Integer startPrice;
+    private Integer currentPrice;
+    private Integer bidIncrement;
+    private String instantPrice;
 }

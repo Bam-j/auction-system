@@ -38,16 +38,30 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public ProductListResponse getProductDetail(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+        return convertToResponse(product);
+    }
+
     private ProductListResponse convertToResponse(Product product) {
         String type = "FIXED";
         String price = "0";
         String priceUnit = "원";
+        Integer stock = null;
+        java.time.LocalDateTime endedAt = null;
+        Integer startPrice = null;
+        Integer currentPrice = null;
+        Integer bidIncrement = null;
+        String instantPrice = null;
 
         var fixedSaleOpt = fixedSaleRepository.findByProduct(product);
         if (fixedSaleOpt.isPresent()) {
-            price = fixedSaleOpt.get().getPrice();
+            var fixedSale = fixedSaleOpt.get();
+            price = fixedSale.getPrice();
             type = "FIXED";
-            priceUnit = "원"; // 일반 판매는 가격 문자열에 단위가 포함될 수 있으므로 기본값 유지
+            priceUnit = "원";
+            stock = fixedSale.getStock();
         } else {
             var auctionOpt = auctionRepository.findByProduct(product);
             if (auctionOpt.isPresent()) {
@@ -55,6 +69,11 @@ public class ProductService {
                 price = String.valueOf(auction.getCurrentPrice());
                 type = "AUCTION";
                 priceUnit = getPriceUnitDisplayName(auction.getPriceUnit());
+                endedAt = auction.getEndedAt();
+                startPrice = auction.getStartPrice();
+                currentPrice = auction.getCurrentPrice();
+                bidIncrement = auction.getMinBidIncrement();
+                instantPrice = auction.getInstantPurchasePrice();
             }
         }
 
@@ -68,6 +87,14 @@ public class ProductService {
                 .status(product.getSalesStatus())
                 .type(type)
                 .category(product.getCategory())
+                .description(product.getDescription())
+                .stock(stock)
+                .createdAt(product.getCreatedAt())
+                .endedAt(endedAt)
+                .startPrice(startPrice)
+                .currentPrice(currentPrice)
+                .bidIncrement(bidIncrement)
+                .instantPrice(instantPrice)
                 .build();
     }
 

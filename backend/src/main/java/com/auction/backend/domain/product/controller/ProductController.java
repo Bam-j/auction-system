@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +30,11 @@ public class ProductController {
             @AuthenticationPrincipal User principal) {
         Long userId = Long.parseLong(principal.getUsername());
         return ResponseEntity.ok(productService.getUserProducts(userId));
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductListResponse> getProductDetail(
+            @PathVariable Long productId) {
+        return ResponseEntity.ok(productService.getProductDetail(productId));
     }
 }

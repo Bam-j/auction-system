@@ -58,6 +58,11 @@ export const getProducts = () => {
   return api.get("/products");
 };
 
+// 상품 상세 조회
+export const getProductDetail = (productId) => {
+  return api.get(`/products/${productId}`);
+};
+
 // 내 등록 상품 조회
 export const getMyProducts = () => {
   return api.get("/products/me");
