@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
@@ -10,55 +10,31 @@ import EmptyState from "../../../components/ui/EmptyState";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+import { getIncomingPurchaseRequests } from "../../product/api/productApi";
 
-const TABLE_HEAD = ["ID", "상품명", "요청자", "수량", "제안가 (입찰/즉시)", "상태", "상세", "관리"];
+const TABLE_HEAD = ["ID", "상품명", "수량", "가격", "상태", "요청 일시", "상세", "관리"];
 
 const MySalesRequests = () => {
   const [page, setPage] = useState(1);
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [requests, setRequests] = useState([
-    {
-      id: 1, type: "FIXED", status: "WAITING",
-      productName: "다이아몬드 검", requestor: "Newbie01", amount: 2, offerPrice: 0,
-      productDetail: {
-        title: "다이아몬드 검",
-        price: 5000,
-        seller: "Me",
-        stock: 10,
-        status: "SELLING",
-        type: "FIXED",
-        image: "https://placehold.co/150"
+  const [requests, setRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchIncomingRequests = async () => {
+      try {
+        const response = await getIncomingPurchaseRequests();
+        setRequests(response.data);
+      } catch (error) {
+        console.error("Failed to fetch incoming requests:", error);
+      } finally {
+        setIsLoading(false);
       }
-    },
-    {
-      id: 2, type: "AUCTION", status: "WAITING",
-      productName: "황금 사과", requestor: "RichMan", amount: 0, offerPrice: 1500,
-      productDetail: {
-        title: "황금 사과",
-        currentPrice: 1200,
-        startPrice: 1000,
-        bidIncrement: 100,
-        seller: "Me",
-        status: "AUCTION",
-        type: "AUCTION",
-        image: "https://placehold.co/150"
-      }
-    },
-    {
-      id: 3, type: "AUCTION", status: "Wait_Confirm",
-      productName: "겉날개", requestor: "FlyHigh", amount: 0, offerPrice: 50000,
-      productDetail: {
-        title: "겉날개",
-        currentPrice: 45000,
-        instantPrice: 50000,
-        seller: "Me",
-        status: "AUCTION",
-        type: "AUCTION",
-        image: "https://placehold.co/150"
-      }
-    },
-  ]);
+    };
+
+    fetchIncomingRequests();
+  }, []);
 
   const filterConfigs = [
     {
@@ -129,13 +105,17 @@ const MySalesRequests = () => {
   return (
       <div className="flex flex-col gap-4 h-full">
         <CommonFilterBar
-            searchPlaceholder="상품명, 요청자 검색"
+            searchPlaceholder="상품명 검색"
             filterConfigs={filterConfigs}
             onSearch={handleSearch}
         />
 
-        {requests.length === 0 ? (
-            <EmptyState message="들어온 구매/입찰 요청이 없습니다."/>
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Typography>요청 목록을 불러오는 중입니다...</Typography>
+            </div>
+        ) : requests.length === 0 ? (
+            <EmptyState message="들어온 구매 요청이 없습니다."/>
         ) : (
             <>
               <CommonTable
@@ -147,22 +127,18 @@ const MySalesRequests = () => {
                     <tr key={req.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600">{req.id}</td>
                       <td className="p-4 font-bold text-blue-gray-900">{req.productName}</td>
-                      <td className="p-4 font-medium text-blue-600">{req.requestor}</td>
-
+                      <td className="p-4 text-gray-600">{req.quantity}개</td>
+                      <td className="p-4">
+                        <PriceTag 
+                          price={req.price} 
+                          unit={req.priceUnit}
+                        />
+                      </td>
+                      <td className="p-4">
+                        <StatusBadge status={req.status}/>
+                      </td>
                       <td className="p-4 text-gray-600">
-                        {req.type === "AUCTION" ? "-" : `${req.amount}개`}
-                      </td>
-
-                      <td className="p-4">
-                        {req.type === "FIXED" ? (
-                            <span className="text-gray-400">-</span>
-                        ) : (
-                            <PriceTag price={req.offerPrice}/>
-                        )}
-                      </td>
-
-                      <td className="p-4">
-                        <StatusBadge status="ING"/>
+                        {new Date(req.requestDate).toLocaleDateString()}
                       </td>
 
                       <td className="p-4">
@@ -174,22 +150,28 @@ const MySalesRequests = () => {
                       </td>
 
                       <td className="p-4 flex gap-2">
-                        <Tooltip content="요청 수락">
-                          <IconButton
-                              size="sm" variant="gradient" color="green"
-                              onClick={() => handleAction(req.id, "ACCEPT")}
-                          >
-                            <CheckIcon className="h-4 w-4"/>
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip content="요청 거절">
-                          <IconButton
-                              size="sm" variant="outlined" color="red"
-                              onClick={() => handleAction(req.id, "REJECT")}
-                          >
-                            <XMarkIcon className="h-4 w-4"/>
-                          </IconButton>
-                        </Tooltip>
+                        {req.status === 'PENDING' ? (
+                            <>
+                              <Tooltip content="요청 수락">
+                                <IconButton
+                                    size="sm" variant="gradient" color="green"
+                                    onClick={() => handleAction(req.id, "ACCEPT")}
+                                >
+                                  <CheckIcon className="h-4 w-4"/>
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip content="요청 거절">
+                                <IconButton
+                                    size="sm" variant="outlined" color="red"
+                                    onClick={() => handleAction(req.id, "REJECT")}
+                                >
+                                  <XMarkIcon className="h-4 w-4"/>
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                        ) : (
+                            <Typography variant="small" color="gray">처리완료</Typography>
+                        )}
                       </td>
                     </tr>
                 ))}

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {
   Card, CardHeader, CardBody, CardFooter,
   Typography, Button
@@ -9,40 +9,28 @@ import EmptyState from "../components/ui/EmptyState";
 import ProductDetailModal from "../features/product/components/ProductDetailModal";
 import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
+import { getProducts } from "@/features/product/api/productApi";
 
 const HomePage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [products] = useState([
-    {
-      id: 1,
-      title: "전설의 다이아몬드 검",
-      seller: "Steve",
-      price: 5000,
-      image: null,
-      status: "SELLING",
-      type: "FIXED"
-    },
-    {
-      id: 2,
-      title: "황금 사과 세트",
-      seller: "Alex",
-      price: 1200,
-      image: null,
-      status: "AUCTION",
-      type: "AUCTION"
-    },
-    {
-      id: 3,
-      title: "겉날개 (내구성 III)",
-      seller: "Trader",
-      price: 30000,
-      image: "https://placehold.co/300x200",
-      status: "SOLD_OUT",
-      type: "FIXED"
-    },
-  ]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const productListFilters = [
     {
@@ -78,7 +66,11 @@ const HomePage = () => {
           />
         </div>
 
-        {products.length === 0 ? (
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Typography>상품을 불러오는 중입니다...</Typography>
+            </div>
+        ) : products.length === 0 ? (
             <EmptyState message="등록된 상품이 없습니다."/>
         ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -108,7 +100,11 @@ const HomePage = () => {
                       <Typography variant="h6" color="blue-gray" className="mb-1 truncate">
                         {product.title}
                       </Typography>
-                      <PriceTag price={product.price} className="text-lg text-font-dark_blue"/>
+                      <PriceTag 
+                        price={product.price} 
+                        unit={product.priceUnit} 
+                        className="text-lg text-font-dark_blue"
+                      />
                     </CardBody>
 
                     <CardFooter className="pt-0 px-4 pb-4">

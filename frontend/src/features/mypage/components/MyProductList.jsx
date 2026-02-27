@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -7,6 +7,7 @@ import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+import { getMyProducts } from "../../product/api/productApi";
 
 const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"];
 
@@ -14,46 +15,23 @@ const MyProductList = () => {
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const products = [
-    {
-      id: 101,
-      title: "다이아몬드 검",
-      date: "2026-01-20",
-      price: 5000,
-      stock: 10,
-      status: "SELLING",
-      type: "FIXED",
-      seller: "Me",
-      image: "https://placehold.co/150",
-      description: "직접 인챈트한 검입니다."
-    },
-    {
-      id: 102,
-      title: "철 갑옷 세트",
-      date: "2026-01-18",
-      price: 3000,
-      stock: 0,
-      status: "SOLD_OUT",
-      type: "FIXED",
-      seller: "Me",
-      image: "https://placehold.co/150",
-      description: "내구도가 조금 닳았습니다."
-    },
-    {
-      id: 103,
-      title: "황금 사과",
-      date: "2026-01-15",
-      startPrice: 1000,
-      bidIncrement: 100,
-      stock: 5,
-      status: "AUCTION",
-      type: "AUCTION",
-      seller: "Me",
-      image: "https://placehold.co/150",
-      description: "경매로 올린 사과입니다."
-    },
-  ];
+  useEffect(() => {
+    const fetchMyProducts = async () => {
+      try {
+        const response = await getMyProducts();
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch my products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyProducts();
+  }, []);
 
   const filterConfigs = [
     {
@@ -93,7 +71,11 @@ const MyProductList = () => {
             onSearch={handleSearch}
         />
 
-        {products.length === 0 ? (
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Typography>목록을 불러오는 중입니다...</Typography>
+            </div>
+        ) : products.length === 0 ? (
             <EmptyState message="등록한 상품이 없습니다."/>
         ) : (
             <>
@@ -106,11 +88,16 @@ const MyProductList = () => {
                     <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600">{product.id}</td>
                       <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
-                      <td className="p-4 text-gray-600">{product.date}</td>
-                      <td className="p-4">
-                        <PriceTag price={product.type === "AUCTION" ? product.startPrice : product.price}/>
+                      <td className="p-4 text-gray-600">
+                        {new Date(product.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="p-4 text-gray-600">{product.stock}개</td>
+                      <td className="p-4">
+                        <PriceTag 
+                          price={product.price} 
+                          unit={product.priceUnit}
+                        />
+                      </td>
+                      <td className="p-4 text-gray-600">{product.stock || "-"}개</td>
                       <td className="p-4"><StatusBadge status={product.status}/></td>
                       <td className="p-4">
                         <TableActionButtons

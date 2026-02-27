@@ -47,3 +47,28 @@ export const registerProduct = (productData) => {
   
   return Promise.reject(new Error("알 수 없는 상품 등록 유형입니다."));
 };
+
+// 일반 판매 구매 요청
+export const purchaseFixedSale = (purchaseData) => {
+  return api.post("/purchase-requests", purchaseData);
+};
+
+// 모든 상품 조회
+export const getProducts = () => {
+  return api.get("/products");
+};
+
+// 내 등록 상품 조회
+export const getMyProducts = () => {
+  return api.get("/products/me");
+};
+
+// 내 구매 요청 내역 조회
+export const getMyPurchaseRequests = () => {
+  return api.get("/purchase-requests/me");
+};
+
+// 내 상품에 대한 구매 요청 조회 (판매자용)
+export const getIncomingPurchaseRequests = () => {
+  return api.get("/purchase-requests/seller");
+};

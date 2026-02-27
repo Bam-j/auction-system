@@ -5,6 +5,7 @@ import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
+import { purchaseFixedSale } from "../api/productApi";
 
 const ProductDetailModal = ({open, handleOpen, product}) => {
   const contentRef = useRef(null);
@@ -26,16 +27,40 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
   const isAuction = product.type === "AUCTION";
 
   const handleBid = () => {
-    const nextBidPrice = product.currentPrice + product.bidIncrement;
+    const currentPrice = isNaN(product.currentPrice) ? 0 : Number(product.currentPrice);
+    const bidIncrement = isNaN(product.bidIncrement) ? 0 : Number(product.bidIncrement);
+    const nextBidPrice = currentPrice + bidIncrement;
     alert(`${nextBidPrice.toLocaleString()}원에 입찰하시겠습니까?`);
   };
 
   const handleBuyNow = () => {
-    alert(`${product.instantPrice.toLocaleString()}원에 즉시 구매하시겠습니까?`);
+    const price = product.instantPrice;
+    const displayPrice = !isNaN(parseFloat(price)) && isFinite(price) 
+      ? Number(price).toLocaleString() 
+      : price;
+    alert(`${displayPrice}에 즉시 구매하시겠습니까?`);
   };
 
-  const handlePurchase = () => {
-    alert(`${product.title} ${purchaseAmount}개를 구매 요청합니다.`);
+  const handlePurchase = async () => {
+    if (!window.confirm(`${product.title} ${purchaseAmount}개를 구매 요청하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      const response = await purchaseFixedSale({
+        fixedSaleId: product.id,
+        quantity: parseInt(purchaseAmount)
+      });
+      
+      if (response.status === 200) {
+        alert("구매 요청이 성공적으로 전송되었습니다.");
+        handleOpen();
+      }
+    } catch (error) {
+      console.error("Purchase request failed:", error);
+      const errorMessage = error.response?.data?.message || "구매 요청 중 오류가 발생했습니다.";
+      alert(errorMessage);
+    }
   };
 
   return (
@@ -75,7 +100,7 @@ const ProductDetailModal = ({open, handleOpen, product}) => {
                 </Typography>
                 <PriceTag
                     price={isAuction ? product.currentPrice : product.price}
-                    unit={product.priceUnit || "원"}
+                    unit={product.priceUnit}
                     className="text-2xl text-blue-600"
                 />
                 {isAuction && (
