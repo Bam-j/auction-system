@@ -5,6 +5,7 @@ backend/.gradle/
 backend/bin/
 backend/*.log
 backend/help.md
+backend/uploads/
 .idea/
 *.iml
 *.class
