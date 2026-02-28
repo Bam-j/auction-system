@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 import {Typography, Button, Input, Chip} from "@material-tailwind/react";
 import {CubeIcon, UserCircleIcon, CalendarDaysIcon} from "@heroicons/react/24/outline";
+import Swal from "sweetalert2";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -15,6 +16,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   useEffect(() => {
     if (open && initialProduct?.id) {
+      setPurchaseAmount(1);
       const fetchDetail = async () => {
         setIsLoading(true);
         try {
@@ -42,23 +44,105 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   const isAuction = product?.type === "AUCTION";
 
-  const handleBid = () => {
+  const handleBid = async () => {
     const currentPrice = isNaN(product.currentPrice) ? 0 : Number(product.currentPrice);
     const bidIncrement = isNaN(product.bidIncrement) ? 0 : Number(product.bidIncrement);
     const nextBidPrice = currentPrice + bidIncrement;
-    alert(`${nextBidPrice.toLocaleString()}원에 입찰하시겠습니까?`);
+
+    const result = await Swal.fire({
+      title: "입찰 확인",
+      text: `${nextBidPrice.toLocaleString()}원에 입찰하시겠습니까?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "입찰",
+      cancelButtonText: "취소",
+      customClass: {
+        confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
+        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
+      },
+      buttonsStyling: false,
+    });
+
+    if (result.isConfirmed) {
+      // TODO: Implement actual bid logic
+      Swal.fire({
+        title: "입찰 완료",
+        text: "입찰이 정상적으로 처리되었습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
+    }
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     const price = product.instantPrice;
     const displayPrice = !isNaN(parseFloat(price)) && isFinite(price) 
       ? Number(price).toLocaleString() 
       : price;
-    alert(`${displayPrice}에 즉시 구매하시겠습니까?`);
+
+    const result = await Swal.fire({
+      title: "즉시 구매 확인",
+      text: `${displayPrice}에 즉시 구매하시겠습니까?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "구매",
+      cancelButtonText: "취소",
+      customClass: {
+        confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
+        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
+      },
+      buttonsStyling: false,
+    });
+
+    if (result.isConfirmed) {
+      // TODO: Implement actual instant buy logic
+      Swal.fire({
+        title: "구매 완료",
+        text: "구매가 정상적으로 처리되었습니다.",
+        icon: "success",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
+    }
   };
 
   const handlePurchase = async () => {
-    if (!window.confirm(`${product.title} ${purchaseAmount}개를 구매 요청하시겠습니까?`)) {
+    if (parseInt(purchaseAmount) > product.stock) {
+      Swal.fire({
+        title: "수량 오류",
+        text: "재고를 초과하는 양을 요청할 수 없습니다.",
+        icon: "warning",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: "구매 요청",
+      text: `${product.title} ${purchaseAmount}개를 구매 요청하시겠습니까?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "요청",
+      cancelButtonText: "취소",
+      customClass: {
+        confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
+        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
+      },
+      buttonsStyling: false,
+    });
+
+    if (!result.isConfirmed) {
       return;
     }
 
@@ -69,13 +153,31 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       });
       
       if (response.status === 200) {
-        alert("구매 요청이 성공적으로 전송되었습니다.");
+        await Swal.fire({
+          title: "성공",
+          text: "구매 요청이 성공적으로 전송되었습니다.",
+          icon: "success",
+          confirmButtonText: "확인",
+          customClass: {
+            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+          },
+          buttonsStyling: false,
+        });
         handleOpen();
       }
     } catch (error) {
       console.error("Purchase request failed:", error);
       const errorMessage = error.response?.data?.message || "구매 요청 중 오류가 발생했습니다.";
-      alert(errorMessage);
+      Swal.fire({
+        title: "오류",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
     }
   };
 
@@ -159,23 +261,23 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                   {isAuction && (
                       <div className="bg-blue-50 p-4 rounded-lg text-sm grid grid-cols-2 gap-2">
                         <div className="flex justify-between">
-                          <span className="text-gray-600">시작가:</span>
+                          <span className="text-blue-gray-800 font-medium">시작가:</span>
                           <PriceTag price={product.startPrice} unit={product.priceUnit} className="font-medium"/>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-600">입찰 단위:</span>
+                          <span className="text-blue-gray-800 font-medium">입찰 단위:</span>
                           <PriceTag price={product.bidIncrement} unit={product.priceUnit}
                                     className="font-bold text-blue-600"/>
                         </div>
                         {product.instantPrice && (
                             <div className="flex justify-between col-span-2 border-t border-blue-100 pt-2">
-                              <span className="text-gray-600">즉시 구매가:</span>
+                              <span className="text-blue-gray-800 font-medium">즉시 구매가:</span>
                               <PriceTag price={product.instantPrice} unit={product.priceUnit}
                                         className="font-bold text-green-600"/>
                             </div>
                         )}
                         <div className="flex justify-between col-span-2 border-t border-blue-100 pt-2">
-                          <span className="text-gray-600">마감 일시:</span>
+                          <span className="text-blue-gray-800 font-medium">마감 일시:</span>
                           <span className="font-medium text-red-600">
                             {product.endedAt ? new Date(product.endedAt).toLocaleString() : "-"}
                           </span>
@@ -224,7 +326,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                     </div>
                 ) : (
                     <div className="flex gap-3 items-end">
-                      <div className="flex-[3] min-w-[80px]">
+                      <div className="flex-[3] min-w-[100px]">
                         <Input
                             type="number"
                             label="구매 수량"
@@ -232,13 +334,13 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                             max={product.stock}
                             value={purchaseAmount}
                             onChange={(e) => setPurchaseAmount(e.target.value)}
-                            className="!text-lg !font-bold text-right !pr-12 placeholder:text-blue-gray-200"
+                            className="!text-lg !font-bold text-center placeholder:text-blue-gray-200"
                             containerProps={{ className: "min-w-0" }}
                         />
                       </div>
                       <Button
                           variant="gradient" color="blue"
-                          className="h-10 text-lg flex-[7]"
+                          className="h-[44px] text-lg flex-[7] flex items-center justify-center leading-none"
                           onClick={handlePurchase}
                           disabled={product.stock <= 0}
                       >
