@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 public class PurchaseRequestResponse {
     private Long id;
     private String productName;
+    private String buyerName;
+    private String sellerName;
     private Integer quantity;
     private String price;
     private String priceUnit;

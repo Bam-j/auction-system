@@ -130,10 +130,12 @@ public class PurchaseRequestService {
         request.reject(); // CANCELED status could be better, but REJECTED/CANCELED are similar.
     }
 
-    private PurchaseRequestResponse convertToResponse(PurchaseRequest request) {
+    public PurchaseRequestResponse convertToResponse(PurchaseRequest request) {
         return PurchaseRequestResponse.builder()
                 .id(request.getPurchaseRequestId())
                 .productName(request.getFixedSale().getProduct().getProductName())
+                .buyerName(request.getUser().getNickname())
+                .sellerName(request.getFixedSale().getUser().getNickname())
                 .quantity(request.getQuantity())
                 .price(request.getFixedSale().getPrice())
                 .priceUnit("원") // 일반 판매는 현재 "원" 단위를 기본으로 사용

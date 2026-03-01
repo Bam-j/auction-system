@@ -49,7 +49,7 @@ function App() {
 
             {/* 관리자 페이지 라우팅 */}
             <Route path="/admin" element={<AdminPage/>}>
-              <Route index element={<Navigate to="products" replace/>}/>
+              <Route index element={<Navigate to="users" replace/>}/>
               <Route path="products" element={<AdminProductList/>}/>
               <Route path="purchases" element={<AdminPurchaseHistory/>}/>
               <Route path="bids" element={<AdminBidHistory/>}/>
