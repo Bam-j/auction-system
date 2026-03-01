@@ -21,23 +21,31 @@ const ProductCard = ({product}) => {
   };
 
   const statusInfo = getStatusInfo(product.status);
+  const isSoldOut = product.status === "SOLD_OUT";
 
   return (
-      <Card className="w-full shadow-md hover:shadow-xl transition-shadow cursor-pointer">
+      <Card className={`w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer ${isSoldOut ? 'opacity-75 grayscale-[0.5]' : ''}`}>
         <CardHeader floated={false} className="h-40 overflow-hidden relative">
           <img
               src={product.image || defaultImage}
               alt={product.title}
-              className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-300"
+              className={`w-full h-full object-cover transform hover:scale-110 transition-transform duration-300 ${isSoldOut ? 'filter blur-[1px]' : ''}`}
           />
           <div className="absolute top-2 right-2">
             <Chip
                 size="sm"
-                color={statusInfo.color}
-                value={statusInfo.text}
+                color={isSoldOut ? "red" : statusInfo.color}
+                value={isSoldOut ? "품절" : statusInfo.text}
                 className="rounded-full px-2"
             />
           </div>
+          {isSoldOut && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+               <Typography variant="h5" color="white" className="font-bold drop-shadow-md">
+                 품절되었습니다
+               </Typography>
+            </div>
+          )}
         </CardHeader>
 
         <CardBody className="p-4 text-center">

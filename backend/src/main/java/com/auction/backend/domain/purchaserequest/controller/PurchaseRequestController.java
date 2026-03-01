@@ -46,4 +46,31 @@ public class PurchaseRequestController {
         Long userId = Long.parseLong(principal.getUsername());
         return ResponseEntity.ok(purchaseRequestService.getSellerPurchaseRequests(userId));
     }
+
+    @PostMapping("/{requestId}/approve")
+    public ResponseEntity<Void> approvePurchaseRequest(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long requestId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        purchaseRequestService.approvePurchaseRequest(userId, requestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{requestId}/reject")
+    public ResponseEntity<Void> rejectPurchaseRequest(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long requestId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        purchaseRequestService.rejectPurchaseRequest(userId, requestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{requestId}/cancel")
+    public ResponseEntity<Void> cancelPurchaseRequest(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long requestId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        purchaseRequestService.cancelPurchaseRequest(userId, requestId);
+        return ResponseEntity.ok().build();
+    }
 }

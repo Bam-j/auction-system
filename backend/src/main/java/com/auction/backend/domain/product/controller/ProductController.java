@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +33,14 @@ public class ProductController {
     public ResponseEntity<ProductListResponse> getProductDetail(
             @PathVariable Long productId) {
         return ResponseEntity.ok(productService.getProductDetail(productId));
+    }
+
+    @PostMapping("/{productId}/end")
+    public ResponseEntity<Void> endSale(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long productId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        productService.endSale(productId, userId);
+        return ResponseEntity.ok().build();
     }
 }

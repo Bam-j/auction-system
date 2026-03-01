@@ -50,4 +50,15 @@ public class FixedSale extends BaseTimeEntity {
                 .stock(stock)
                 .build();
     }
+
+    public void decreaseStock(int amount) {
+        if (this.stock < amount) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+        this.stock -= amount;
+        
+        if (this.stock == 0) {
+            this.product.soldOut();
+        }
+    }
 }

@@ -5,9 +5,12 @@ import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
 import com.auction.backend.domain.purchaserequest.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
+import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequestStatus;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.domain.fixedsalesorder.entity.FixedSalesOrder;
+import com.auction.backend.domain.fixedsalesorder.repository.FixedSalesOrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +28,11 @@ public class PurchaseRequestService {
     private final PurchaseRequestRepository purchaseRequestRepository;
     private final FixedSaleRepository fixedSaleRepository;
     private final UserRepository userRepository;
+    private final FixedSalesOrderRepository fixedSalesOrderRepository;
 
     @Transactional
     public Long createPurchaseRequest(Long userId, PurchaseRequestCreateRequest request) {
+// ... existing createPurchaseRequest method ...
         // ... 생략 (기존 코드 유지)
         log.info("Creating purchase request for user: {}, fixedSale: {}, quantity: {}", 
                 userId, request.getFixedSaleId(), request.getQuantity());
@@ -73,6 +78,56 @@ public class PurchaseRequestService {
         return purchaseRequestRepository.findBySeller(seller).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void approvePurchaseRequest(Long userId, Long requestId) {
+        PurchaseRequest request = purchaseRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("구매 요청을 찾을 수 없습니다."));
+
+        // 판매자 확인
+        if (!request.getFixedSale().getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("판매자만 요청을 수락할 수 있습니다.");
+        }
+
+        request.approve();
+        
+        // 재고 감소
+        request.getFixedSale().decreaseStock(request.getQuantity());
+
+        // 주문 생성
+        FixedSalesOrder order = FixedSalesOrder.createOrder(
+                request,
+                request.getFixedSale().getPrice(),
+                request.getQuantity()
+        );
+        fixedSalesOrderRepository.save(order);
+    }
+
+    @Transactional
+    public void rejectPurchaseRequest(Long userId, Long requestId) {
+        PurchaseRequest request = purchaseRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("구매 요청을 찾을 수 없습니다."));
+
+        // 판매자 확인
+        if (!request.getFixedSale().getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("판매자만 요청을 거절할 수 있습니다.");
+        }
+
+        request.reject();
+    }
+
+    @Transactional
+    public void cancelPurchaseRequest(Long userId, Long requestId) {
+        PurchaseRequest request = purchaseRequestRepository.findById(requestId)
+                .orElseThrow(() -> new RuntimeException("구매 요청을 찾을 수 없습니다."));
+
+        // 구매자 확인
+        if (!request.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("본인의 요청만 취소할 수 있습니다.");
+        }
+
+        request.reject(); // CANCELED status could be better, but REJECTED/CANCELED are similar.
     }
 
     private PurchaseRequestResponse convertToResponse(PurchaseRequest request) {

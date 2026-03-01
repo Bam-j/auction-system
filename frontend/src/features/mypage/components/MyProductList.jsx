@@ -1,15 +1,18 @@
 import React, {useState, useEffect} from "react";
+import {Typography, Button, IconButton, Tooltip} from "@material-tailwind/react";
+import {EyeIcon} from "@heroicons/react/24/outline";
+import Swal from "sweetalert2";
+
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getMyProducts } from "../../product/api/productApi";
+import { getMyProducts, endSale } from "../../product/api/productApi";
 
-const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "관리"];
+const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"];
 
 const MyProductList = () => {
   const [page, setPage] = useState(1);
@@ -18,18 +21,19 @@ const MyProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchMyProducts = async () => {
-      try {
-        const response = await getMyProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch my products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchMyProducts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getMyProducts();
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch my products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMyProducts();
   }, []);
 
@@ -63,6 +67,51 @@ const MyProductList = () => {
     setOpenModal(true);
   };
 
+  const handleEndSale = async (productId) => {
+    const result = await Swal.fire({
+      title: "판매 종료",
+      text: "정말로 판매를 종료하시겠습니까?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "종료하기",
+      cancelButtonText: "취소",
+      customClass: {
+        confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
+        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
+      },
+      buttonsStyling: false
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await endSale(productId);
+        Swal.fire({
+          title: "완료",
+          text: "판매가 종료되었습니다.",
+          icon: "success",
+          confirmButtonText: "확인",
+          customClass: {
+            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+          },
+          buttonsStyling: false
+        });
+        await fetchMyProducts(); // 목록 새로고침
+      } catch (error) {
+        console.error("Failed to end sale:", error);
+        Swal.fire({
+          title: "오류",
+          text: error.response?.data?.message || "판매 종료 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+          customClass: {
+            confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+          },
+          buttonsStyling: false
+        });
+      }
+    }
+  };
+
   return (
       <div className="flex flex-col gap-4 h-full">
         <CommonFilterBar
@@ -82,29 +131,57 @@ const MyProductList = () => {
               <CommonTable
                   title="내 등록 상품 목록"
                   headers={TABLE_HEAD}
-                  pagination={<Pagination active={page} total={3} onChange={setPage}/>}
+                  pagination={
+                    products.length > 0 && (
+                      <Pagination 
+                        active={page} 
+                        total={Math.ceil(products.length / 10) || 1} 
+                        onChange={setPage}
+                      />
+                    )
+                  }
               >
                 {products.map((product) => (
                     <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-                      <td className="p-4 text-gray-600">{product.id}</td>
-                      <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
-                      <td className="p-4 text-gray-600">
+                      <td className="p-4 text-left text-gray-600">{product.id}</td>
+                      <td className="p-4 text-left font-bold text-blue-gray-900">{product.title}</td>
+                      <td className="p-4 text-left text-gray-600">
                         {new Date(product.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 text-left">
                         <PriceTag 
                           price={product.price} 
                           unit={product.priceUnit}
                         />
                       </td>
-                      <td className="p-4 text-gray-600">{product.stock || "-"}개</td>
-                      <td className="p-4"><StatusBadge status={product.status}/></td>
-                      <td className="p-4">
-                        <TableActionButtons
-                            onView={() => handleViewDetail(product)}
-                            onDelete={() => console.log("판매종료", product.id)}
-                            deleteLabel="판매종료"
-                        />
+                      <td className="p-4 text-left text-gray-600">{product.stock || "-"}개</td>
+                      <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
+                      
+                      <td className="p-4 text-left">
+                        <Tooltip content="상품 상세 보기">
+                          <IconButton
+                              size="sm"
+                              variant="text"
+                              color="blue-gray"
+                              onClick={() => handleViewDetail(product)}
+                          >
+                            <EyeIcon className="h-4 w-4"/>
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+
+                      <td className="p-4 text-left">
+                        {product.status !== 'SOLD_OUT' && (
+                            <Button
+                                size="sm"
+                                variant="gradient"
+                                color="red"
+                                className="whitespace-nowrap px-3"
+                                onClick={() => handleEndSale(product.id)}
+                            >
+                              판매종료
+                            </Button>
+                        )}
                       </td>
                     </tr>
                 ))}

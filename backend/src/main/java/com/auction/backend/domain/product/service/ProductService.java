@@ -44,6 +44,18 @@ public class ProductService {
         return convertToResponse(product);
     }
 
+    @Transactional
+    public void endSale(Long productId, Long userId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+
+        if (!product.getUser().getUserId().equals(userId)) {
+            throw new RuntimeException("상품 소유자만 판매를 종료할 수 있습니다.");
+        }
+
+        product.soldOut();
+    }
+
     private ProductListResponse convertToResponse(Product product) {
         String type = "FIXED";
         String price = "0";

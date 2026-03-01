@@ -28,9 +28,9 @@ const CommonFilterBar = ({searchPlaceholder = "검색어를 입력하세요", fi
           className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 w-full flex flex-col xl:flex-row gap-4 items-center justify-between"
       >
         {filterConfigs.length > 0 && (
-            <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-3 w-full xl:w-auto">
               {filterConfigs.map((config) => (
-                  <div key={config.id} className="w-full sm:w-40">
+                  <div key={config.id} className="w-full sm:min-w-[160px]">
                     <Select
                         label={config.label}
                         value={selectedFilters[config.id] || ""}

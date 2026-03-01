@@ -10,7 +10,11 @@ import EmptyState from "../../../components/ui/EmptyState";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getIncomingPurchaseRequests } from "../../product/api/productApi";
+import { 
+  getIncomingPurchaseRequests, 
+  approvePurchaseRequest, 
+  rejectPurchaseRequest 
+} from "../../product/api/productApi";
 
 const TABLE_HEAD = ["ID", "상품명", "수량", "가격", "상태", "요청 일시", "상세", "관리"];
 
@@ -21,18 +25,19 @@ const MySalesRequests = () => {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchIncomingRequests = async () => {
-      try {
-        const response = await getIncomingPurchaseRequests();
-        setRequests(response.data);
-      } catch (error) {
-        console.error("Failed to fetch incoming requests:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchIncomingRequests = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getIncomingPurchaseRequests();
+      setRequests(response.data);
+    } catch (error) {
+      console.error("Failed to fetch incoming requests:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchIncomingRequests();
   }, []);
 
@@ -66,11 +71,11 @@ const MySalesRequests = () => {
     setOpenDetail(true);
   };
 
-  const handleAction = (id, action) => {
+  const handleAction = async (id, action) => {
     const isAccept = action === "ACCEPT";
     const actionText = isAccept ? "수락" : "거절";
 
-    Swal.fire({
+    const result = await Swal.fire({
       title: `요청 ${actionText}`,
       text: `정말로 이 요청을 ${actionText}하시겠습니까?`,
       icon: "question",
@@ -84,9 +89,17 @@ const MySalesRequests = () => {
         cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
       },
       buttonsStyling: false
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setRequests(requests.filter(req => req.id !== id));
+    });
+
+    if (result.isConfirmed) {
+      try {
+        if (isAccept) {
+          await approvePurchaseRequest(id);
+        } else {
+          await rejectPurchaseRequest(id);
+        }
+
+        await fetchIncomingRequests();
 
         Swal.fire({
           title: "처리 완료",
@@ -98,8 +111,20 @@ const MySalesRequests = () => {
           },
           buttonsStyling: false
         });
+      } catch (error) {
+        console.error(`Failed to ${action} purchase request:`, error);
+        Swal.fire({
+          title: "처리 실패",
+          text: error.response?.data?.message || "요청 처리 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+          customClass: {
+            confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+          },
+          buttonsStyling: false
+        });
       }
-    });
+    }
   };
 
   return (
@@ -121,7 +146,15 @@ const MySalesRequests = () => {
               <CommonTable
                   title="판매 요청 관리"
                   headers={TABLE_HEAD}
-                  pagination={<Pagination active={page} total={1} onChange={setPage}/>}
+                  pagination={
+                    requests.length > 0 && (
+                      <Pagination 
+                        active={page} 
+                        total={Math.ceil(requests.length / 10) || 1} 
+                        onChange={setPage}
+                      />
+                    )
+                  }
               >
                 {requests.map((req) => (
                     <tr key={req.id} className="border-b border-blue-gray-50 hover:bg-gray-50">

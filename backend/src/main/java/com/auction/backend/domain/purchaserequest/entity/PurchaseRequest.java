@@ -52,4 +52,18 @@ public class PurchaseRequest extends BaseTimeEntity {
                 .status(PurchaseRequestStatus.PENDING)
                 .build();
     }
+
+    public void approve() {
+        if (this.purchaseRequestStatus != PurchaseRequestStatus.PENDING) {
+            throw new IllegalStateException("대기 중인 요청만 수락할 수 있습니다.");
+        }
+        this.purchaseRequestStatus = PurchaseRequestStatus.APPROVED;
+    }
+
+    public void reject() {
+        if (this.purchaseRequestStatus != PurchaseRequestStatus.PENDING) {
+            throw new IllegalStateException("대기 중인 요청만 거절할 수 있습니다.");
+        }
+        this.purchaseRequestStatus = PurchaseRequestStatus.REJECTED;
+    }
 }

@@ -73,7 +73,32 @@ export const getMyPurchaseRequests = () => {
   return api.get("/purchase-requests/me");
 };
 
+// 내 입찰 내역 조회
+export const getMyBids = () => {
+  return api.get("/bids/me");
+};
+
+// 내 상품 판매 종료
+export const endSale = (productId) => {
+  return api.post(`/products/${productId}/end`);
+};
+
 // 내 상품에 대한 구매 요청 조회 (판매자용)
 export const getIncomingPurchaseRequests = () => {
   return api.get("/purchase-requests/seller");
+};
+
+// 구매 요청 수락
+export const approvePurchaseRequest = (requestId) => {
+  return api.post(`/purchase-requests/${requestId}/approve`);
+};
+
+// 구매 요청 거절
+export const rejectPurchaseRequest = (requestId) => {
+  return api.post(`/purchase-requests/${requestId}/reject`);
+};
+
+// 구매 요청 취소 (구매자용)
+export const cancelPurchaseRequest = (requestId) => {
+  return api.post(`/purchase-requests/${requestId}/cancel`);
 };

@@ -61,4 +61,8 @@ public class Product extends BaseTimeEntity {
                 .category(category)
                 .build();
     }
+
+    public void soldOut() {
+        this.salesStatus = SalesStatus.SOLD_OUT;
+    }
 }

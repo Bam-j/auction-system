@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -7,6 +7,8 @@ import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+import { getMyBids } from "../../product/api/productApi";
+import { Typography } from "@material-tailwind/react";
 
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 
@@ -14,49 +16,23 @@ const MyBidHistory = () => {
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [bids, setBids] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const bids = [
-    {
-      id: 301,
-      title: "전설의 곡괭이",
-      date: "2026-01-26",
-      price: 50000,
-      result: "WIN",
-      type: "AUCTION",
-      status: "SOLD_OUT",
-      seller: "MiningKing",
-      image: null,
-      description: "전설적인 광부에게 전해져 내려오는 곡괭이입니다.",
-      currentPrice: 50000,
-      bidIncrement: 1000,
-    },
-    {
-      id: 302,
-      title: "드래곤 알",
-      date: "2026-01-22",
-      price: 120000,
-      result: "LOSE",
-      type: "AUCTION",
-      status: "SOLD_OUT",
-      seller: "EnderSlayer",
-      image: null,
-      currentPrice: 150000,
-    },
-    {
-      id: 303,
-      title: "비콘",
-      date: "2026-01-28",
-      price: 30000,
-      result: "ING",
-      type: "AUCTION",
-      status: "AUCTION",
-      seller: "BuilderBob",
-      image: null,
-      currentPrice: 30000,
-      bidIncrement: 500,
-      startPrice: 10000,
-    },
-  ];
+  useEffect(() => {
+    const fetchMyBids = async () => {
+      try {
+        const response = await getMyBids();
+        setBids(response.data);
+      } catch (error) {
+        console.error("Failed to fetch my bids:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyBids();
+  }, []);
 
   const filterConfigs = [
     {
@@ -64,9 +40,9 @@ const MyBidHistory = () => {
       label: "입찰 결과",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "진행 중", value: "ING"},
-        {label: "낙찰", value: "WIN"},
-        {label: "유찰/패배", value: "LOSE"},
+        {label: "진행 중", value: "BIDDING"},
+        {label: "낙찰", value: "SUCCESS"},
+        {label: "유찰/패배", value: "FAILED"},
       ],
     }
   ];
@@ -88,25 +64,39 @@ const MyBidHistory = () => {
             onSearch={handleSearch}
         />
 
-        {bids.length === 0 ? (
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <Typography>입찰 내역을 불러오는 중입니다...</Typography>
+            </div>
+        ) : bids.length === 0 ? (
             <EmptyState message="입찰 참여 내역이 없습니다."/>
         ) : (
             <>
               <CommonTable
                   title="내 입찰 기록"
                   headers={TABLE_HEAD}
-                  pagination={<Pagination active={page} total={1} onChange={setPage}/>}
+                  pagination={
+                    bids.length > 0 && (
+                      <Pagination 
+                        active={page} 
+                        total={Math.ceil(bids.length / 10) || 1} 
+                        onChange={setPage}
+                      />
+                    )
+                  }
               >
                 {bids.map((item) => (
                     <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600">{item.id}</td>
-                      <td className="p-4 font-bold text-blue-gray-900">{item.title}</td>
-                      <td className="p-4 text-gray-600">{item.date}</td>
-                      <td className="p-4">
-                        <PriceTag price={item.price}/>
+                      <td className="p-4 font-bold text-blue-gray-900">{item.productName}</td>
+                      <td className="p-4 text-gray-600">
+                        {new Date(item.bidDate).toLocaleDateString()}
                       </td>
                       <td className="p-4">
-                        <StatusBadge status={item.result}/>
+                        <PriceTag price={item.bidPrice} unit={item.priceUnit}/>
+                      </td>
+                      <td className="p-4">
+                        <StatusBadge status={item.status}/>
                       </td>
                       <td className="p-4">
                         <TableActionButtons onView={() => handleViewDetail(item)}/>
