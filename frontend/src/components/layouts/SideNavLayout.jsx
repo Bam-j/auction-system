@@ -22,8 +22,10 @@ const SideNavLayout = ({title, menuItems}) => {
                     {({isActive}) => (
                         <ListItem
                             className={`${
-                                isActive ? "bg-blue-50 text-blue-600" : ""
-                            } hover:bg-gray-100 focus:bg-gray-100`}
+                                isActive 
+                                ? "bg-blue-50 text-blue-600 focus:bg-blue-50 active:bg-blue-50" 
+                                : "hover:bg-gray-100 focus:bg-gray-100"
+                            }`}
                             selected={isActive}
                         >
 

@@ -13,7 +13,8 @@ const TableActionButtons = ({
                               onView,
                               onDelete,
                               deleteLabel = "삭제",
-                              isBlocked = false
+                              isBlocked = false,
+                              disabled = false
                             }) => {
   return (
       <div className="flex items-center gap-2">
@@ -24,6 +25,7 @@ const TableActionButtons = ({
                 variant={isBlocked ? "outlined" : "gradient"}
                 className="whitespace-nowrap px-3"
                 onClick={onDelete}
+                disabled={disabled}
             >
               {isBlocked ? "차단 해제" : deleteLabel}
             </Button>

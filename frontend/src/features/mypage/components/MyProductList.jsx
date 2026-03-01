@@ -171,17 +171,16 @@ const MyProductList = () => {
                       </td>
 
                       <td className="p-4 text-left">
-                        {product.status !== 'SOLD_OUT' && (
-                            <Button
-                                size="sm"
-                                variant="gradient"
-                                color="red"
-                                className="whitespace-nowrap px-3"
-                                onClick={() => handleEndSale(product.id)}
-                            >
-                              판매종료
-                            </Button>
-                        )}
+                        <Button
+                            size="sm"
+                            variant="gradient"
+                            color="red"
+                            className="whitespace-nowrap px-3"
+                            onClick={() => handleEndSale(product.id)}
+                            disabled={product.status === 'SOLD_OUT'}
+                        >
+                          판매종료
+                        </Button>
                       </td>
                     </tr>
                 ))}

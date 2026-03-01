@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from "react";
+import {IconButton, Tooltip, Button, Typography} from "@material-tailwind/react";
+import {EyeIcon} from "@heroicons/react/24/outline";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllProducts } from "../api/adminApi";
-import { Typography } from "@material-tailwind/react";
 
 const AdminProductList = () => {
   const [page, setPage] = useState(1);
@@ -79,7 +79,7 @@ const AdminProductList = () => {
             <>
               <CommonTable
                   title="전체 등록 상품 관리"
-                  headers={["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "관리"]}
+                  headers={["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"]}
                   pagination={
                     products.length > 0 && (
                       <Pagination 
@@ -92,20 +92,38 @@ const AdminProductList = () => {
               >
                 {products.map((product) => (
                     <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-                      <td className="p-4 text-gray-600">{product.id}</td>
-                      <td className="p-4 font-bold text-blue-600">{product.seller}</td>
-                      <td className="p-4 font-bold text-blue-gray-900">{product.title}</td>
-                      <td className="p-4 text-gray-600">{new Date(product.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4"><PriceTag price={product.price} unit={product.priceUnit}/></td>
-                      <td className="p-4 text-gray-600">{product.stock || "-"}개</td>
-                      <td className="p-4"><StatusBadge status={product.status}/></td>
-                      <td className="p-4">
-                        <TableActionButtons
-                            onView={() => handleViewDetail(product)}
-                            onDelete={() => console.log("판매종료", product.id)}
-                            deleteLabel="판매종료"
-                            isBlocked={product.status === "BLOCKED"}
-                        />
+                      <td className="p-4 text-left text-gray-600">{product.id}</td>
+                      <td className="p-4 text-left font-bold text-blue-600">{product.seller}</td>
+                      <td className="p-4 text-left font-bold text-blue-gray-900">{product.title}</td>
+                      <td className="p-4 text-left text-gray-600">{new Date(product.createdAt).toLocaleDateString()}</td>
+                      <td className="p-4 text-left"><PriceTag price={product.price} unit={product.priceUnit}/></td>
+                      <td className="p-4 text-left text-gray-600">{product.stock || "-"}개</td>
+                      <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
+                      
+                      <td className="p-4 text-left">
+                        <Tooltip content="상품 상세 보기">
+                          <IconButton
+                              size="sm"
+                              variant="text"
+                              color="blue-gray"
+                              onClick={() => handleViewDetail(product)}
+                          >
+                            <EyeIcon className="h-4 w-4"/>
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+
+                      <td className="p-4 text-left">
+                        <Button
+                            size="sm"
+                            variant="gradient"
+                            color="red"
+                            className="whitespace-nowrap px-3"
+                            onClick={() => console.log("판매종료", product.id)}
+                            disabled={product.status === "SOLD_OUT"}
+                        >
+                          판매종료
+                        </Button>
                       </td>
                     </tr>
                 ))}
