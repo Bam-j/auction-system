@@ -1,5 +1,7 @@
 package com.auction.backend.domain.purchaserequest.controller;
 
+import com.auction.backend.domain.purchaserequest.dto.InstantBuyCreateRequest;
+import com.auction.backend.domain.purchaserequest.dto.InstantBuyRequestResponse;
 import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestCreateRequest;
 import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.purchaserequest.service.PurchaseRequestService;
@@ -31,6 +33,47 @@ public class PurchaseRequestController {
         Long purchaseRequestId = purchaseRequestService.createPurchaseRequest(userId, request);
 
         return ResponseEntity.ok(Map.of("purchaseRequestId", purchaseRequestId));
+    }
+
+    @PostMapping("/instant")
+    public ResponseEntity<Map<String, Long>> createInstantBuyRequest(
+            @AuthenticationPrincipal User principal,
+            @Valid @RequestBody InstantBuyCreateRequest request) {
+        
+        Long userId = Long.parseLong(principal.getUsername());
+        Long instantBuyRequestId = purchaseRequestService.createInstantBuyRequest(userId, request);
+
+        return ResponseEntity.ok(Map.of("instantBuyRequestId", instantBuyRequestId));
+    }
+
+    @GetMapping("/instant/me")
+    public ResponseEntity<List<InstantBuyRequestResponse>> getMyInstantBuyRequests(
+            @AuthenticationPrincipal User principal) {
+        Long userId = Long.parseLong(principal.getUsername());
+        return ResponseEntity.ok(purchaseRequestService.getUserInstantBuyRequests(userId));
+    }
+
+    @GetMapping("/instant/admin")
+    public ResponseEntity<List<InstantBuyRequestResponse>> getAllInstantBuyRequests() {
+        return ResponseEntity.ok(purchaseRequestService.getAllInstantBuyRequests());
+    }
+
+    @PostMapping("/instant/{requestId}/approve")
+    public ResponseEntity<Void> approveInstantBuyRequest(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long requestId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        purchaseRequestService.approveInstantBuyRequest(userId, requestId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/instant/{requestId}/reject")
+    public ResponseEntity<Void> rejectInstantBuyRequest(
+            @AuthenticationPrincipal User principal,
+            @PathVariable Long requestId) {
+        Long userId = Long.parseLong(principal.getUsername());
+        purchaseRequestService.rejectInstantBuyRequest(userId, requestId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")

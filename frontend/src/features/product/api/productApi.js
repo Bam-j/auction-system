@@ -53,6 +53,16 @@ export const purchaseFixedSale = (purchaseData) => {
   return api.post("/purchase-requests", purchaseData);
 };
 
+// 경매 즉시 구매 요청
+export const purchaseInstantBuy = (instantBuyData) => {
+  return api.post("/purchase-requests/instant", instantBuyData);
+};
+
+// 경매 입찰
+export const bidAuction = (bidData) => {
+  return api.post("/bids", bidData);
+};
+
 // 모든 상품 조회
 export const getProducts = () => {
   return api.get("/products");
@@ -71,6 +81,26 @@ export const getMyProducts = () => {
 // 내 구매 요청 내역 조회
 export const getMyPurchaseRequests = () => {
   return api.get("/purchase-requests/me");
+};
+
+// 내 즉시 구매 요청 내역 조회 (보낸 것 + 받은 것)
+export const getMyInstantBuyRequests = () => {
+  return api.get("/purchase-requests/instant/me");
+};
+
+// 모든 즉시 구매 요청 조회 (관리자용)
+export const getAllInstantBuyRequests = () => {
+  return api.get("/purchase-requests/instant/admin");
+};
+
+// 즉시 구매 요청 수락
+export const approveInstantBuy = (requestId) => {
+  return api.post(`/purchase-requests/instant/${requestId}/approve`);
+};
+
+// 즉시 구매 요청 거절
+export const rejectInstantBuy = (requestId) => {
+  return api.post(`/purchase-requests/instant/${requestId}/reject`);
 };
 
 // 내 입찰 내역 조회

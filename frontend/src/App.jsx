@@ -11,6 +11,7 @@ import SignupPage from './pages/SignupPage';
 import MyPage from './pages/MyPage';
 import MyProductList from './features/mypage/components/MyProductList';
 import MyPurchaseHistory from './features/mypage/components/MyPurchaseHistory';
+import MyInstantBuyHistory from './features/mypage/components/MyInstantBuyHistory';
 import MyBidHistory from './features/mypage/components/MyBidHistory';
 import MyProfileEdit from './features/mypage/components/MyProfileEdit';
 import MySalesRequests from './features/mypage/components/MySalesRequests';
@@ -19,6 +20,7 @@ import MySalesRequests from './features/mypage/components/MySalesRequests';
 import AdminPage from './pages/AdminPage';
 import AdminProductList from './features/admin/components/AdminProductList';
 import AdminPurchaseHistory from './features/admin/components/AdminPurchaseHistory';
+import AdminInstantBuyHistory from './features/admin/components/AdminInstantBuyHistory';
 import AdminBidHistory from './features/admin/components/AdminBidHistory';
 import AdminUserList from './features/admin/components/AdminUserList';
 
@@ -42,6 +44,7 @@ function App() {
               <Route index element={<Navigate to="products" replace/>}/>
               <Route path="products" element={<MyProductList/>}/>
               <Route path="requests" element={<MySalesRequests/>}/>
+              <Route path="instant-buys" element={<MyInstantBuyHistory/>}/>
               <Route path="purchases" element={<MyPurchaseHistory/>}/>
               <Route path="bids" element={<MyBidHistory/>}/>
               <Route path="profile" element={<MyProfileEdit/>}/>
@@ -51,6 +54,7 @@ function App() {
             <Route path="/admin" element={<AdminPage/>}>
               <Route index element={<Navigate to="users" replace/>}/>
               <Route path="products" element={<AdminProductList/>}/>
+              <Route path="instant-buys" element={<AdminInstantBuyHistory/>}/>
               <Route path="purchases" element={<AdminPurchaseHistory/>}/>
               <Route path="bids" element={<AdminBidHistory/>}/>
               <Route path="users" element={<AdminUserList/>}/>

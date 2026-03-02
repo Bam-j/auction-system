@@ -74,4 +74,17 @@ public class Auction extends BaseTimeEntity {
                 .priceUnit(priceUnit)
                 .build();
     }
+
+    public void updateCurrentPrice(Integer newPrice) {
+        if (newPrice <= this.currentPrice) {
+            throw new IllegalArgumentException("입찰 가격은 현재 가격보다 높아야 합니다.");
+        }
+        if (newPrice < this.currentPrice + this.minBidIncrement) {
+            throw new IllegalArgumentException("최소 입찰 단위 이상의 금액으로 입찰해야 합니다.");
+        }
+        if (LocalDateTime.now().isAfter(this.endedAt)) {
+            throw new IllegalStateException("경매가 이미 종료되었습니다.");
+        }
+        this.currentPrice = newPrice;
+    }
 }

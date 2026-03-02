@@ -6,7 +6,7 @@ import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
-import { purchaseFixedSale, getProductDetail } from "../api/productApi";
+import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
 
 const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const contentRef = useRef(null);
@@ -51,7 +51,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
     const result = await Swal.fire({
       title: "입찰 확인",
-      text: `${nextBidPrice.toLocaleString()}원에 입찰하시겠습니까?`,
+      text: `${nextBidPrice.toLocaleString()}${product.priceUnit}에 입찰하시겠습니까?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "입찰",
@@ -63,15 +63,35 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       buttonsStyling: false,
     });
 
-    if (result.isConfirmed) {
-      // TODO: Implement actual bid logic
-      Swal.fire({
+    if (!result.isConfirmed) return;
+
+    try {
+      await bidAuction({
+        auctionId: product.auctionId,
+        bidPrice: nextBidPrice
+      });
+
+      await Swal.fire({
         title: "입찰 완료",
         text: "입찰이 정상적으로 처리되었습니다.",
         icon: "success",
         confirmButtonText: "확인",
         customClass: {
           confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
+      handleOpen();
+    } catch (error) {
+      console.error("Bid failed:", error);
+      const errorMessage = error.response?.data?.message || "입찰 중 오류가 발생했습니다.";
+      Swal.fire({
+        title: "오류",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
         },
         buttonsStyling: false,
       });
@@ -86,7 +106,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
     const result = await Swal.fire({
       title: "즉시 구매 확인",
-      text: `${displayPrice}에 즉시 구매하시겠습니까?`,
+      text: `${displayPrice}${product.priceUnit}에 즉시 구매하시겠습니까?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "구매",
@@ -98,15 +118,34 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       buttonsStyling: false,
     });
 
-    if (result.isConfirmed) {
-      // TODO: Implement actual instant buy logic
-      Swal.fire({
-        title: "구매 완료",
-        text: "구매가 정상적으로 처리되었습니다.",
+    if (!result.isConfirmed) return;
+
+    try {
+      await purchaseInstantBuy({
+        auctionId: product.auctionId
+      });
+
+      await Swal.fire({
+        title: "구매 요청 완료",
+        text: "즉시 구매 요청이 판매자에게 전달되었습니다.",
         icon: "success",
         confirmButtonText: "확인",
         customClass: {
           confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg"
+        },
+        buttonsStyling: false,
+      });
+      handleOpen();
+    } catch (error) {
+      console.error("Instant purchase failed:", error);
+      const errorMessage = error.response?.data?.message || "구매 중 오류가 발생했습니다.";
+      Swal.fire({
+        title: "오류",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "확인",
+        customClass: {
+          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
         },
         buttonsStyling: false,
       });
@@ -148,7 +187,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
     try {
       const response = await purchaseFixedSale({
-        fixedSaleId: product.id,
+        fixedSaleId: product.fixedSaleId,
         quantity: parseInt(purchaseAmount)
       });
       
@@ -222,20 +261,17 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                     />
                   </div>
 
-                  <div>
-                    <Typography variant="h4" color="blue-gray" className="font-bold mb-2">
-                      {product.title}
+                  <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 shadow-sm">
+                    <Typography variant="small" color="blue" className="font-bold mb-1 uppercase tracking-wider opacity-80">
+                      {isAuction ? "현재 최고 입찰가" : "판매 가격"}
                     </Typography>
-                    <PriceTag
-                        price={isAuction ? product.currentPrice : product.price}
-                        unit={product.priceUnit}
-                        className="text-2xl text-blue-600"
-                    />
-                    {isAuction && (
-                        <Typography variant="small" className="text-gray-500 mt-1">
-                          (현재 최고 입찰가)
-                        </Typography>
-                    )}
+                    <div className="flex items-baseline gap-2">
+                      <PriceTag
+                          price={isAuction ? product.currentPrice : product.price}
+                          unit={product.priceUnit}
+                          className="text-4xl text-blue-700 font-black drop-shadow-sm"
+                      />
+                    </div>
                   </div>
 
                   <hr className="border-gray-200 my-1"/>
@@ -262,7 +298,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                       <div className="bg-blue-50 p-4 rounded-lg text-sm grid grid-cols-2 gap-2">
                         <div className="flex justify-between">
                           <span className="text-blue-gray-800 font-medium">시작가:</span>
-                          <PriceTag price={product.startPrice} unit={product.priceUnit} className="font-medium"/>
+                          <PriceTag price={product.startPrice} unit={product.priceUnit} className="font-medium text-gray-900"/>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-blue-gray-800 font-medium">입찰 단위:</span>
@@ -279,7 +315,13 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                         <div className="flex justify-between col-span-2 border-t border-blue-100 pt-2">
                           <span className="text-blue-gray-800 font-medium">마감 일시:</span>
                           <span className="font-medium text-red-600">
-                            {product.endedAt ? new Date(product.endedAt).toLocaleString() : "-"}
+                            {product.endedAt ? new Date(product.endedAt).toLocaleString('ko-KR', {
+                              year: 'numeric',
+                              month: 'numeric',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }) : "-"}
                           </span>
                         </div>
                       </div>
@@ -309,18 +351,24 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                     <div className="flex flex-col md:flex-row gap-3">
                       <Button
                           fullWidth
-                          variant="gradient" color="blue" className="h-12 text-lg flex-1"
+                          variant="gradient" color="blue" className="h-14 text-lg flex-1 shadow-lg shadow-blue-200/50"
                           onClick={handleBid}
                       >
-                        입찰하기 (+<PriceTag price={product.bidIncrement} unit="" className="inline"/>)
+                        <div className="flex flex-col items-center leading-tight">
+                          <span className="text-xs font-bold opacity-80 uppercase">입찰하기 (+{Number(product.bidIncrement).toLocaleString()} {product.priceUnit})</span>
+                          <span className="font-black">{(Number(product.currentPrice) + Number(product.bidIncrement)).toLocaleString()} {product.priceUnit}</span>
+                        </div>
                       </Button>
                       {product.instantPrice && (
                           <Button
                               fullWidth
-                              variant="gradient" color="green" className="h-12 text-lg flex-1"
+                              variant="gradient" color="green" className="h-14 text-lg flex-1 shadow-lg shadow-green-200/50"
                               onClick={handleBuyNow}
                           >
-                            즉시 구매 (<PriceTag price={product.instantPrice} unit="" className="inline"/>)
+                            <div className="flex flex-col items-center leading-tight">
+                              <span className="text-xs font-bold opacity-80 uppercase">즉시 구매하기</span>
+                              <span className="font-black">{Number(product.instantPrice).toLocaleString()} {product.priceUnit}</span>
+                            </div>
                           </Button>
                       )}
                     </div>

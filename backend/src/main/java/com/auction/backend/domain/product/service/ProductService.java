@@ -66,6 +66,8 @@ public class ProductService {
         Integer currentPrice = null;
         Integer bidIncrement = null;
         String instantPrice = null;
+        Long auctionId = null;
+        Long fixedSaleId = null;
 
         var fixedSaleOpt = fixedSaleRepository.findByProduct(product);
         if (fixedSaleOpt.isPresent()) {
@@ -74,6 +76,7 @@ public class ProductService {
             type = "FIXED";
             priceUnit = "원";
             stock = fixedSale.getStock();
+            fixedSaleId = fixedSale.getFixedSaleId();
         } else {
             var auctionOpt = auctionRepository.findByProduct(product);
             if (auctionOpt.isPresent()) {
@@ -86,11 +89,14 @@ public class ProductService {
                 currentPrice = auction.getCurrentPrice();
                 bidIncrement = auction.getMinBidIncrement();
                 instantPrice = auction.getInstantPurchasePrice();
+                auctionId = auction.getAuctionId();
             }
         }
 
         return ProductListResponse.builder()
                 .id(product.getProductId())
+                .auctionId(auctionId)
+                .fixedSaleId(fixedSaleId)
                 .title(product.getProductName())
                 .seller(product.getUser().getNickname())
                 .price(price)
@@ -111,7 +117,7 @@ public class ProductService {
     }
 
     private String getPriceUnitDisplayName(com.auction.backend.global.enums.PriceUnit unit) {
-        if (unit == null) return "원";
+        if (unit == null) return "에메랄드";
         return switch (unit) {
             case EMERALD -> "에메랄드";
             case EMERALD_BLOCK -> "에메랄드 블록";

@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class ProductListResponse {
-    private Long id;
+    private Long id; // Product ID
+    private Long auctionId; // Auction ID if type is AUCTION
+    private Long fixedSaleId; // FixedSale ID if type is FIXED
     private String title;
     private String seller;
     private String price;

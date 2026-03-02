@@ -49,15 +49,37 @@ const ProductCard = ({product}) => {
         </CardHeader>
 
         <CardBody className="p-4 text-center">
-          <Typography variant="h6" color="blue-gray" className="mb-2 truncate">
+          <Typography variant="h6" color="blue-gray" className="mb-1 truncate font-bold">
             {product.title}
           </Typography>
-          <Typography color="gray" className="font-medium text-sm">
-            {product.type === "AUCTION" ? "현재가" : "가격"}: {product.price.toLocaleString()}원
-          </Typography>
-          <Typography color="gray" className="text-xs mt-1">
-            수량: {product.quantity}개
-          </Typography>
+          
+          <div className="flex flex-col gap-1 items-center justify-center min-h-[50px]">
+            <Typography color="blue" className="font-black text-lg">
+              {product.type === "AUCTION" ? (
+                <span className="flex flex-col items-center">
+                  <span className="text-[10px] uppercase tracking-tighter opacity-70 leading-none">현재 최고가</span>
+                  <span>{Number(product.currentPrice || product.price).toLocaleString()} <span className="text-xs font-normal opacity-80">{product.priceUnit || "원"}</span></span>
+                </span>
+              ) : (
+                <span className="flex flex-col items-center">
+                  <span className="text-[10px] uppercase tracking-tighter opacity-70 leading-none">판매 가격</span>
+                  <span>{Number(product.price).toLocaleString()} <span className="text-xs font-normal opacity-80">{product.priceUnit || "원"}</span></span>
+                </span>
+              )}
+            </Typography>
+            
+            {product.type !== "AUCTION" && (
+              <Typography color="gray" className="text-[10px] font-medium opacity-80">
+                남은 수량: {product.stock != null ? `${product.stock}개` : "정보없음"}
+              </Typography>
+            )}
+            
+            {product.type === "AUCTION" && product.endedAt && (
+              <Typography color="red" className="text-[10px] font-bold animate-pulse">
+                마감: {new Date(product.endedAt).toLocaleDateString()}
+              </Typography>
+            )}
+          </div>
         </CardBody>
 
         <CardFooter className="pt-0 pb-4 px-4 border-t border-gray-100 flex justify-between items-center mt-auto">
