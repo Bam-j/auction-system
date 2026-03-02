@@ -1,56 +1,59 @@
 package com.auction.backend.domain.purchaserequest.entity;
 
-import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
+import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.global.entity.BaseTimeEntity;
 import com.auction.backend.global.enums.RequestStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "purchase_requests")
+@Table(name = "instant_buy_requests")
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PurchaseRequest extends BaseTimeEntity {
+public class InstantBuyRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "purchase_request_id")
-    private Long purchaseRequestId;
+    @Column(name = "instant_buy_request_id")
+    private Long instantBuyRequestId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fixed_sales_id", nullable = false)
-    private FixedSale fixedSale;
-
-    @Column(nullable = false)
-    private Integer quantity;
+    @JoinColumn(name = "auction_id", nullable = false)
+    private Auction auction;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "request_status", nullable = false)
     private RequestStatus requestStatus = RequestStatus.PENDING;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
     @Builder
-    public PurchaseRequest(User user, FixedSale fixedSale, Integer quantity, RequestStatus requestStatus) {
+    public InstantBuyRequest(User user, Auction auction, RequestStatus requestStatus) {
         this.user = user;
-        this.fixedSale = fixedSale;
-        this.quantity = quantity != null ? quantity : 1;
+        this.auction = auction;
         if (requestStatus != null) {
             this.requestStatus = requestStatus;
         }
     }
 
-    public static PurchaseRequest createPurchaseRequest(User user, FixedSale fixedSale, Integer quantity) {
-        return PurchaseRequest.builder()
+    public static InstantBuyRequest createInstantBuyRequest(User user, Auction auction) {
+        return InstantBuyRequest.builder()
                 .user(user)
-                .fixedSale(fixedSale)
-                .quantity(quantity)
+                .auction(auction)
                 .requestStatus(RequestStatus.PENDING)
                 .build();
     }

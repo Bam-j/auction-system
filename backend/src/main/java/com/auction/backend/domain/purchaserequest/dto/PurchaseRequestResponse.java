@@ -1,6 +1,6 @@
 package com.auction.backend.domain.purchaserequest.dto;
 
-import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequestStatus;
+import com.auction.backend.global.enums.RequestStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,6 +16,6 @@ public class PurchaseRequestResponse {
     private Integer quantity;
     private String price;
     private String priceUnit;
-    private PurchaseRequestStatus status;
+    private RequestStatus status;
     private LocalDateTime requestDate;
 }

@@ -5,12 +5,12 @@ import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
 import com.auction.backend.domain.purchaserequest.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
-import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequestStatus;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.domain.fixedsalesorder.entity.FixedSalesOrder;
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSalesOrderRepository;
+import com.auction.backend.global.enums.RequestStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -139,7 +139,7 @@ public class PurchaseRequestService {
                 .quantity(request.getQuantity())
                 .price(request.getFixedSale().getPrice())
                 .priceUnit("원") // 일반 판매는 현재 "원" 단위를 기본으로 사용
-                .status(request.getPurchaseRequestStatus())
+                .status(request.getRequestStatus())
                 .requestDate(request.getCreatedAt())
                 .build();
     }
