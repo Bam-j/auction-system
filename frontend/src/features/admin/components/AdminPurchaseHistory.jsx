@@ -7,6 +7,7 @@ import EmptyState from "../../../components/ui/EmptyState";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllPurchaseRequests } from "../api/adminApi";
 import { Typography } from "@material-tailwind/react";
+import StatusBadge from "../../../components/ui/StatusBadge";
 
 const TABLE_HEAD = ["ID", "판매자", "상품명", "구매자", "구매일", "구매금액", "구매량", "상태"];
 
@@ -85,7 +86,7 @@ const AdminPurchaseHistory = () => {
                     </td>
                     <td className="p-4 text-gray-600">{p.quantity}개</td>
                     <td className="p-4">
-                      <Typography variant="small" color="blue-gray">{p.status}</Typography>
+                      <StatusBadge status={p.status}/>
                     </td>
                   </tr>
               ))}

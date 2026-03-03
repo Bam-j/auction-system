@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PurchaseRequestResponse {
     private Long id;
+    private Long productId;
     private String productName;
     private String buyerName;
     private String sellerName;

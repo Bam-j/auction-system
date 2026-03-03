@@ -143,6 +143,10 @@ public class PurchaseRequestService {
             throw new RuntimeException("판매자만 요청을 수락할 수 있습니다.");
         }
 
+        if (com.auction.backend.domain.product.entity.SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
+            throw new RuntimeException("이미 품절된 상품입니다.");
+        }
+
         request.approve();
         request.getFixedSale().decreaseStock(request.getQuantity());
 
@@ -163,7 +167,13 @@ public class PurchaseRequestService {
             throw new RuntimeException("판매자만 요청을 수락할 수 있습니다.");
         }
 
+        if (com.auction.backend.domain.product.entity.SalesStatus.SOLD_OUT.equals(request.getAuction().getProduct().getSalesStatus()) || 
+            com.auction.backend.domain.product.entity.SalesStatus.INSTANT_BUY.equals(request.getAuction().getProduct().getSalesStatus())) {
+            throw new RuntimeException("이미 낙찰 또는 판매 완료된 상품입니다.");
+        }
+
         request.approve();
+        request.getAuction().getProduct().instantBuy();
     }
 
     @Transactional
@@ -205,6 +215,7 @@ public class PurchaseRequestService {
     public PurchaseRequestResponse convertToResponse(PurchaseRequest request) {
         return PurchaseRequestResponse.builder()
                 .id(request.getPurchaseRequestId())
+                .productId(request.getFixedSale().getProduct().getProductId())
                 .productName(request.getFixedSale().getProduct().getProductName())
                 .buyerName(request.getUser().getNickname())
                 .sellerName(request.getFixedSale().getUser().getNickname())
@@ -219,6 +230,7 @@ public class PurchaseRequestService {
     private InstantBuyRequestResponse convertToInstantResponse(InstantBuyRequest request) {
         return InstantBuyRequestResponse.builder()
                 .id(request.getInstantBuyRequestId())
+                .productId(request.getAuction().getProduct().getProductId())
                 .productName(request.getAuction().getProduct().getProductName())
                 .requesterNickname(request.getUser().getNickname())
                 .sellerNickname(request.getAuction().getUser().getNickname())

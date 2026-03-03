@@ -71,8 +71,18 @@ const ProductManagementModal = ({ open, handleOpen, product }) => {
                     // [경매 상품일 경우]
                     <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm">
                       <div className="flex flex-col">
-                        <span className="text-gray-500 text-xs">시작 가격</span>
-                        <PriceTag price={product.startPrice} unit={product.priceUnit} className="font-medium" />
+                        <span className="text-gray-500 text-xs">
+                          {product.status === "INSTANT_BUY" ? "판매 방식" : "시작 가격"}
+                        </span>
+                        {product.status === "INSTANT_BUY" ? (
+                          <span className="font-bold text-orange-700">즉시 구매</span>
+                        ) : (
+                          <PriceTag 
+                            price={product.startPrice} 
+                            unit={product.priceUnit} 
+                            className="font-medium" 
+                          />
+                        )}
                       </div>
                       <div className="flex flex-col">
                         <span className="text-gray-500 text-xs">입찰 단위</span>

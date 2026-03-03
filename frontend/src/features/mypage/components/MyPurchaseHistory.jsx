@@ -4,12 +4,12 @@ import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
-import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyPurchaseRequests, cancelPurchaseRequest } from "../../product/api/productApi";
 import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
+import ProductDetailModal from "../../product/components/ProductDetailModal";
 
 import StatusBadge from "../../../components/ui/StatusBadge";
 
@@ -100,7 +100,7 @@ const MyPurchaseHistory = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct(item);
+    setSelectedProduct({ id: item.productId });
     setOpenModal(true);
   };
 
@@ -169,13 +169,11 @@ const MyPurchaseHistory = () => {
                 ))}
               </CommonTable>
 
-              {selectedProduct && (
-                  <ProductManagementModal
-                      open={openModal}
-                      handleOpen={() => setOpenModal(!openModal)}
-                      product={selectedProduct}
-                  />
-              )}
+              <ProductDetailModal
+                  open={openModal}
+                  handleOpen={() => setOpenModal(!openModal)}
+                  product={selectedProduct}
+              />
             </>
         )}
       </div>

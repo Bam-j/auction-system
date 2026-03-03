@@ -43,6 +43,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   }
 
   const isAuction = product?.type === "AUCTION";
+  const currentStatus = product?.status?.toString().toUpperCase();
+  const isInstantBuy = currentStatus === "INSTANT_BUY";
+  
+  // 경매 마감 여부 확인
+  const isAuctionEnded = isAuction && product?.endedAt && new Date(product.endedAt) < new Date();
 
   const handleBid = async () => {
     const currentPrice = isNaN(product.currentPrice) ? 0 : Number(product.currentPrice);
@@ -250,7 +255,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
                 <div className="md:col-span-2 flex flex-col gap-4">
                   <div className="flex justify-between items-start">
-                    <StatusBadge status={product.status}/>
+                    <StatusBadge status={isAuctionEnded && currentStatus !== 'SOLD_OUT' && currentStatus !== 'INSTANT_BUY' ? 'CLOSED' : product.status}/>
                     <Chip
                         variant="ghost"
                         color="blue-gray"
@@ -263,14 +268,20 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
                   <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 shadow-sm">
                     <Typography variant="small" color="blue" className="font-bold mb-1 uppercase tracking-wider opacity-80">
-                      {isAuction ? "현재 최고 입찰가" : "판매 가격"}
+                      {product.status === "INSTANT_BUY" ? "판매 방식" : (isAuction ? "현재 최고 입찰가" : "판매 가격")}
                     </Typography>
                     <div className="flex items-baseline gap-2">
-                      <PriceTag
-                          price={isAuction ? product.currentPrice : product.price}
-                          unit={product.priceUnit}
-                          className="text-4xl text-blue-700 font-black drop-shadow-sm"
-                      />
+                      {product.status === "INSTANT_BUY" ? (
+                        <Typography className="text-4xl text-orange-700 font-black drop-shadow-sm">
+                          즉시 구매
+                        </Typography>
+                      ) : (
+                        <PriceTag
+                            price={product.price}
+                            unit={product.priceUnit}
+                            className="text-4xl text-blue-700 font-black drop-shadow-sm"
+                        />
+                      )}
                     </div>
                   </div>
 
@@ -346,6 +357,10 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                 {product.status !== 'SELLING' && product.status !== 'AUCTION' && product.status !== 'FIXED_SALES' ? (
                     <Button fullWidth color="gray" variant="outlined" disabled className="h-12 text-lg">
                       판매가 종료된 상품입니다.
+                    </Button>
+                ) : isAuctionEnded ? (
+                    <Button fullWidth color="red" variant="outlined" disabled className="h-12 text-lg font-bold border-2">
+                      경매가 마감되었습니다 (판매 종료)
                     </Button>
                 ) : isAuction ? (
                     <div className="flex flex-col md:flex-row gap-3">

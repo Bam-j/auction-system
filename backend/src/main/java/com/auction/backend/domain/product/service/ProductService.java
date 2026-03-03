@@ -81,7 +81,6 @@ public class ProductService {
             var auctionOpt = auctionRepository.findByProduct(product);
             if (auctionOpt.isPresent()) {
                 var auction = auctionOpt.get();
-                price = String.valueOf(auction.getCurrentPrice());
                 type = "AUCTION";
                 priceUnit = getPriceUnitDisplayName(auction.getPriceUnit());
                 endedAt = auction.getEndedAt();
@@ -90,6 +89,13 @@ public class ProductService {
                 bidIncrement = auction.getMinBidIncrement();
                 instantPrice = auction.getInstantPurchasePrice();
                 auctionId = auction.getAuctionId();
+                
+                // 즉시 구매 완료된 경우 가격을 즉시 구매가로 설정
+                if (product.getSalesStatus() == com.auction.backend.domain.product.entity.SalesStatus.INSTANT_BUY && instantPrice != null) {
+                    price = instantPrice;
+                } else {
+                    price = String.valueOf(auction.getCurrentPrice());
+                }
             }
         }
 

@@ -64,6 +64,7 @@ public class BidService {
     public BidResponse convertToResponse(Bid bid) {
         return BidResponse.builder()
                 .id(bid.getBidId())
+                .productId(bid.getAuction().getProduct().getProductId())
                 .productName(bid.getAuction().getProduct().getProductName())
                 .bidderName(bid.getUser().getNickname())
                 .sellerName(bid.getAuction().getProduct().getUser().getNickname())

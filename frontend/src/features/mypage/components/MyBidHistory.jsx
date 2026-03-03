@@ -5,7 +5,7 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
-import ProductManagementModal from "../../product/components/ProductManagementModal";
+import ProductDetailModal from "../../product/components/ProductDetailModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyBids } from "../../product/api/productApi";
 import { Typography } from "@material-tailwind/react";
@@ -52,7 +52,7 @@ const MyBidHistory = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct(item);
+    setSelectedProduct({ id: item.productId });
     setOpenModal(true);
   };
 
@@ -105,13 +105,11 @@ const MyBidHistory = () => {
                 ))}
               </CommonTable>
 
-              {selectedProduct && (
-                  <ProductManagementModal
-                      open={openModal}
-                      handleOpen={() => setOpenModal(!openModal)}
-                      product={selectedProduct}
-                  />
-              )}
+              <ProductDetailModal
+                  open={openModal}
+                  handleOpen={() => setOpenModal(!openModal)}
+                  product={selectedProduct}
+              />
             </>
         )}
       </div>

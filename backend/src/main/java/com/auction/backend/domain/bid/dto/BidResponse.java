@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BidResponse {
     private Long id;
+    private Long productId;
     private String productName;
     private String bidderName;
     private String sellerName;

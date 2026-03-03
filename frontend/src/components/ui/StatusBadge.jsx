@@ -5,12 +5,18 @@ const STATUS_CONFIG = {
   FIXED_SALES: {color: "green", label: "판매중"},
   SELLING: {color: "green", label: "판매중"},
   SOLD_OUT: {color: "blue-gray", label: "판매완료"},
+  INSTANT_BUY: {color: "deep-orange", label: "즉시구매완료"},
   AUCTION: {color: "blue", label: "경매중"},
   BLOCKED: {color: "red", label: "판매중지"},
 
   WIN: {color: "green", label: "낙찰 성공"},
   LOSE: {color: "red", label: "패찰"},
   ING: {color: "blue", label: "입찰 진행"},
+
+  // BidStatus mappings
+  BIDDING: {color: "blue", label: "입찰 중"},
+  SUCCESS: {color: "green", label: "성공"},
+  FAILED: {color: "red", label: "실패"},
 
   PENDING: {color: "amber", label: "대기중"},
   APPROVED: {color: "green", label: "승인됨"},

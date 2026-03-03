@@ -76,17 +76,24 @@ const HomePage = () => {
             <EmptyState message="등록된 상품이 없습니다."/>
         ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
+              {products.map((product) => {
+                  const currentStatus = product.status?.toString().toUpperCase();
+                  const isInstantBuy = currentStatus === "INSTANT_BUY";
+                  // 경매 마감 여부 확인 (경매 타입이고 endedAt이 현재 시간보다 이전인 경우)
+                  const isAuctionEnded = product.type === "AUCTION" && product.endedAt && new Date(product.endedAt) < new Date();
+                  const isSoldOut = currentStatus === "SOLD_OUT" || isInstantBuy || isAuctionEnded;
+
+                  return (
                   <Card key={product.id} onClick={() => handleCardClick(product)}
-                        className="w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
-                    <CardHeader floated={false} color="blue-gray" className="relative h-42 m-0 rounded-b-none">
+                        className={`w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer`}>
+                    <CardHeader floated={false} color="blue-gray" className={`relative h-42 m-0 rounded-b-none`}>
                       <img
                           src={product.image || defaultImage}
                           alt={product.title}
                           className="w-full h-full object-cover"
                       />
                       <div className="absolute top-2 right-2 z-10">
-                        <StatusBadge status={product.status}/>
+                        <StatusBadge status={isAuctionEnded && currentStatus !== 'SOLD_OUT' && currentStatus !== 'INSTANT_BUY' ? 'CLOSED' : product.status}/>
                       </div>
                     </CardHeader>
 
@@ -102,25 +109,38 @@ const HomePage = () => {
                       <Typography variant="h6" color="blue-gray" className="mb-1 truncate">
                         {product.title}
                       </Typography>
-                      <PriceTag 
-                        price={product.price} 
-                        unit={product.priceUnit} 
-                        className="text-lg text-font-dark_blue"
-                      />
+                      <div className="flex flex-col">
+                        {product.type === "AUCTION" && (
+                          <Typography variant="small" className="text-[10px] text-gray-500 font-bold mb-0.5">
+                            {isInstantBuy ? "판매 방식" : "현재 최고가"}
+                          </Typography>
+                        )}
+                        {isInstantBuy ? (
+                          <Typography className="text-lg font-bold text-orange-700">
+                            즉시 구매
+                          </Typography>
+                        ) : (
+                          <PriceTag 
+                            price={product.price} 
+                            unit={product.priceUnit} 
+                            className="text-lg text-font-dark_blue"
+                          />
+                        )}
+                      </div>
                     </CardBody>
 
                     <CardFooter className="pt-0 px-4 pb-4">
                       <Button
                           fullWidth
-                          variant={product.status === "SOLD_OUT" ? "outlined" : "gradient"}
-                          color={product.status === "SOLD_OUT" ? "gray" : "blue"}
-                          disabled={product.status === "SOLD_OUT"}
+                          variant={isSoldOut ? "outlined" : "gradient"}
+                          color={isSoldOut ? "gray" : "blue"}
+                          disabled={isSoldOut}
                       >
-                        {product.status === "SOLD_OUT" ? "판매 완료" : "상세 보기"}
+                        {isSoldOut ? "판매 종료" : "상세 보기"}
                       </Button>
                     </CardFooter>
                   </Card>
-              ))}
+              )})}
             </div>
         )}
         <ProductDetailModal

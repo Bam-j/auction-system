@@ -65,4 +65,8 @@ public class Product extends BaseTimeEntity {
     public void soldOut() {
         this.salesStatus = SalesStatus.SOLD_OUT;
     }
+
+    public void instantBuy() {
+        this.salesStatus = SalesStatus.INSTANT_BUY;
+    }
 }

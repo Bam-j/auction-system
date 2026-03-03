@@ -8,9 +8,13 @@ const ProductCard = ({product}) => {
   const getStatusInfo = (status) => {
     switch (status) {
       case "SELLING":
+      case "FIXED_SALES":
         return {color: "green", text: "판매중"};
       case "SOLD_OUT":
         return {color: "blue-gray", text: "품절"};
+      case "INSTANT_BUY":
+        return {color: "deep-orange", text: "즉시구매완료"};
+      case "AUCTION":
       case "BIDDING":
         return {color: "blue", text: "경매진행중"};
       case "CLOSED":
@@ -21,31 +25,26 @@ const ProductCard = ({product}) => {
   };
 
   const statusInfo = getStatusInfo(product.status);
-  const isSoldOut = product.status === "SOLD_OUT";
+  const currentStatus = product.status?.toString().toUpperCase();
+  const isInstantBuy = currentStatus === "INSTANT_BUY";
+  const isSoldOut = currentStatus === "SOLD_OUT" || isInstantBuy;
 
   return (
-      <Card className={`w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer ${isSoldOut ? 'opacity-75 grayscale-[0.5]' : ''}`}>
+      <Card className={`w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer`}>
         <CardHeader floated={false} className="h-40 overflow-hidden relative">
           <img
               src={product.image || defaultImage}
               alt={product.title}
-              className={`w-full h-full object-cover transform hover:scale-110 transition-transform duration-300 ${isSoldOut ? 'filter blur-[1px]' : ''}`}
+              className={`w-full h-full object-cover transform hover:scale-110 transition-transform duration-300`}
           />
           <div className="absolute top-2 right-2">
             <Chip
                 size="sm"
-                color={isSoldOut ? "red" : statusInfo.color}
-                value={isSoldOut ? "품절" : statusInfo.text}
+                color={statusInfo.color}
+                value={statusInfo.text}
                 className="rounded-full px-2"
             />
           </div>
-          {isSoldOut && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-               <Typography variant="h5" color="white" className="font-bold drop-shadow-md">
-                 품절되었습니다
-               </Typography>
-            </div>
-          )}
         </CardHeader>
 
         <CardBody className="p-4 text-center">
@@ -57,8 +56,14 @@ const ProductCard = ({product}) => {
             <Typography color="blue" className="font-black text-lg">
               {product.type === "AUCTION" ? (
                 <span className="flex flex-col items-center">
-                  <span className="text-[10px] uppercase tracking-tighter opacity-70 leading-none">현재 최고가</span>
-                  <span>{Number(product.currentPrice || product.price).toLocaleString()} <span className="text-xs font-normal opacity-80">{product.priceUnit || "원"}</span></span>
+                  <span className="text-[10px] uppercase tracking-tighter opacity-70 leading-none">
+                    {isInstantBuy ? "판매 방식" : "현재 최고가"}
+                  </span>
+                  {isInstantBuy ? (
+                    <span className="text-orange-700">즉시 구매</span>
+                  ) : (
+                    <span>{Number(product.price).toLocaleString()} <span className="text-xs font-normal opacity-80">{product.priceUnit || "원"}</span></span>
+                  )}
                 </span>
               ) : (
                 <span className="flex flex-col items-center">
