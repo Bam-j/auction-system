@@ -4,6 +4,7 @@ import { UserCircleIcon, CalendarDaysIcon, TagIcon, CubeIcon } from "@heroicons/
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
+import { translateCategory } from "../../../utils/categoryTranslations";
 
 const ProductManagementModal = ({ open, handleOpen, product }) => {
   if (!product) return null;
@@ -62,7 +63,7 @@ const ProductManagementModal = ({ open, handleOpen, product }) => {
                 <div className="flex items-center gap-2">
                   <TagIcon className="h-4 w-4 text-gray-500" />
                   <span className="font-medium text-gray-500">분류:</span>
-                  <Chip value={product.category || "기타"} size="sm" variant="ghost" color="blue" className="rounded-full px-2 py-0.5" />
+                  <Chip value={translateCategory(product.category) || "기타"} size="sm" variant="ghost" color="blue" className="rounded-full px-2 py-0.5" />
                 </div>
               </div>
 

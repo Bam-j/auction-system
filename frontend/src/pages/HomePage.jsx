@@ -38,8 +38,16 @@ const HomePage = () => {
       label: "카테고리",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "무기/방어구", value: "WEAPON"},
-        {label: "건축 블록", value: "BLOCK"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+        {label: "도구", value: "TOOL"},
+        {label: "치장품", value: "COSMETIC"},
+        {label: "칭호", value: "TITLE"},
+        {label: "블록", value: "BLOCK"},
+        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
+        {label: "광석", value: "ORE"},
+        {label: "성장 재화", value: "GROWTH_GOODS"},
+        {label: "기타", value: "ETC"},
       ],
     },
   ];

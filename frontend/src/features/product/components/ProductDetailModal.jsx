@@ -7,6 +7,7 @@ import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
+import { translateCategory } from "../../../utils/categoryTranslations";
 
 const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const contentRef = useRef(null);
@@ -260,7 +261,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                         variant="ghost"
                         color="blue-gray"
                         size="sm"
-                        value={product.category || "기타"}
+                        value={translateCategory(product.category) || "기타"}
                         icon={<CubeIcon className="h-4 w-4"/>}
                         className="rounded-full"
                     />

@@ -1,4 +1,5 @@
 import {Input, Select, Option} from "@material-tailwind/react";
+import { translateCategory } from "../../../../utils/categoryTranslations";
 
 const CATEGORIES = [
   "WEAPON", "ARMOR", "TOOL", "COSMETIC", "TITLE",
@@ -24,7 +25,7 @@ const CommonProductForm = ({formData, handleChange, handleCategoryChange}) => {
             size="lg"
         >
           {CATEGORIES.map((cat) => (
-              <Option key={cat} value={cat}>{cat}</Option>
+              <Option key={cat} value={cat}>{translateCategory(cat)}</Option>
           ))}
         </Select>
       </div>

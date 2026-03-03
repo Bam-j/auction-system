@@ -7,6 +7,7 @@ const STATUS_CONFIG = {
   SOLD_OUT: {color: "blue-gray", label: "판매완료"},
   INSTANT_BUY: {color: "deep-orange", label: "즉시구매완료"},
   AUCTION: {color: "blue", label: "경매중"},
+  CLOSED: {color: "blue-gray", label: "경매 마감"},
   BLOCKED: {color: "red", label: "판매중지"},
 
   WIN: {color: "green", label: "낙찰 성공"},
