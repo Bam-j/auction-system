@@ -44,15 +44,15 @@ public class Auction extends BaseTimeEntity {
     @Column(name = "min_bid_increment", nullable = false)
     private Integer minBidIncrement;
 
-    @Column(name = "instant_purchase_price", length = 100)
-    private String instantPurchasePrice;
+    @Column(name = "instant_purchase_price")
+    private Integer instantPurchasePrice;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "price_unit")
     private PriceUnit priceUnit;
 
     @Builder
-    public Auction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, String instantPurchasePrice, PriceUnit priceUnit) {
+    public Auction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, Integer instantPurchasePrice, PriceUnit priceUnit) {
         this.product = product;
         this.user = user;
         this.endedAt = endedAt;
@@ -63,7 +63,7 @@ public class Auction extends BaseTimeEntity {
         this.priceUnit = priceUnit != null ? priceUnit : PriceUnit.EMERALD_BLOCK;
     }
 
-    public static Auction createAuction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, String instantPurchasePrice, PriceUnit priceUnit) {
+    public static Auction createAuction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, Integer instantPurchasePrice, PriceUnit priceUnit) {
         return Auction.builder()
                 .product(product)
                 .user(user)

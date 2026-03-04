@@ -234,7 +234,7 @@ public class PurchaseRequestService {
                 .productName(request.getAuction().getProduct().getProductName())
                 .requesterNickname(request.getUser().getNickname())
                 .sellerNickname(request.getAuction().getUser().getNickname())
-                .price(request.getAuction().getInstantPurchasePrice())
+                .price(request.getAuction().getInstantPurchasePrice() != null ? String.valueOf(request.getAuction().getInstantPurchasePrice()) : null)
                 .priceUnit(getPriceUnitDisplayName(request.getAuction().getPriceUnit()))
                 .status(request.getRequestStatus())
                 .requestDate(request.getCreatedAt())

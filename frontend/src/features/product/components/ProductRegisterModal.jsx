@@ -34,6 +34,36 @@ const ProductRegisterModal = () => {
   };
 
   const handleSubmit = async () => {
+    // Client-side validation for FIXED
+    if (formData.type === "FIXED") {
+      if (Number(formData.stock) < 1) {
+        Swal.fire({ icon: "error", title: "입력 오류", text: "재고 수량은 1개 이상이어야 합니다." });
+        return;
+      }
+    }
+
+    // Client-side validation for AUCTION
+    if (formData.type === "AUCTION") {
+      const now = new Date();
+      const endedAt = new Date(formData.ended_at);
+      if (endedAt <= now) {
+        Swal.fire({ icon: "error", title: "입력 오류", text: "경매 마감일은 현재 시간 이후여야 합니다." });
+        return;
+      }
+      if (Number(formData.start_price) < 0) {
+        Swal.fire({ icon: "error", title: "입력 오류", text: "경매 시작가는 0 이상이어야 합니다." });
+        return;
+      }
+      if (Number(formData.min_bid_increment) < 1) {
+        Swal.fire({ icon: "error", title: "입력 오류", text: "최소 입찰 단위는 1 이상이어야 합니다." });
+        return;
+      }
+      if (formData.instant_purchase_price && Number(formData.instant_purchase_price) < 0) {
+        Swal.fire({ icon: "error", title: "입력 오류", text: "즉시 구매가는 0 이상이어야 합니다." });
+        return;
+      }
+    }
+
     try {
       await registerProduct(formData);
 

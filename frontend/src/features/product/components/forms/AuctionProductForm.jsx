@@ -7,6 +7,10 @@ const PRICE_UNITS = [
 ];
 
 const AuctionProductForm = ({formData, handleChange}) => {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  const minDateTime = now.toISOString().slice(0, 16);
+
   return (
       <div className="flex flex-col gap-6">
         <div className="grid grid-cols-2 gap-6">
@@ -16,6 +20,7 @@ const AuctionProductForm = ({formData, handleChange}) => {
               name="ended_at"
               value={formData.ended_at}
               onChange={handleChange}
+              min={minDateTime}
               containerProps={{className: "min-w-[72px]"}}
           />
           <Input
@@ -24,6 +29,7 @@ const AuctionProductForm = ({formData, handleChange}) => {
               name="start_price"
               value={formData.start_price}
               onChange={handleChange}
+              min="0"
           />
         </div>
 
@@ -34,6 +40,7 @@ const AuctionProductForm = ({formData, handleChange}) => {
               name="min_bid_increment"
               value={formData.min_bid_increment}
               onChange={handleChange}
+              min="1"
           />
           <Input
               type="number"
@@ -41,6 +48,7 @@ const AuctionProductForm = ({formData, handleChange}) => {
               name="instant_purchase_price"
               value={formData.instant_purchase_price}
               onChange={handleChange}
+              min="0"
           />
         </div>
 

@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from "react";
+import {useNavigate} from "react-router-dom";
 import {Typography, Button, Input, Chip} from "@material-tailwind/react";
 import {CubeIcon, UserCircleIcon, CalendarDaysIcon} from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
@@ -8,8 +9,11 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
 import { translateCategory } from "../../../utils/categoryTranslations";
+import useAuthStore from "../../../stores/useAuthStore";
 
 const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
+  const navigate = useNavigate();
+  const {user} = useAuthStore();
   const contentRef = useRef(null);
   const [product, setProduct] = useState(initialProduct);
   const [purchaseAmount, setPurchaseAmount] = useState(1);
@@ -50,7 +54,26 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   // 경매 마감 여부 확인
   const isAuctionEnded = isAuction && product?.endedAt && new Date(product.endedAt) < new Date();
 
+  const checkAuth = () => {
+    if (!user) {
+      Swal.fire({
+        title: "로그인을 해주세요",
+        icon: "warning",
+        timer: 1000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      }).then(() => {
+        handleOpen();
+        navigate("/login");
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleBid = async () => {
+    if (!checkAuth()) return;
+    
     const currentPrice = isNaN(product.currentPrice) ? 0 : Number(product.currentPrice);
     const bidIncrement = isNaN(product.bidIncrement) ? 0 : Number(product.bidIncrement);
     const nextBidPrice = currentPrice + bidIncrement;
@@ -105,6 +128,8 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   };
 
   const handleBuyNow = async () => {
+    if (!checkAuth()) return;
+
     const price = product.instantPrice;
     const displayPrice = !isNaN(parseFloat(price)) && isFinite(price) 
       ? Number(price).toLocaleString() 
@@ -159,6 +184,8 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   };
 
   const handlePurchase = async () => {
+    if (!checkAuth()) return;
+
     if (parseInt(purchaseAmount) > product.stock) {
       Swal.fire({
         title: "수량 오류",

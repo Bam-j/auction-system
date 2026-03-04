@@ -2,6 +2,7 @@ package com.auction.backend.domain.sale.auction.dto;
 
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.global.enums.ProductCategory;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +28,7 @@ public class AuctionRegisterRequest {
     private ProductCategory category;
 
     @NotNull(message = "경매 종료 시간은 필수입니다.")
+    @Future(message = "경매 마감일은 현재 시간 이후여야 합니다.")
     @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endedAt;
 
@@ -38,7 +40,8 @@ public class AuctionRegisterRequest {
     @Min(value = 1, message = "최소 입찰 단위는 1 이상이어야 합니다.")
     private Integer minBidIncrement;
 
-    private String instantPurchasePrice;
+    @Min(value = 0, message = "즉시 구매가는 0 이상이어야 합니다.")
+    private Integer instantPurchasePrice;
 
     @NotNull(message = "가격 단위는 필수입니다.")
     private PriceUnit priceUnit;

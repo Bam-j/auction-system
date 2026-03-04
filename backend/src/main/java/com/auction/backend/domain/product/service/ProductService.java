@@ -87,7 +87,7 @@ public class ProductService {
                 startPrice = auction.getStartPrice();
                 currentPrice = auction.getCurrentPrice();
                 bidIncrement = auction.getMinBidIncrement();
-                instantPrice = auction.getInstantPurchasePrice();
+                instantPrice = auction.getInstantPurchasePrice() != null ? String.valueOf(auction.getInstantPurchasePrice()) : null;
                 auctionId = auction.getAuctionId();
                 
                 // 즉시 구매 완료된 경우 가격을 즉시 구매가로 설정

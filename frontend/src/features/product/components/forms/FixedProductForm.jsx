@@ -16,6 +16,7 @@ const FixedProductForm = ({formData, handleChange}) => {
             name="stock"
             value={formData.stock}
             onChange={handleChange}
+            min="1"
         />
       </div>
   );
