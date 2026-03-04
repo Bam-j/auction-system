@@ -52,12 +52,12 @@ const ProductCard = ({product}) => {
             {product.title}
           </Typography>
           
-          <div className="flex flex-col gap-1 items-center justify-center min-h-[50px]">
+          <div className="flex flex-col gap-1 items-center justify-center min-h-[60px]">
             <Typography color="blue" className="font-black text-lg">
               {product.type === "AUCTION" ? (
                 <span className="flex flex-col items-center">
                   <span className="text-[10px] uppercase tracking-tighter opacity-70 leading-none">
-                    {isInstantBuy ? "판매 방식" : "현재 최고가"}
+                    {isInstantBuy ? "판매 방식" : (statusInfo.text === "경매마감" || statusInfo.text === "품절" || currentStatus === "SOLD_OUT" ? "낙찰가" : "현재 최고가")}
                   </span>
                   {isInstantBuy ? (
                     <span className="text-orange-700">즉시 구매</span>
@@ -73,17 +73,19 @@ const ProductCard = ({product}) => {
               )}
             </Typography>
             
-            {product.type !== "AUCTION" && (
-              <Typography color="gray" className="text-[10px] font-medium opacity-80">
-                남은 수량: {product.stock != null ? `${product.stock}개` : "정보없음"}
-              </Typography>
-            )}
-            
-            {product.type === "AUCTION" && product.endedAt && (
-              <Typography color="red" className="text-[10px] font-bold animate-pulse">
-                마감: {new Date(product.endedAt).toLocaleDateString()}
-              </Typography>
-            )}
+            <div className="min-h-[15px]">
+              {product.type !== "AUCTION" ? (
+                <Typography color="gray" className="text-[10px] font-medium opacity-80">
+                  남은 수량: {product.stock != null ? `${product.stock}개` : "정보없음"}
+                </Typography>
+              ) : (
+                product.endedAt && (
+                  <Typography color="red" className="text-[10px] font-bold animate-pulse">
+                    마감: {new Date(product.endedAt).toLocaleDateString()}
+                  </Typography>
+                )
+              )}
+            </div>
           </div>
         </CardBody>
 

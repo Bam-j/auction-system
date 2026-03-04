@@ -117,22 +117,40 @@ const HomePage = () => {
                       <Typography variant="h6" color="blue-gray" className="mb-1 truncate">
                         {product.title}
                       </Typography>
-                      <div className="flex flex-col">
-                        {product.type === "AUCTION" && (
+                      
+                      <div className="min-h-[70px] flex flex-col justify-between">
+                        <div className="flex flex-col">
                           <Typography variant="small" className="text-[10px] text-gray-500 font-bold mb-0.5">
-                            {isInstantBuy ? "판매 방식" : "현재 최고가"}
+                            {product.type === "AUCTION" 
+                              ? (isInstantBuy ? "판매 방식" : (isAuctionEnded || currentStatus === "SOLD_OUT" ? "낙찰가" : "현재 최고가"))
+                              : "판매 가격"
+                            }
                           </Typography>
-                        )}
-                        {isInstantBuy ? (
-                          <Typography className="text-lg font-bold text-orange-700">
-                            즉시 구매
+                          {isInstantBuy ? (
+                            <Typography className="text-lg font-bold text-orange-700">
+                              즉시 구매
+                            </Typography>
+                          ) : (
+                            <PriceTag 
+                              price={product.price} 
+                              unit={product.priceUnit} 
+                              className="text-lg text-font-dark_blue"
+                            />
+                          )}
+                        </div>
+                        
+                        {product.type === "AUCTION" && product.endedAt ? (
+                          <Typography variant="small" className="text-[10px] text-red-500 font-medium">
+                            마감: {new Date(product.endedAt).toLocaleString('ko-KR', {
+                              year: 'numeric',
+                              month: 'numeric',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
                           </Typography>
                         ) : (
-                          <PriceTag 
-                            price={product.price} 
-                            unit={product.priceUnit} 
-                            className="text-lg text-font-dark_blue"
-                          />
+                          <div className="h-[15px]" /> /* 일반 상품용 높이 보정용 공백 */
                         )}
                       </div>
                     </CardBody>

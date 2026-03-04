@@ -322,7 +322,15 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                     </div>
                     <div className="flex items-center gap-2">
                       <CalendarDaysIcon className="h-5 w-5 text-gray-500"/>
-                      <Typography className="font-bold">{product.createdAt ? new Date(product.createdAt).toLocaleDateString() : "-"}</Typography>
+                      <Typography className="font-bold">
+                        {product.createdAt ? new Date(product.createdAt).toLocaleString('ko-KR', {
+                          year: 'numeric',
+                          month: 'numeric',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : "-"}
+                      </Typography>
                     </div>
                     {!isAuction && (
                         <div className="col-span-2 flex items-center gap-2">
