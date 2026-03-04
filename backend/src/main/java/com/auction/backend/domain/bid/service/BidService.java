@@ -3,7 +3,10 @@ package com.auction.backend.domain.bid.service;
 import com.auction.backend.domain.bid.dto.BidCreateRequest;
 import com.auction.backend.domain.bid.dto.BidResponse;
 import com.auction.backend.domain.bid.entity.Bid;
+import com.auction.backend.domain.bid.entity.BidStatus;
 import com.auction.backend.domain.bid.repository.BidRepository;
+import com.auction.backend.domain.product.entity.Product;
+import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.user.entity.User;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,15 +66,38 @@ public class BidService {
     }
 
     public BidResponse convertToResponse(Bid bid) {
+        BidStatus status = bid.getBidStatus();
+        Auction auction = bid.getAuction();
+        Product product = auction.getProduct();
+
+        // 경매가 종료되었는지 확인 (마감 기한 지남 or 상태가 SOLD_OUT/INSTANT_BUY)
+        boolean isEnded = LocalDateTime.now().isAfter(auction.getEndedAt()) ||
+                product.getSalesStatus() == SalesStatus.SOLD_OUT ||
+                product.getSalesStatus() == SalesStatus.INSTANT_BUY;
+
+        if (isEnded) {
+            if (product.getSalesStatus() == SalesStatus.INSTANT_BUY) {
+                // 즉시 구매로 판매된 경우 모든 입찰은 패찰
+                status = BidStatus.FAILED;
+            } else {
+                // 경매 최고가(currentPrice)와 입찰가가 일치하는 경우만 낙찰(SUCCESS), 나머지는 패찰(FAILED)
+                if (bid.getBidPrice().equals(auction.getCurrentPrice())) {
+                    status = BidStatus.SUCCESS;
+                } else {
+                    status = BidStatus.FAILED;
+                }
+            }
+        }
+
         return BidResponse.builder()
                 .id(bid.getBidId())
-                .productId(bid.getAuction().getProduct().getProductId())
-                .productName(bid.getAuction().getProduct().getProductName())
+                .productId(product.getProductId())
+                .productName(product.getProductName())
                 .bidderName(bid.getUser().getNickname())
-                .sellerName(bid.getAuction().getProduct().getUser().getNickname())
+                .sellerName(product.getUser().getNickname())
                 .bidPrice(bid.getBidPrice())
-                .priceUnit(getPriceUnitDisplayName(bid.getAuction().getPriceUnit()))
-                .status(bid.getBidStatus())
+                .priceUnit(getPriceUnitDisplayName(auction.getPriceUnit()))
+                .status(status)
                 .bidDate(bid.getCreatedAt())
                 .build();
     }

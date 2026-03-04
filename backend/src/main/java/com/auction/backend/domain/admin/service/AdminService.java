@@ -56,4 +56,18 @@ public class AdminService {
                 .map(bidService::convertToResponse)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void blockUser(Long userId) {
+        com.auction.backend.domain.user.entity.User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.block();
+    }
+
+    @Transactional
+    public void unblockUser(Long userId) {
+        com.auction.backend.domain.user.entity.User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        user.unblock();
+    }
 }

@@ -7,9 +7,7 @@ import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +21,18 @@ public class AdminController {
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    @PostMapping("/users/{userId}/block")
+    public ResponseEntity<Void> blockUser(@PathVariable Long userId) {
+        adminService.blockUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/users/{userId}/unblock")
+    public ResponseEntity<Void> unblockUser(@PathVariable Long userId) {
+        adminService.unblockUser(userId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/products")

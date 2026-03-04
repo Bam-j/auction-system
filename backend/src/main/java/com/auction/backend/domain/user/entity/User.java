@@ -62,6 +62,14 @@ public class User extends BaseTimeEntity {
         this.password = encodedNewPassword;
     }
 
+    public void block() {
+        this.status = UserStatus.BLOCKED;
+    }
+
+    public void unblock() {
+        this.status = UserStatus.ACTIVE;
+    }
+
     public void markAsDeleted() {
         this.status = UserStatus.DELETED;
 

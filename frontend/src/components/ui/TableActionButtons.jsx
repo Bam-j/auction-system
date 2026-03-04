@@ -21,7 +21,7 @@ const TableActionButtons = ({
         {onDelete && (
             <Button
                 size="sm"
-                color={isBlocked ? "green" : "red"}
+                color={isBlocked ? "blue" : "red"}
                 variant={isBlocked ? "outlined" : "gradient"}
                 className="whitespace-nowrap px-3"
                 onClick={onDelete}

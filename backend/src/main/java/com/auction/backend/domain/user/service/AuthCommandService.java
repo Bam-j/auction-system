@@ -68,6 +68,10 @@ public class AuthCommandService {
             throw new DisabledException("탈퇴한 계정입니다.");
         }
 
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new IllegalArgumentException("차단된 계정입니다.");
+        }
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
