@@ -7,6 +7,7 @@ import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
 import { translateCategory } from "../../../utils/categoryTranslations";
 import useAuthStore from "../../../stores/useAuthStore";
@@ -263,7 +264,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
         <div ref={contentRef} className="flex flex-col gap-6 p-6 h-full max-h-[70vh] overflow-y-auto outline-none">
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>정보를 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="medium" />
             </div>
           ) : !product ? (
             <div className="text-center p-10">

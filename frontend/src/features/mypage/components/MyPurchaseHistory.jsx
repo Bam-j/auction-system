@@ -4,6 +4,7 @@ import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyPurchaseRequests, cancelPurchaseRequest } from "../../product/api/productApi";
 import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
@@ -114,7 +115,7 @@ const MyPurchaseHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>내역을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : purchases.length === 0 ? (
             <EmptyState message="구매 내역이 없습니다."/>

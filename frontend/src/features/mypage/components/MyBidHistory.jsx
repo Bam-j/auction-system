@@ -5,6 +5,7 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyBids } from "../../product/api/productApi";
@@ -66,7 +67,7 @@ const MyBidHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>입찰 내역을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : bids.length === 0 ? (
             <EmptyState message="입찰 참여 내역이 없습니다."/>

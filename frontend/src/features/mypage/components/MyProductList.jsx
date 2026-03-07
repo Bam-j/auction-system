@@ -8,6 +8,7 @@ import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import EmptyState from "../../../components/ui/EmptyState";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyProducts, endSale } from "../../product/api/productApi";
@@ -122,7 +123,7 @@ const MyProductList = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>목록을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : products.length === 0 ? (
             <EmptyState message="등록한 상품이 없습니다."/>

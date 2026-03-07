@@ -6,6 +6,7 @@ import {
 import PriceTag from "../components/ui/PriceTag";
 import StatusBadge from "../components/ui/StatusBadge";
 import EmptyState from "../components/ui/EmptyState";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ProductDetailModal from "../features/product/components/ProductDetailModal";
 import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
@@ -78,7 +79,7 @@ const HomePage = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>상품을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : products.length === 0 ? (
             <EmptyState message="등록된 상품이 없습니다."/>

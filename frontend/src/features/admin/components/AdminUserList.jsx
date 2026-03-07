@@ -4,6 +4,7 @@ import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllUsers, blockUser, unblockUser } from "../api/adminApi";
 import { Typography } from "@material-tailwind/react";
@@ -104,7 +105,7 @@ const AdminUserList = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>회원 목록을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : users.length === 0 ? (
             <EmptyState message="회원이 없습니다."/>

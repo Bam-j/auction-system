@@ -7,6 +7,7 @@ import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
 import EmptyState from "../../../components/ui/EmptyState";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
@@ -137,7 +138,7 @@ const MySalesRequests = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <Typography>요청 목록을 불러오는 중입니다...</Typography>
+              <LoadingSpinner size="large" />
             </div>
         ) : requests.length === 0 ? (
             <EmptyState message="들어온 구매 요청이 없습니다."/>
