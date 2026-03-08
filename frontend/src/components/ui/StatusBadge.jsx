@@ -26,7 +26,11 @@ const STATUS_CONFIG = {
   REJECTED: {color: "red", label: "거절됨"},
 
   ACTIVE: {color: "green", label: "정상"},
-  BANNED: {color: "red", label: "차단됨"}
+  BANNED: {color: "red", label: "차단됨"},
+
+  // User Roles
+  USER: {color: "blue", label: "일반 사용자"},
+  ADMIN: {color: "purple", label: "관리자"}
 };
 
 const StatusBadge = ({status}) => {

@@ -11,6 +11,7 @@ import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
 import com.auction.backend.domain.purchaserequest.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.purchaserequest.service.PurchaseRequestService;
+import com.auction.backend.domain.user.entity.UserStatus;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
 import com.auction.backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,18 @@ public class AdminService {
     private final PurchaseRequestService purchaseRequestService;
     private final BidService bidService;
 
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream()
+    public List<UserResponse> getAllUsers(String keyword, String status) {
+        UserStatus userStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            userStatus = UserStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        return userRepository.findByKeywordAndStatus(searchKeyword, userStatus).stream()
                 .map(UserResponse::from)
                 .collect(Collectors.toList());
     }

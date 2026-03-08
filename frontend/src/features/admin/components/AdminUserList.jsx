@@ -16,11 +16,12 @@ const AdminUserList = () => {
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (params = {}) => {
     setIsLoading(true);
     try {
-      const response = await getAllUsers();
+      const response = await getAllUsers(params);
       setUsers(response.data);
     } catch (error) {
       console.error("Failed to fetch users:", error);
@@ -30,7 +31,7 @@ const AdminUserList = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(searchParams);
   }, []);
 
   const userFilters = [
@@ -38,15 +39,20 @@ const AdminUserList = () => {
       id: "status",
       label: "계정 상태",
       options: [
-        {label: "전체", value: "ALL"},
-        {label: "정상 (ACTIVE)", value: "ACTIVE"},
-        {label: "차단됨 (BLOCKED)", value: "BLOCKED"},
+        {label: "정상", value: "ACTIVE"},
+        {label: "탈퇴함", value: "DELETED"},
+        {label: "차단됨", value: "BLOCKED"},
       ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("관리자 유저 검색:", searchData);
+    const params = {
+      keyword: searchData.keyword || "",
+      status: searchData.status || ""
+    };
+    setSearchParams(params);
+    fetchUsers(params);
   };
 
   const handleToggleBlock = async (user) => {

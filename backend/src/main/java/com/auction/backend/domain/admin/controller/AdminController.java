@@ -19,8 +19,10 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
+    public ResponseEntity<List<UserResponse>> getAllUsers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String status) {
+        return ResponseEntity.ok(adminService.getAllUsers(keyword, status));
     }
 
     @PostMapping("/users/{userId}/block")
