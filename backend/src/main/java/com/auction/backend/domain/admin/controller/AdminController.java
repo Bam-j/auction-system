@@ -38,8 +38,12 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductListResponse>> getAllProducts() {
-        return ResponseEntity.ok(adminService.getAllProducts());
+    public ResponseEntity<List<ProductListResponse>> getAllProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(adminService.getAllProducts(category, status, searchType, keyword));
     }
 
     @GetMapping("/purchase-requests")

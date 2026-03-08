@@ -155,7 +155,9 @@ const MyProductList = () => {
                           unit={product.priceUnit}
                         />
                       </td>
-                      <td className="p-4 text-left text-gray-600">{product.stock || "-"}개</td>
+                      <td className="p-4 text-left text-gray-600">
+                        {product.type === "AUCTION" || product.status === "AUCTION" ? "-" : `${product.stock || 0}개`}
+                      </td>
                       <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
                       
                       <td className="p-4 text-left">

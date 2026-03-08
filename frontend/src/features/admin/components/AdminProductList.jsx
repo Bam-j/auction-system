@@ -17,19 +17,22 @@ const AdminProductList = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
+
+  const fetchProducts = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getAllProducts(params);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getAllProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProducts();
+    fetchProducts(searchParams);
   }, []);
 
   const productFilters = [
@@ -55,14 +58,32 @@ const AdminProductList = () => {
       label: "상태",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "판매중", value: "SELLING"},
-        {label: "차단됨", value: "BLOCKED"},
+        {label: "판매중", value: "FIXED_SALES"},
+        {label: "경매중", value: "AUCTION"},
+        {label: "판매 완료", value: "SOLD_OUT"},
+        {label: "즉시구매완료", value: "INSTANT_BUY"},
+      ],
+    },
+    {
+      id: "searchType",
+      label: "검색 분류",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
+        {label: "등록자", value: "registrant"},
       ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("관리자 상품 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    fetchProducts(params);
   };
 
   const handleViewDetail = (product) => {
@@ -87,8 +108,9 @@ const AdminProductList = () => {
         ) : (
             <>
               <CommonTable
-                  title="전체 등록 상품 관리"
+                  title="전체 상품 관리"
                   headers={["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"]}
+
                   pagination={
                     products.length > 0 && (
                       <Pagination 
@@ -106,7 +128,9 @@ const AdminProductList = () => {
                       <td className="p-4 text-left font-bold text-blue-gray-900">{product.title}</td>
                       <td className="p-4 text-left text-gray-600">{new Date(product.createdAt).toLocaleDateString()}</td>
                       <td className="p-4 text-left"><PriceTag price={product.price} unit={product.priceUnit}/></td>
-                      <td className="p-4 text-left text-gray-600">{product.stock || "-"}개</td>
+                      <td className="p-4 text-left text-gray-600">
+                        {product.type === "AUCTION" || product.status === "AUCTION" ? "-" : `${product.stock || 0}개`}
+                      </td>
                       <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
                       
                       <td className="p-4 text-left">

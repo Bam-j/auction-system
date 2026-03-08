@@ -11,6 +11,8 @@ import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
 import com.auction.backend.domain.purchaserequest.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.purchaserequest.service.PurchaseRequestService;
+import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.user.entity.UserStatus;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
 import com.auction.backend.domain.user.repository.UserRepository;
@@ -50,8 +52,28 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductListResponse> getAllProducts() {
-        return productRepository.findAll().stream()
+    public List<ProductListResponse> getAllProducts(String category, String status, String searchType, String keyword) {
+        ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = ProductCategory.valueOf(category);
+        }
+
+        SalesStatus salesStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            salesStatus = SalesStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return productRepository.findByFilters(productCategory, salesStatus, stype, searchKeyword).stream()
                 .map(product -> productService.getProductDetail(product.getProductId()))
                 .collect(Collectors.toList());
     }
