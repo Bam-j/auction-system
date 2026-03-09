@@ -80,7 +80,7 @@ const MyInstantBuyHistory = () => {
     setPage(1);
     fetchInstantBuyHistory(params);
   };
-ㅎㅅ
+
   const handleApprove = async (id) => {
     const result = await Swal.fire({
       title: "요청 수락",
