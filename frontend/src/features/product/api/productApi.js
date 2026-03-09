@@ -89,8 +89,8 @@ export const getMyInstantBuyRequests = () => {
 };
 
 // 모든 즉시 구매 요청 조회 (관리자용)
-export const getAllInstantBuyRequests = () => {
-  return api.get("/purchase-requests/instant/admin");
+export const getAllInstantBuyRequests = (params) => {
+  return api.get("/purchase-requests/instant/admin", { params });
 };
 
 // 즉시 구매 요청 수락

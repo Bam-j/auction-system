@@ -78,14 +78,54 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
-    public List<PurchaseRequestResponse> getAllPurchaseRequests() {
-        return purchaseRequestRepository.findAll().stream()
+    public List<PurchaseRequestResponse> getAllPurchaseRequests(String category, String status, String searchType, String keyword) {
+        ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return purchaseRequestRepository.findByFilters(productCategory, requestStatus, stype, searchKeyword).stream()
                 .map(purchaseRequestService::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<BidResponse> getAllBids() {
-        return bidRepository.findAll().stream()
+    public List<BidResponse> getAllBids(String category, String status, String searchType, String keyword) {
+        ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.domain.bid.entity.BidStatus bidStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            bidStatus = com.auction.backend.domain.bid.entity.BidStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return bidRepository.findByFilters(productCategory, bidStatus, stype, searchKeyword).stream()
                 .map(bidService::convertToResponse)
                 .collect(Collectors.toList());
     }

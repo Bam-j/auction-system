@@ -10,4 +10,18 @@ import java.util.List;
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByUserOrderByCreatedAtDesc(User user);
+
+    @org.springframework.data.jpa.repository.Query("SELECT b FROM Bid b WHERE " +
+            "(:category IS NULL OR b.auction.product.category = :category) AND " +
+            "(:status IS NULL OR b.bidStatus = :status) AND " +
+            "(:keyword IS NULL OR " +
+            "  (:searchType = 'seller' AND (b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType = 'bidder' AND (b.user.username LIKE %:keyword% OR b.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType IS NULL AND (b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword% OR b.user.username LIKE %:keyword% OR b.user.nickname LIKE %:keyword%))" +
+            ")")
+    List<Bid> findByFilters(
+            @org.springframework.data.repository.query.Param("category") com.auction.backend.global.enums.ProductCategory category,
+            @org.springframework.data.repository.query.Param("status") com.auction.backend.domain.bid.entity.BidStatus status,
+            @org.springframework.data.repository.query.Param("searchType") String searchType,
+            @org.springframework.data.repository.query.Param("keyword") String keyword);
 }

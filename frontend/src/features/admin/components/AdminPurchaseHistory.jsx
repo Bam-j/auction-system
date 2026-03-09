@@ -2,12 +2,10 @@ import React, {useState, useEffect} from "react";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllPurchaseRequests } from "../api/adminApi";
-import { Typography } from "@material-tailwind/react";
 import StatusBadge from "../../../components/ui/StatusBadge";
 
 const TABLE_HEAD = ["ID", "판매자", "상품명", "구매자", "구매일", "구매금액", "구매량", "상태"];
@@ -16,41 +14,79 @@ const AdminPurchaseHistory = () => {
   const [page, setPage] = useState(1);
   const [purchases, setPurchases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
+
+  const fetchPurchases = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getAllPurchaseRequests(params);
+      setPurchases(response.data);
+    } catch (error) {
+      console.error("Failed to fetch purchase history:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPurchases = async () => {
-      try {
-        const response = await getAllPurchaseRequests();
-        setPurchases(response.data);
-      } catch (error) {
-        console.error("Failed to fetch purchase history:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchPurchases();
+    fetchPurchases(searchParams);
   }, []);
 
   const purchaseFilters = [
     {
-      id: "type",
-      label: "거래 유형",
+      id: "category",
+      label: "카테고리",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "일반 구매", value: "FIXED"},
-        {label: "경매 낙찰", value: "AUCTION"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+        {label: "도구", value: "TOOL"},
+        {label: "치장품", value: "COSMETIC"},
+        {label: "칭호", value: "TITLE"},
+        {label: "블록", value: "BLOCK"},
+        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
+        {label: "광석", value: "ORE"},
+        {label: "성장 재화", value: "GROWTH_GOODS"},
+        {label: "기타", value: "ETC"},
+      ],
+    },
+    {
+      id: "status",
+      label: "상태",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "대기중", value: "PENDING"},
+        {label: "승인됨", value: "APPROVED"},
+        {label: "거부됨", value: "REJECTED"},
+      ],
+    },
+    {
+      id: "searchType",
+      label: "검색 분류",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "판매자", value: "seller"},
+        {label: "구매자", value: "buyer"},
       ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("관리자 구매 기록 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    setPage(1);
+    fetchPurchases(params);
   };
 
   return (
       <div className="flex flex-col gap-4 h-full">
         <CommonFilterBar
-            searchPlaceholder="상품명, 판매자, 구매자 검색"
+            searchPlaceholder="판매자 또는 구매자 검색"
             filterConfigs={purchaseFilters}
             onSearch={handleSearch}
         />
@@ -60,10 +96,10 @@ const AdminPurchaseHistory = () => {
               <LoadingSpinner size="large" />
             </div>
         ) : purchases.length === 0 ? (
-            <EmptyState message="구매 기록이 없습니다."/>
+            <EmptyState message="일반 구매 기록이 없습니다."/>
         ) : (
             <CommonTable
-                title="전체 구매 기록 열람"
+                title="전체 일반 구매 기록"
                 headers={TABLE_HEAD}
                 pagination={
                   purchases.length > 0 && (

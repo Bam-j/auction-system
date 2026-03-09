@@ -15,4 +15,18 @@ public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest
 
     @Query("SELECT pr FROM PurchaseRequest pr WHERE pr.fixedSale.user = :seller")
     List<PurchaseRequest> findBySeller(@Param("seller") User seller);
+
+    @Query("SELECT pr FROM PurchaseRequest pr WHERE " +
+            "(:category IS NULL OR pr.fixedSale.product.category = :category) AND " +
+            "(:status IS NULL OR pr.requestStatus = :status) AND " +
+            "(:keyword IS NULL OR " +
+            "  (:searchType = 'seller' AND (pr.fixedSale.user.username LIKE %:keyword% OR pr.fixedSale.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType = 'buyer' AND (pr.user.username LIKE %:keyword% OR pr.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType IS NULL AND (pr.fixedSale.user.username LIKE %:keyword% OR pr.fixedSale.user.nickname LIKE %:keyword% OR pr.user.username LIKE %:keyword% OR pr.user.nickname LIKE %:keyword%))" +
+            ")")
+    List<PurchaseRequest> findByFilters(
+            @Param("category") com.auction.backend.global.enums.ProductCategory category,
+            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("searchType") String searchType,
+            @Param("keyword") String keyword);
 }

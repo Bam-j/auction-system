@@ -119,8 +119,28 @@ public class PurchaseRequestService {
                 .collect(Collectors.toList());
     }
 
-    public List<InstantBuyRequestResponse> getAllInstantBuyRequests() {
-        return instantBuyRequestRepository.findAll().stream()
+    public List<InstantBuyRequestResponse> getAllInstantBuyRequests(String category, String status, String searchType, String keyword) {
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return instantBuyRequestRepository.findByFilters(productCategory, requestStatus, stype, searchKeyword).stream()
                 .map(this::convertToInstantResponse)
                 .collect(Collectors.toList());
     }

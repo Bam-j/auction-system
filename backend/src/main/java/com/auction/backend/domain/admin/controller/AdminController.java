@@ -47,12 +47,20 @@ public class AdminController {
     }
 
     @GetMapping("/purchase-requests")
-    public ResponseEntity<List<PurchaseRequestResponse>> getAllPurchaseRequests() {
-        return ResponseEntity.ok(adminService.getAllPurchaseRequests());
+    public ResponseEntity<List<PurchaseRequestResponse>> getAllPurchaseRequests(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(adminService.getAllPurchaseRequests(category, status, searchType, keyword));
     }
 
     @GetMapping("/bids")
-    public ResponseEntity<List<BidResponse>> getAllBids() {
-        return ResponseEntity.ok(adminService.getAllBids());
+    public ResponseEntity<List<BidResponse>> getAllBids(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(adminService.getAllBids(category, status, searchType, keyword));
     }
 }

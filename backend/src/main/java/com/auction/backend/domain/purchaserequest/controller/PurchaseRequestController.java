@@ -54,8 +54,12 @@ public class PurchaseRequestController {
     }
 
     @GetMapping("/instant/admin")
-    public ResponseEntity<List<InstantBuyRequestResponse>> getAllInstantBuyRequests() {
-        return ResponseEntity.ok(purchaseRequestService.getAllInstantBuyRequests());
+    public ResponseEntity<List<InstantBuyRequestResponse>> getAllInstantBuyRequests(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
+        return ResponseEntity.ok(purchaseRequestService.getAllInstantBuyRequests(category, status, searchType, keyword));
     }
 
     @PostMapping("/instant/{requestId}/approve")
