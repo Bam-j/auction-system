@@ -24,8 +24,28 @@ public class ProductService {
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
-    public List<ProductListResponse> getAllProducts() {
-        return productRepository.findAll().stream()
+    public List<ProductListResponse> getAllProducts(String category, String status, String searchType, String keyword) {
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.domain.product.entity.SalesStatus salesStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            salesStatus = com.auction.backend.domain.product.entity.SalesStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return productRepository.findByFilters(productCategory, salesStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

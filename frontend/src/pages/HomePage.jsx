@@ -17,20 +17,22 @@ const HomePage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
+
+  const fetchProducts = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getProducts(params);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await getProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProducts();
+    fetchProducts(searchParams);
   }, []);
 
   const productListFilters = [
@@ -51,10 +53,36 @@ const HomePage = () => {
         {label: "기타", value: "ETC"},
       ],
     },
+    {
+      id: "searchType",
+      label: "검색 분류",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
+        {label: "판매자", value: "seller"},
+      ],
+    },
+    {
+      id: "status",
+      label: "판매 방식",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "일반 판매", value: "FIXED_SALES"},
+        {label: "경매 중", value: "AUCTION"},
+        {label: "완료", value: "SOLD_OUT"},
+      ],
+    }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("메인 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    fetchProducts(params);
   };
 
   const handleCardClick = (product) => {
@@ -65,13 +93,8 @@ const HomePage = () => {
   return (
       <div className="max-w-screen-xl mx-auto p-6 min-h-screen">
         <div className="flex flex-col mb-6 gap-4">
-          {/* 현재 단일 서비스를 제공하여 제목열을 주석 처리, 추후 확장 시 주석 해제
-          <Typography variant="h3" className="font-bold text-font-dark_blue px-1">
-            거래소
-          </Typography>
-          */}
           <CommonFilterBar
-              searchPlaceholder="어떤 아이템을 찾으시나요?"
+              searchPlaceholder="검색어 입력"
               filterConfigs={productListFilters}
               onSearch={handleSearch}
           />

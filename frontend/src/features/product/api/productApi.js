@@ -64,8 +64,8 @@ export const bidAuction = (bidData) => {
 };
 
 // 모든 상품 조회
-export const getProducts = () => {
-  return api.get("/products");
+export const getProducts = (params) => {
+  return api.get("/products", { params });
 };
 
 // 상품 상세 조회

@@ -17,10 +17,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE " +
             "(:category IS NULL OR p.category = :category) AND " +
-            "(:status IS NULL OR p.salesStatus = :status) AND " +
+            "(:status IS NULL OR p.salesStatus = :status OR (:status = 'SOLD_OUT' AND p.salesStatus = 'INSTANT_BUY')) AND " +
             "(:keyword IS NULL OR " +
             "  (:searchType = 'productName' AND p.productName LIKE %:keyword%) OR " +
-            "  (:searchType = 'registrant' AND (p.user.username LIKE %:keyword% OR p.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType = 'seller' AND (p.user.username LIKE %:keyword% OR p.user.nickname LIKE %:keyword%)) OR " +
             "  (:searchType IS NULL AND (p.productName LIKE %:keyword% OR p.user.username LIKE %:keyword% OR p.user.nickname LIKE %:keyword%))" +
             ")")
     List<Product> findByFilters(
