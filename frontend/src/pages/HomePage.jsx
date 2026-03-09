@@ -67,9 +67,10 @@ const HomePage = () => {
       label: "판매 방식",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "일반 판매", value: "FIXED_SALES"},
-        {label: "경매 중", value: "AUCTION"},
-        {label: "완료", value: "SOLD_OUT"},
+        {label: "판매중", value: "FIXED_SALES"},
+        {label: "경매중", value: "AUCTION"},
+        {label: "즉시구매완료", value: "INSTANT_BUY"},
+        {label: "판매완료", value: "SOLD_OUT"},
       ],
     }
   ];

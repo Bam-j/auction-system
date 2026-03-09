@@ -21,11 +21,12 @@ const MyProductList = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
 
-  const fetchMyProducts = async () => {
+  const fetchMyProducts = async (params = {}) => {
     setIsLoading(true);
     try {
-      const response = await getMyProducts();
+      const response = await getMyProducts(params);
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to fetch my products:", error);
@@ -35,17 +36,25 @@ const MyProductList = () => {
   };
 
   useEffect(() => {
-    fetchMyProducts();
+    fetchMyProducts(searchParams);
   }, []);
 
   const filterConfigs = [
     {
-      id: "type",
-      label: "판매 방식",
+      id: "category",
+      label: "카테고리",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "일반 판매", value: "FIXED"},
-        {label: "경매", value: "AUCTION"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+        {label: "도구", value: "TOOL"},
+        {label: "치장품", value: "COSMETIC"},
+        {label: "칭호", value: "TITLE"},
+        {label: "블록", value: "BLOCK"},
+        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
+        {label: "광석", value: "ORE"},
+        {label: "성장 재화", value: "GROWTH_GOODS"},
+        {label: "기타", value: "ETC"},
       ],
     },
     {
@@ -53,14 +62,23 @@ const MyProductList = () => {
       label: "상태",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "판매중", value: "SELLING"},
+        {label: "판매중", value: "FIXED_SALES"},
+        {label: "경매중", value: "AUCTION"},
+        {label: "즉시구매완료", value: "INSTANT_BUY"},
         {label: "판매완료", value: "SOLD_OUT"},
       ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("등록 상품 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    setPage(1);
+    fetchMyProducts(params);
   };
 
   const handleViewDetail = (product) => {

@@ -19,25 +19,44 @@ const MyBidHistory = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [bids, setBids] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
+
+  const fetchMyBids = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getMyBids(params);
+      setBids(response.data);
+    } catch (error) {
+      console.error("Failed to fetch my bids:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchMyBids = async () => {
-      try {
-        const response = await getMyBids();
-        setBids(response.data);
-      } catch (error) {
-        console.error("Failed to fetch my bids:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMyBids();
+    fetchMyBids(searchParams);
   }, []);
 
   const filterConfigs = [
     {
-      id: "result",
+      id: "category",
+      label: "카테고리",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+        {label: "도구", value: "TOOL"},
+        {label: "치장품", value: "COSMETIC"},
+        {label: "칭호", value: "TITLE"},
+        {label: "블록", value: "BLOCK"},
+        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
+        {label: "광석", value: "ORE"},
+        {label: "성장 재화", value: "GROWTH_GOODS"},
+        {label: "기타", value: "ETC"},
+      ],
+    },
+    {
+      id: "status",
       label: "입찰 결과",
       options: [
         {label: "전체", value: "ALL"},
@@ -45,11 +64,27 @@ const MyBidHistory = () => {
         {label: "낙찰", value: "SUCCESS"},
         {label: "유찰/패배", value: "FAILED"},
       ],
+    },
+    {
+      id: "searchType",
+      label: "검색 분류",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "판매자", value: "seller"},
+      ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("입찰 기록 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    setPage(1);
+    fetchMyBids(params);
   };
 
   const handleViewDetail = (item) => {

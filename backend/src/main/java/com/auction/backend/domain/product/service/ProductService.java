@@ -50,10 +50,26 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public List<ProductListResponse> getUserProducts(Long userId) {
+    public List<ProductListResponse> getUserProducts(Long userId, String category, String status, String keyword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        return productRepository.findByUser(user).stream()
+
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.domain.product.entity.SalesStatus salesStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            salesStatus = com.auction.backend.domain.product.entity.SalesStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        return productRepository.findByUserWithFilters(user, productCategory, salesStatus, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

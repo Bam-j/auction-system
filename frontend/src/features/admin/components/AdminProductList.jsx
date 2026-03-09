@@ -60,8 +60,8 @@ const AdminProductList = () => {
         {label: "전체", value: "ALL"},
         {label: "판매중", value: "FIXED_SALES"},
         {label: "경매중", value: "AUCTION"},
-        {label: "판매 완료", value: "SOLD_OUT"},
         {label: "즉시구매완료", value: "INSTANT_BUY"},
+        {label: "판매완료", value: "SOLD_OUT"},
       ],
     },
     {

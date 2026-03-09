@@ -97,24 +97,55 @@ public class PurchaseRequestService {
         return instantBuyRequest.getInstantBuyRequestId();
     }
 
-    public List<PurchaseRequestResponse> getUserPurchaseRequests(Long userId) {
+    public List<PurchaseRequestResponse> getUserPurchaseRequests(Long userId, String category, String status, String searchType, String keyword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
         
-        return purchaseRequestRepository.findByUser(user).stream()
+        return purchaseRequestRepository.findByUserWithFilters(user, productCategory, requestStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<InstantBuyRequestResponse> getUserInstantBuyRequests(Long userId) {
+    public List<InstantBuyRequestResponse> getUserInstantBuyRequests(Long userId, String category, String status, String keyword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        List<InstantBuyRequest> sent = instantBuyRequestRepository.findByUser(user);
-        List<InstantBuyRequest> received = instantBuyRequestRepository.findBySeller(user);
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
 
-        return Stream.concat(sent.stream(), received.stream())
-                .distinct()
+        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        return instantBuyRequestRepository.findByUserOrSellerWithFilters(user, productCategory, requestStatus, searchKeyword).stream()
                 .map(this::convertToInstantResponse)
                 .collect(Collectors.toList());
     }
@@ -145,11 +176,31 @@ public class PurchaseRequestService {
                 .collect(Collectors.toList());
     }
 
-    public List<PurchaseRequestResponse> getSellerPurchaseRequests(Long userId) {
+    public List<PurchaseRequestResponse> getSellerPurchaseRequests(Long userId, String category, String status, String searchType, String keyword) {
         User seller = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        return purchaseRequestRepository.findBySeller(seller).stream()
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return purchaseRequestRepository.findBySellerWithFilters(seller, productCategory, requestStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

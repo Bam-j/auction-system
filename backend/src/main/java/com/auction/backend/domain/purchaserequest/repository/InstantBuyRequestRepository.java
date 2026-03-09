@@ -30,4 +30,18 @@ public interface InstantBuyRequestRepository extends JpaRepository<InstantBuyReq
             @Param("status") com.auction.backend.global.enums.RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
+
+    @Query("SELECT ibr FROM InstantBuyRequest ibr WHERE (ibr.user = :user OR ibr.auction.user = :user) AND " +
+            "(:category IS NULL OR ibr.auction.product.category = :category) AND " +
+            "(:status IS NULL OR ibr.requestStatus = :status) AND " +
+            "(:keyword IS NULL OR " +
+            "  (ibr.auction.product.productName LIKE %:keyword% OR " +
+            "   (ibr.user != :user AND (ibr.user.username LIKE %:keyword% OR ibr.user.nickname LIKE %:keyword%)) OR " +
+            "   (ibr.auction.user != :user AND (ibr.auction.user.username LIKE %:keyword% OR ibr.auction.user.nickname LIKE %:keyword%)))" +
+            ")")
+    List<InstantBuyRequest> findByUserOrSellerWithFilters(
+            @Param("user") User user,
+            @Param("category") com.auction.backend.global.enums.ProductCategory category,
+            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("keyword") String keyword);
 }

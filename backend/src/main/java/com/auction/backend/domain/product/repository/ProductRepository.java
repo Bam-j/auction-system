@@ -17,7 +17,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE " +
             "(:category IS NULL OR p.category = :category) AND " +
-            "(:status IS NULL OR p.salesStatus = :status OR (:status = 'SOLD_OUT' AND p.salesStatus = 'INSTANT_BUY')) AND " +
+            "(:status IS NULL OR p.salesStatus = :status) AND " +
             "(:keyword IS NULL OR " +
             "  (:searchType = 'productName' AND p.productName LIKE %:keyword%) OR " +
             "  (:searchType = 'seller' AND (p.user.username LIKE %:keyword% OR p.user.nickname LIKE %:keyword%)) OR " +
@@ -27,5 +27,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("category") ProductCategory category,
             @Param("status") SalesStatus status,
             @Param("searchType") String searchType,
+            @Param("keyword") String keyword);
+
+    @Query("SELECT p FROM Product p WHERE p.user = :user AND " +
+            "(:category IS NULL OR p.category = :category) AND " +
+            "(:status IS NULL OR p.salesStatus = :status) AND " +
+            "(:keyword IS NULL OR p.productName LIKE %:keyword%)")
+    List<Product> findByUserWithFilters(
+            @Param("user") User user,
+            @Param("category") ProductCategory category,
+            @Param("status") SalesStatus status,
             @Param("keyword") String keyword);
 }

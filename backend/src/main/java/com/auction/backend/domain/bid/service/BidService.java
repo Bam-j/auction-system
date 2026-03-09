@@ -56,11 +56,31 @@ public class BidService {
         return bid.getBidId();
     }
 
-    public List<BidResponse> getMyBids(Long userId) {
+    public List<BidResponse> getMyBids(Long userId, String category, String status, String searchType, String keyword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        return bidRepository.findByUserOrderByCreatedAtDesc(user).stream()
+        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
+            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+        }
+
+        com.auction.backend.domain.bid.entity.BidStatus bidStatus = null;
+        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
+            bidStatus = com.auction.backend.domain.bid.entity.BidStatus.valueOf(status);
+        }
+
+        String searchKeyword = keyword;
+        if (keyword != null && keyword.isEmpty()) {
+            searchKeyword = null;
+        }
+
+        String stype = searchType;
+        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
+            stype = null;
+        }
+
+        return bidRepository.findByUserWithFilters(user, productCategory, bidStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

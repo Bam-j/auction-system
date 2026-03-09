@@ -25,11 +25,12 @@ const MySalesRequests = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({});
 
-  const fetchIncomingRequests = async () => {
+  const fetchIncomingRequests = async (params = {}) => {
     setIsLoading(true);
     try {
-      const response = await getIncomingPurchaseRequests();
+      const response = await getIncomingPurchaseRequests(params);
       setRequests(response.data);
     } catch (error) {
       console.error("Failed to fetch incoming requests:", error);
@@ -39,17 +40,25 @@ const MySalesRequests = () => {
   };
 
   useEffect(() => {
-    fetchIncomingRequests();
+    fetchIncomingRequests(searchParams);
   }, []);
 
   const filterConfigs = [
     {
-      id: "type",
-      label: "요청 종류",
+      id: "category",
+      label: "카테고리",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "일반 구매", value: "FIXED"},
-        {label: "경매 입찰", value: "AUCTION"},
+        {label: "무기", value: "WEAPON"},
+        {label: "방어구", value: "ARMOR"},
+        {label: "도구", value: "TOOL"},
+        {label: "치장품", value: "COSMETIC"},
+        {label: "칭호", value: "TITLE"},
+        {label: "블록", value: "BLOCK"},
+        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
+        {label: "광석", value: "ORE"},
+        {label: "성장 재화", value: "GROWTH_GOODS"},
+        {label: "기타", value: "ETC"},
       ],
     },
     {
@@ -57,14 +66,32 @@ const MySalesRequests = () => {
       label: "상태",
       options: [
         {label: "전체", value: "ALL"},
-        {label: "대기중", value: "WAITING"},
-        {label: "승인/거절됨", value: "DONE"},
+        {label: "대기중", value: "PENDING"},
+        {label: "승인됨", value: "APPROVED"},
+        {label: "거절됨", value: "REJECTED"},
+      ],
+    },
+    {
+      id: "searchType",
+      label: "검색 분류",
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
+        {label: "구매자", value: "buyer"},
       ],
     }
   ];
 
   const handleSearch = (searchData) => {
-    console.log("판매 요청 검색:", searchData);
+    const params = {
+      category: searchData.category === "ALL" ? "" : searchData.category,
+      status: searchData.status === "ALL" ? "" : searchData.status,
+      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
+      keyword: searchData.keyword || ""
+    };
+    setSearchParams(params);
+    setPage(1);
+    fetchIncomingRequests(params);
   };
 
   const handleViewDetail = (item) => {

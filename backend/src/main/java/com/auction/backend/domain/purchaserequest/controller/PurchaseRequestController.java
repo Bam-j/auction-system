@@ -48,9 +48,12 @@ public class PurchaseRequestController {
 
     @GetMapping("/instant/me")
     public ResponseEntity<List<InstantBuyRequestResponse>> getMyInstantBuyRequests(
-            @AuthenticationPrincipal User principal) {
+            @AuthenticationPrincipal User principal,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(purchaseRequestService.getUserInstantBuyRequests(userId));
+        return ResponseEntity.ok(purchaseRequestService.getUserInstantBuyRequests(userId, category, status, keyword));
     }
 
     @GetMapping("/instant/admin")
@@ -82,16 +85,24 @@ public class PurchaseRequestController {
 
     @GetMapping("/me")
     public ResponseEntity<List<PurchaseRequestResponse>> getMyPurchaseRequests(
-            @AuthenticationPrincipal User principal) {
+            @AuthenticationPrincipal User principal,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(purchaseRequestService.getUserPurchaseRequests(userId));
+        return ResponseEntity.ok(purchaseRequestService.getUserPurchaseRequests(userId, category, status, searchType, keyword));
     }
 
     @GetMapping("/seller")
     public ResponseEntity<List<PurchaseRequestResponse>> getIncomingPurchaseRequests(
-            @AuthenticationPrincipal User principal) {
+            @AuthenticationPrincipal User principal,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(purchaseRequestService.getSellerPurchaseRequests(userId));
+        return ResponseEntity.ok(purchaseRequestService.getSellerPurchaseRequests(userId, category, status, searchType, keyword));
     }
 
     @PostMapping("/{requestId}/approve")

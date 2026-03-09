@@ -29,8 +29,12 @@ public class BidController {
 
     @GetMapping("/me")
     public ResponseEntity<List<BidResponse>> getMyBids(
-            @AuthenticationPrincipal User principal) {
+            @AuthenticationPrincipal User principal,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(bidService.getMyBids(userId));
+        return ResponseEntity.ok(bidService.getMyBids(userId, category, status, searchType, keyword));
     }
 }

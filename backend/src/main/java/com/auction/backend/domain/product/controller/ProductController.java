@@ -28,9 +28,12 @@ public class ProductController {
 
     @GetMapping("/me")
     public ResponseEntity<List<ProductListResponse>> getMyProducts(
-            @AuthenticationPrincipal User principal) {
+            @AuthenticationPrincipal User principal,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(productService.getUserProducts(userId));
+        return ResponseEntity.ok(productService.getUserProducts(userId, category, status, keyword));
     }
 
     @GetMapping("/{productId}")

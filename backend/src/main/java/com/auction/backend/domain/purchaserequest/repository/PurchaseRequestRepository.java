@@ -29,4 +29,33 @@ public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest
             @Param("status") com.auction.backend.global.enums.RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
+
+    @Query("SELECT pr FROM PurchaseRequest pr WHERE pr.user = :user AND " +
+            "(:category IS NULL OR pr.fixedSale.product.category = :category) AND " +
+            "(:status IS NULL OR pr.requestStatus = :status) AND " +
+            "(:keyword IS NULL OR " +
+            "  (:searchType = 'seller' AND (pr.fixedSale.user.username LIKE %:keyword% OR pr.fixedSale.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType IS NULL AND (pr.fixedSale.product.productName LIKE %:keyword% OR pr.fixedSale.user.username LIKE %:keyword% OR pr.fixedSale.user.nickname LIKE %:keyword%))" +
+            ")")
+    List<PurchaseRequest> findByUserWithFilters(
+            @Param("user") User user,
+            @Param("category") com.auction.backend.global.enums.ProductCategory category,
+            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("searchType") String searchType,
+            @Param("keyword") String keyword);
+
+    @Query("SELECT pr FROM PurchaseRequest pr WHERE pr.fixedSale.user = :seller AND " +
+            "(:category IS NULL OR pr.fixedSale.product.category = :category) AND " +
+            "(:status IS NULL OR pr.requestStatus = :status) AND " +
+            "(:keyword IS NULL OR " +
+            "  (:searchType = 'productName' AND pr.fixedSale.product.productName LIKE %:keyword%) OR " +
+            "  (:searchType = 'buyer' AND (pr.user.username LIKE %:keyword% OR pr.user.nickname LIKE %:keyword%)) OR " +
+            "  (:searchType IS NULL AND (pr.fixedSale.product.productName LIKE %:keyword% OR pr.user.username LIKE %:keyword% OR pr.user.nickname LIKE %:keyword%))" +
+            ")")
+    List<PurchaseRequest> findBySellerWithFilters(
+            @Param("seller") User seller,
+            @Param("category") com.auction.backend.global.enums.ProductCategory category,
+            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("searchType") String searchType,
+            @Param("keyword") String keyword);
 }
