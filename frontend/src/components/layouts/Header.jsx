@@ -5,6 +5,7 @@ import {PlusIcon} from "@heroicons/react/24/outline";
 
 import useAuthStore from "@/stores/useAuthStore.js";
 import {logoutUser} from "@/features/auth/api/authApi.js";
+import NotificationDropdown from "@/features/notification/components/NotificationDropdown.jsx";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -51,18 +52,7 @@ const Header = () => {
                     {user.nickname}님
                   </Typography>
 
-                  {user.role !== 'ADMIN' && (
-                      <Button
-                          className={`
-                            bg-success hover:bg-success-dark text-font-white
-                            flex items-center gap-1 px-3 whitespace-nowrap
-                          `}
-                          onClick={() => navigate('/products/register')}
-                      >
-                        <PlusIcon strokeWidth={2} className="h-4 w-4"/>
-                        <span className="hidden sm:inline">상품 등록</span>
-                      </Button>
-                  )}
+                  <NotificationDropdown />
 
                   {user.role === 'ADMIN' ? (
                       <Button
@@ -79,6 +69,19 @@ const Header = () => {
                           onClick={() => navigate('/mypage')}
                       >
                         마이페이지
+                      </Button>
+                  )}
+
+                  {user.role !== 'ADMIN' && (
+                      <Button
+                          className={`
+                            bg-success hover:bg-success-dark text-font-white
+                            flex items-center gap-1 px-3 whitespace-nowrap
+                          `}
+                          onClick={() => navigate('/products/register')}
+                      >
+                        <PlusIcon strokeWidth={2} className="h-4 w-4"/>
+                        <span className="hidden sm:inline">상품 등록</span>
                       </Button>
                   )}
 

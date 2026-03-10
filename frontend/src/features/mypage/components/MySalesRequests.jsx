@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {useLocation} from "react-router-dom";
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
@@ -20,6 +21,7 @@ import {
 const TABLE_HEAD = ["ID", "상품명", "수량", "가격", "상태", "요청 일시", "상세", "관리"];
 
 const MySalesRequests = () => {
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const [openDetail, setOpenDetail] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -32,6 +34,11 @@ const MySalesRequests = () => {
     try {
       const response = await getIncomingPurchaseRequests(params);
       setRequests(response.data);
+
+      if (location.state?.openProductId) {
+        setSelectedProduct({ id: location.state.openProductId });
+        setOpenDetail(true);
+      }
     } catch (error) {
       console.error("Failed to fetch incoming requests:", error);
     } finally {
@@ -41,7 +48,7 @@ const MySalesRequests = () => {
 
   useEffect(() => {
     fetchIncomingRequests(searchParams);
-  }, []);
+  }, [location.state]);
 
   const filterConfigs = [
     {
@@ -95,7 +102,7 @@ const MySalesRequests = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct(item.productDetail);
+    setSelectedProduct({ id: item.productId });
     setOpenDetail(true);
   };
 
@@ -172,7 +179,7 @@ const MySalesRequests = () => {
         ) : (
             <>
               <CommonTable
-                  title="판매 요청 관리"
+                  title="구매 요청 관리"
                   headers={TABLE_HEAD}
                   pagination={
                     requests.length > 0 && (

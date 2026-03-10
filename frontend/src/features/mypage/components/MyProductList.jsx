@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {useLocation} from "react-router-dom";
 import {Typography, Button, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon} from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
@@ -16,6 +17,7 @@ import { getMyProducts, endSale } from "../../product/api/productApi";
 const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"];
 
 const MyProductList = () => {
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -28,6 +30,11 @@ const MyProductList = () => {
     try {
       const response = await getMyProducts(params);
       setProducts(response.data);
+
+      if (location.state?.openProductId) {
+        setSelectedProduct({ id: location.state.openProductId });
+        setOpenModal(true);
+      }
     } catch (error) {
       console.error("Failed to fetch my products:", error);
     } finally {
@@ -37,7 +44,7 @@ const MyProductList = () => {
 
   useEffect(() => {
     fetchMyProducts(searchParams);
-  }, []);
+  }, [location.state]);
 
   const filterConfigs = [
     {

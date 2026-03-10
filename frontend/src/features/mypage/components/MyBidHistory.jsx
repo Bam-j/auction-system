@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {useLocation} from "react-router-dom";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -14,6 +15,7 @@ import { Typography } from "@material-tailwind/react";
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 
 const MyBidHistory = () => {
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -26,6 +28,12 @@ const MyBidHistory = () => {
     try {
       const response = await getMyBids(params);
       setBids(response.data);
+      
+      // 알림 등을 통해 특정 상품 상세를 열어야 하는 경우
+      if (location.state?.openProductId) {
+        setSelectedProduct({ id: location.state.openProductId });
+        setOpenModal(true);
+      }
     } catch (error) {
       console.error("Failed to fetch my bids:", error);
     } finally {
@@ -35,7 +43,7 @@ const MyBidHistory = () => {
 
   useEffect(() => {
     fetchMyBids(searchParams);
-  }, []);
+  }, [location.state]); // location.state 변경 시에도 체크
 
   const filterConfigs = [
     {

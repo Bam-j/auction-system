@@ -30,6 +30,13 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
           setProduct(response.data);
         } catch (error) {
           console.error("Failed to fetch product detail:", error);
+          Swal.fire({
+            title: "오류",
+            text: "상품 정보를 불러올 수 없습니다.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+          handleOpen(); // 모달 닫기
         } finally {
           setIsLoading(false);
         }

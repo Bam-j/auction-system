@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import {useLocation} from "react-router-dom";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
@@ -17,6 +18,7 @@ import StatusBadge from "../../../components/ui/StatusBadge";
 const TABLE_HEAD = ["ID", "상품명", "요청일", "가격", "수량", "상태", "상세", "관리"];
 
 const MyPurchaseHistory = () => {
+  const location = useLocation();
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -29,6 +31,11 @@ const MyPurchaseHistory = () => {
     try {
       const response = await getMyPurchaseRequests(params);
       setPurchases(response.data);
+
+      if (location.state?.openProductId) {
+        setSelectedProduct({ id: location.state.openProductId });
+        setOpenModal(true);
+      }
     } catch (error) {
       console.error("Failed to fetch purchase history:", error);
     } finally {
@@ -38,7 +45,7 @@ const MyPurchaseHistory = () => {
 
   useEffect(() => {
     fetchPurchaseHistory(searchParams);
-  }, []);
+  }, [location.state]);
 
   const filterConfigs = [
     {
