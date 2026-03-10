@@ -17,23 +17,23 @@ const NotificationDropdown = () => {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
-      message: "새로운 입찰이 등록되었습니다.",
+      message: "새로운 입찰이 등록되었습니다. (경테상1)",
       time: "5분 전",
       isRead: false,
       type: "/mypage/products",
-      productId: 1
+      productId: 3
     },
     {
       id: 2,
-      message: "경매가 종료되었습니다.",
+      message: "경매가 종료되었습니다. (경테상1)",
       time: "1시간 전",
       isRead: false,
       type: "/mypage/products",
-      productId: 2
+      productId: 3
     },
     {
       id: 3,
-      message: "새로운 구매 요청이 들어왔습니다.",
+      message: "새로운 구매 요청이 들어왔습니다. (테상2)",
       time: "2시간 전",
       isRead: false,
       type: "/mypage/requests",
@@ -41,11 +41,11 @@ const NotificationDropdown = () => {
     },
     {
       id: 4,
-      message: "상품 등록이 완료되었습니다.",
+      message: "상품 등록이 완료되었습니다. (테상1)",
       time: "5시간 전",
       isRead: true,
       type: "/mypage/products",
-      productId: 3
+      productId: 1
     },
   ]);
 
