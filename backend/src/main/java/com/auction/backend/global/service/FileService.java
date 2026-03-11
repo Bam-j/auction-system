@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Slf4j
@@ -41,7 +40,7 @@ public class FileService {
             log.info("Saving file to: {}", filePath.toAbsolutePath());
             file.transferTo(filePath.toFile());
 
-            // 웹에서 접근 가능한 경로 반환 (예: /uploads/filename.jpg)
+            // 웹에서 접근 가능한 경로 반환
             return "/uploads/" + savedFilename;
         } catch (IOException e) {
             log.error("파일 업로드 실패 (경로: " + uploadDir + ")", e);

@@ -10,22 +10,22 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 public class ProductListResponse {
-    private Long id; // Product ID
-    private Long auctionId; // Auction ID if type is AUCTION
-    private Long fixedSaleId; // FixedSale ID if type is FIXED
+    private Long id;
+    private Long auctionId;
+    private Long fixedSaleId;
     private String title;
     private String seller;
     private String price;
     private String priceUnit;
     private String imageUrl;
     private SalesStatus status;
-    private String type; // "FIXED" or "AUCTION"
+    private String type;
     private ProductCategory category;
     private String description;
     private Integer stock;
     private LocalDateTime createdAt;
-    
-    // Auction specific
+
+    //경매용 데이터
     private LocalDateTime endedAt;
     private Integer startPrice;
     private Integer currentPrice;

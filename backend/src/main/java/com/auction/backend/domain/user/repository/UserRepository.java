@@ -1,7 +1,6 @@
 package com.auction.backend.domain.user.repository;
 
 import com.auction.backend.domain.user.entity.User;
-import jakarta.validation.constraints.NotBlank;
 import com.auction.backend.domain.user.entity.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
