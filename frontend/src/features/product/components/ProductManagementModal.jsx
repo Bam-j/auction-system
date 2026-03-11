@@ -7,6 +7,8 @@ import PriceTag from "../../../components/ui/PriceTag";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { translateCategory } from "../../../utils/categoryTranslations";
 import { getProductDetail } from "../api/productApi";
+import { getFullImageUrl } from "../../../utils/imageUtils";
+import defaultImage from "@/assets/images/general/grass_block.jpeg";
 
 const ProductManagementModal = ({ open, handleOpen, product: initialProduct }) => {
   const [product, setProduct] = useState(initialProduct);
@@ -59,9 +61,12 @@ const ProductManagementModal = ({ open, handleOpen, product: initialProduct }) =
 
                 <div className="w-full md:w-1/3 shrink-0">
                   <img
-                      src={product.imageUrl || "https://placehold.co/400x400?text=No+Image"}
+                      src={getFullImageUrl(product.imageUrl) || defaultImage}
                       alt={product.title}
                       className="w-full h-64 md:h-full object-cover rounded-lg border border-gray-200 shadow-sm"
+                      onError={(e) => {
+                        e.target.src = defaultImage;
+                      }}
                   />
                 </div>
 

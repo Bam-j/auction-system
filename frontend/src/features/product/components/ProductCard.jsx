@@ -3,6 +3,7 @@ import {
   Typography, Chip,
 } from "@material-tailwind/react";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
+import { getFullImageUrl } from "../../../utils/imageUtils";
 
 const ProductCard = ({product}) => {
   const getStatusInfo = (status) => {
@@ -33,9 +34,12 @@ const ProductCard = ({product}) => {
       <Card className={`w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer`}>
         <CardHeader floated={false} className="h-40 overflow-hidden relative">
           <img
-              src={product.image || defaultImage}
+              src={getFullImageUrl(product.imageUrl) || defaultImage}
               alt={product.title}
               className={`w-full h-full object-cover transform hover:scale-110 transition-transform duration-300`}
+              onError={(e) => {
+                e.target.src = defaultImage;
+              }}
           />
           <div className="absolute top-2 right-2">
             <Chip

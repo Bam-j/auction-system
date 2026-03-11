@@ -11,6 +11,7 @@ import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
 import { translateCategory } from "../../../utils/categoryTranslations";
 import useAuthStore from "../../../stores/useAuthStore";
+import { getFullImageUrl } from "../../../utils/imageUtils";
 
 const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const navigate = useNavigate();
@@ -283,9 +284,12 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="md:col-span-1">
                   <img
-                      src={product.imageUrl || product.image || defaultImage}
+                      src={getFullImageUrl(product.imageUrl) || defaultImage}
                       alt={product.title}
                       className="w-full h-64 md:h-full object-cover rounded-lg border border-gray-200 shadow-sm"
+                      onError={(e) => {
+                        e.target.src = defaultImage;
+                      }}
                   />
                 </div>
 

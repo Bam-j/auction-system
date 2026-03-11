@@ -11,6 +11,7 @@ import ProductDetailModal from "../features/product/components/ProductDetailModa
 import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import { getProducts } from "@/features/product/api/productApi";
+import { getFullImageUrl } from "@/utils/imageUtils";
 
 const HomePage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -121,9 +122,12 @@ const HomePage = () => {
                         className={`w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer`}>
                     <CardHeader floated={false} color="blue-gray" className={`relative h-42 m-0 rounded-b-none`}>
                       <img
-                          src={product.image || defaultImage}
+                          src={getFullImageUrl(product.imageUrl) || defaultImage}
                           alt={product.title}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = defaultImage;
+                          }}
                       />
                       <div className="absolute top-2 right-2 z-10">
                         <StatusBadge status={isAuctionEnded && currentStatus !== 'SOLD_OUT' && currentStatus !== 'INSTANT_BUY' ? 'CLOSED' : product.status}/>
