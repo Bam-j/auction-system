@@ -109,7 +109,7 @@ const LoginForm = ({onLoginSuccess}) => {
         <CommonModal
             open={openContactModal}
             handleOpen={handleOpenContact}
-            title="계정 찾기 문의"
+            title="아이디 및 비밀번호 찾기 문의"
             size="xs"
             footer={
               <div className="flex justify-end w-full">
@@ -121,7 +121,17 @@ const LoginForm = ({onLoginSuccess}) => {
         >
           <div className="py-4 text-center">
             <Typography className="text-gray-800 font-medium">
-              디스코드 문의 티켓으로 문의해주세요.
+              공식 디스코드 문의 티켓으로 문의해주세요.
+            </Typography>
+            <Typography className="mt-2">
+              <a
+                  href="https://discord.gg/QZF8HHZk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 font-bold hover:underline"
+              >
+                공식 디스코드 바로가기
+              </a>
             </Typography>
           </div>
         </CommonModal>
