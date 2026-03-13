@@ -2,33 +2,30 @@ import React from "react";
 import {Chip} from "@material-tailwind/react";
 
 const STATUS_CONFIG = {
+  //상품 상태
   FIXED_SALES: {color: "green", label: "판매중"},
   SELLING: {color: "green", label: "판매중"},
   SOLD_OUT: {color: "blue-gray", label: "판매완료"},
   INSTANT_BUY: {color: "deep-orange", label: "즉시구매완료"},
   AUCTION: {color: "blue", label: "경매중"},
   CLOSED: {color: "blue-gray", label: "경매 마감"},
-  BLOCKED: {color: "red", label: "차단됨"},
-  DELETED: {color: "blue-gray", label: "탈퇴함"},
-  BLOCKED_SALE: {color: "red", label: "판매중지"},
 
-  WIN: {color: "green", label: "낙찰 성공"},
-  LOSE: {color: "red", label: "패찰"},
-  ING: {color: "blue", label: "입찰 진행"},
-
-  // BidStatus mappings
+  //입찰 상태
   BIDDING: {color: "blue", label: "입찰 중"},
   SUCCESS: {color: "green", label: "낙찰"},
   FAILED: {color: "red", label: "패찰"},
 
+  //즉시 구매 요청 상태
   PENDING: {color: "amber", label: "대기중"},
   APPROVED: {color: "green", label: "승인됨"},
   REJECTED: {color: "red", label: "거절됨"},
 
+  //사용자 상태
   ACTIVE: {color: "green", label: "정상"},
-  BANNED: {color: "red", label: "차단됨"},
+  DELETED: {color: "blue-gray", label: "탈퇴함"},
+  BLOCKED: {color: "red", label: "차단됨"},
 
-  // User Roles
+  //사용자 권한
   USER: {color: "blue", label: "일반 사용자"},
   ADMIN: {color: "purple", label: "관리자"}
 };
