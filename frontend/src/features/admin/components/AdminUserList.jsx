@@ -7,8 +7,10 @@ import EmptyState from "../../../components/ui/EmptyState";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllUsers, blockUser, unblockUser } from "../api/adminApi";
-import { Typography } from "@material-tailwind/react";
-import Swal from "sweetalert2";
+import {
+  USER_STATUS_FILTER_CONFIG,
+  mapFilterParams
+} from "@/constants/filterOptions.js";
 
 const TABLE_HEAD = ["ID", "아이디", "닉네임", "권한", "상태", "관리"];
 
@@ -35,22 +37,11 @@ const AdminUserList = () => {
   }, []);
 
   const userFilters = [
-    {
-      id: "status",
-      label: "계정 상태",
-      options: [
-        {label: "정상", value: "ACTIVE"},
-        {label: "탈퇴함", value: "DELETED"},
-        {label: "차단됨", value: "BLOCKED"},
-      ],
-    }
+    USER_STATUS_FILTER_CONFIG
   ];
 
   const handleSearch = (searchData) => {
-    const params = {
-      keyword: searchData.keyword || "",
-      status: searchData.status || ""
-    };
+    const params = mapFilterParams(searchData);
     setSearchParams(params);
     fetchUsers(params);
   };

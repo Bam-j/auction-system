@@ -12,6 +12,11 @@ import useAuthStore from "../../../stores/useAuthStore";
 import Swal from "sweetalert2";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+import {
+  CATEGORY_FILTER_CONFIG,
+  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+  mapFilterParams
+} from "@/constants/filterOptions.js";
 
 const TABLE_HEAD = ["ID", "상품명", "요청자", "요청일", "요청 금액", "상태", "수락", "상세"];
 
@@ -41,41 +46,12 @@ const MyInstantBuyHistory = () => {
   }, []);
 
   const filterConfigs = [
-    {
-      id: "category",
-      label: "카테고리",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "무기", value: "WEAPON"},
-        {label: "방어구", value: "ARMOR"},
-        {label: "도구", value: "TOOL"},
-        {label: "치장품", value: "COSMETIC"},
-        {label: "칭호", value: "TITLE"},
-        {label: "블록", value: "BLOCK"},
-        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
-        {label: "광석", value: "ORE"},
-        {label: "성장 재화", value: "GROWTH_GOODS"},
-        {label: "기타", value: "ETC"},
-      ],
-    },
-    {
-      id: "status",
-      label: "상태",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "대기중", value: "PENDING"},
-        {label: "승인됨", value: "APPROVED"},
-        {label: "거부됨", value: "REJECTED"},
-      ],
-    }
+    CATEGORY_FILTER_CONFIG,
+    PURCHASE_REQUEST_STATUS_FILTER_CONFIG
   ];
 
   const handleSearch = (searchData) => {
-    const params = {
-      category: searchData.category === "ALL" ? "" : searchData.category,
-      status: searchData.status === "ALL" ? "" : searchData.status,
-      keyword: searchData.keyword || ""
-    };
+    const params = mapFilterParams(searchData);
     setSearchParams(params);
     setPage(1);
     fetchInstantBuyHistory(params);

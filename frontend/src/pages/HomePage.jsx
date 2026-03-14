@@ -12,6 +12,12 @@ import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import { getProducts } from "@/features/product/api/productApi";
 import { getFullImageUrl } from "@/utils/imageUtils";
+import {
+  CATEGORY_FILTER_CONFIG,
+  SALE_METHOD_FILTER_CONFIG,
+  SEARCH_TYPE_FILTER_CONFIG,
+  mapFilterParams
+} from "@/constants/filterOptions";
 
 const HomePage = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -37,52 +43,13 @@ const HomePage = () => {
   }, []);
 
   const productListFilters = [
-    {
-      id: "category",
-      label: "카테고리",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "무기", value: "WEAPON"},
-        {label: "방어구", value: "ARMOR"},
-        {label: "도구", value: "TOOL"},
-        {label: "치장품", value: "COSMETIC"},
-        {label: "칭호", value: "TITLE"},
-        {label: "블록", value: "BLOCK"},
-        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
-        {label: "광석", value: "ORE"},
-        {label: "성장 재화", value: "GROWTH_GOODS"},
-        {label: "기타", value: "ETC"},
-      ],
-    },
-    {
-      id: "searchType",
-      label: "검색 분류",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "상품명", value: "productName"},
-        {label: "판매자", value: "seller"},
-      ],
-    },
-    {
-      id: "status",
-      label: "판매 방식",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "판매중", value: "FIXED_SALES"},
-        {label: "경매중", value: "AUCTION"},
-        {label: "즉시구매완료", value: "INSTANT_BUY"},
-        {label: "판매완료", value: "SOLD_OUT"},
-      ],
-    }
+    CATEGORY_FILTER_CONFIG,
+    SEARCH_TYPE_FILTER_CONFIG,
+    SALE_METHOD_FILTER_CONFIG
   ];
 
   const handleSearch = (searchData) => {
-    const params = {
-      category: searchData.category === "ALL" ? "" : searchData.category,
-      status: searchData.status === "ALL" ? "" : searchData.status,
-      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
-      keyword: searchData.keyword || ""
-    };
+    const params = mapFilterParams(searchData);
     setSearchParams(params);
     fetchProducts(params);
   };

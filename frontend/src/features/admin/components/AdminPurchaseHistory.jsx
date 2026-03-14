@@ -7,6 +7,12 @@ import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getAllPurchaseRequests } from "../api/adminApi";
 import StatusBadge from "../../../components/ui/StatusBadge";
+import {
+  CATEGORY_FILTER_CONFIG,
+  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+  BUYER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
+  mapFilterParams
+} from "@/constants/filterOptions.js";
 
 const TABLE_HEAD = ["ID", "판매자", "상품명", "구매자", "구매일", "구매금액", "구매량", "상태"];
 
@@ -33,51 +39,13 @@ const AdminPurchaseHistory = () => {
   }, []);
 
   const purchaseFilters = [
-    {
-      id: "category",
-      label: "카테고리",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "무기", value: "WEAPON"},
-        {label: "방어구", value: "ARMOR"},
-        {label: "도구", value: "TOOL"},
-        {label: "치장품", value: "COSMETIC"},
-        {label: "칭호", value: "TITLE"},
-        {label: "블록", value: "BLOCK"},
-        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
-        {label: "광석", value: "ORE"},
-        {label: "성장 재화", value: "GROWTH_GOODS"},
-        {label: "기타", value: "ETC"},
-      ],
-    },
-    {
-      id: "status",
-      label: "상태",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "대기중", value: "PENDING"},
-        {label: "승인됨", value: "APPROVED"},
-        {label: "거부됨", value: "REJECTED"},
-      ],
-    },
-    {
-      id: "searchType",
-      label: "검색 분류",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "판매자", value: "seller"},
-        {label: "구매자", value: "buyer"},
-      ],
-    }
+    CATEGORY_FILTER_CONFIG,
+    PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+    BUYER_SELLER_SEARCH_TYPE_FILTER_CONFIG
   ];
 
   const handleSearch = (searchData) => {
-    const params = {
-      category: searchData.category === "ALL" ? "" : searchData.category,
-      status: searchData.status === "ALL" ? "" : searchData.status,
-      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
-      keyword: searchData.keyword || ""
-    };
+    const params = mapFilterParams(searchData);
     setSearchParams(params);
     setPage(1);
     fetchPurchases(params);

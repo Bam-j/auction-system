@@ -12,6 +12,12 @@ import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import Swal from "sweetalert2";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
+import {
+  CATEGORY_FILTER_CONFIG,
+  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+  SEARCH_TYPE_FILTER_CONFIG,
+  mapFilterParams
+} from "@/constants/filterOptions.js";
 
 import StatusBadge from "../../../components/ui/StatusBadge";
 
@@ -48,36 +54,10 @@ const MyPurchaseHistory = () => {
   }, [location.state]);
 
   const filterConfigs = [
+    CATEGORY_FILTER_CONFIG,
+    PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
     {
-      id: "category",
-      label: "카테고리",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "무기", value: "WEAPON"},
-        {label: "방어구", value: "ARMOR"},
-        {label: "도구", value: "TOOL"},
-        {label: "치장품", value: "COSMETIC"},
-        {label: "칭호", value: "TITLE"},
-        {label: "블록", value: "BLOCK"},
-        {label: "레드스톤 장치", value: "REDSTONE_DEVICES"},
-        {label: "광석", value: "ORE"},
-        {label: "성장 재화", value: "GROWTH_GOODS"},
-        {label: "기타", value: "ETC"},
-      ],
-    },
-    {
-      id: "status",
-      label: "상태",
-      options: [
-        {label: "전체", value: "ALL"},
-        {label: "대기중", value: "PENDING"},
-        {label: "승인됨", value: "APPROVED"},
-        {label: "거절됨", value: "REJECTED"},
-      ],
-    },
-    {
-      id: "searchType",
-      label: "검색 분류",
+      ...SEARCH_TYPE_FILTER_CONFIG,
       options: [
         {label: "전체", value: "ALL"},
         {label: "판매자", value: "seller"},
@@ -86,12 +66,7 @@ const MyPurchaseHistory = () => {
   ];
 
   const handleSearch = (searchData) => {
-    const params = {
-      category: searchData.category === "ALL" ? "" : searchData.category,
-      status: searchData.status === "ALL" ? "" : searchData.status,
-      searchType: searchData.searchType === "ALL" ? "" : searchData.searchType,
-      keyword: searchData.keyword || ""
-    };
+    const params = mapFilterParams(searchData);
     setSearchParams(params);
     setPage(1);
     fetchPurchaseHistory(params);
