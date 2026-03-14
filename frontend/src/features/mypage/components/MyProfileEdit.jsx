@@ -4,11 +4,11 @@ import {
   Card, CardHeader, CardBody, Typography, Input, Button
 } from "@material-tailwind/react";
 import Swal from "sweetalert2";
-
 import CommonModal from "../../../components/ui/CommonModal";
 import api from "@/api/axiosInstance.js";
 import useAuthStore from "@/stores/useAuthStore";
 import {checkNickname} from "@/features/auth/api/authApi";
+import {validateField} from "@/utils/validation.js";
 
 const MyProfileEdit = () => {
   const navigate = useNavigate();
@@ -30,37 +30,6 @@ const MyProfileEdit = () => {
   const [isNicknameChecked, setIsNicknameChecked] = useState(true);
   const [errors, setErrors] = useState({});
 
-  const validateField = (name, value, allData = {}) => {
-    let errorMessage = "";
-    switch (name) {
-      case "nickname":
-        if (value.length > 0) {
-          if (!/^[a-zA-Z0-9_]{3,16}$/.test(value)) {
-            errorMessage = "3~16자의 영문, 숫자, 언더바(_)만 사용 가능합니다.";
-          }
-        }
-        break;
-      case "password":
-        if (value.length > 0) {
-          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#.+^=])[A-Za-z\d@$!%*?&\-_#.+^=]{8,}$/;
-          if (!passwordRegex.test(value)) {
-            errorMessage = "8자 이상, 대/소문자/숫자/특수문자를 모두 포함해야 합니다.";
-          }
-        }
-        break;
-      case "confirmPassword":
-        if (value.length > 0 || (allData.password && allData.password.length > 0)) {
-          if (allData.password !== value) {
-            errorMessage = "비밀번호가 일치하지 않습니다.";
-          }
-        }
-        break;
-      default:
-        break;
-    }
-    return errorMessage;
-  };
-
   const handleNicknameChange = (e) => {
     const val = e.target.value;
     setNickname(val);
@@ -77,11 +46,11 @@ const MyProfileEdit = () => {
   const handlePasswordChange = (e) => {
     const val = e.target.value;
     setPassword(val);
-    const errorMsg = validateField("password", val, {password: val, confirmPassword});
+    const errorMsg = validateField("password", val);
     setErrors((prev) => ({...prev, password: errorMsg}));
 
     if (confirmPassword) {
-      const confirmMsg = val !== confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
+      const confirmMsg = validateField("confirmPassword", confirmPassword, {password: val});
       setErrors((prev) => ({...prev, confirmPassword: confirmMsg}));
     }
   };
@@ -89,7 +58,7 @@ const MyProfileEdit = () => {
   const handleConfirmPasswordChange = (e) => {
     const val = e.target.value;
     setConfirmPassword(val);
-    const errorMsg = validateField("confirmPassword", val, {password, confirmPassword: val});
+    const errorMsg = validateField("confirmPassword", val, {password});
     setErrors((prev) => ({...prev, confirmPassword: errorMsg}));
   };
 

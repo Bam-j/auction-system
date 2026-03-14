@@ -6,6 +6,7 @@ import {
 } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import {signup, checkUsername, checkNickname} from "../api/authApi";
+import {validateField} from "@/utils/validation.js";
 
 const SignupForm = () => {
   const navigate = useNavigate();
@@ -20,38 +21,6 @@ const SignupForm = () => {
   const [errors, setErrors] = useState({});
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-
-  const validateField = (name, value, allData = formData) => {
-    let errorMessage = "";
-    switch (name) {
-      case "username":
-        if (!/^[a-zA-Z0-9]{7,}$/.test(value)) {
-          errorMessage = "7자 이상, 영문 대소문자와 숫자만 사용 가능합니다.";
-        }
-        break;
-      case "nickname":
-        if (!/^[a-zA-Z0-9_]{3,16}$/.test(value)) {
-          errorMessage = "3자 이상 16자 이하, 영문과 숫자, 언더바(_)만 사용 가능합니다.";
-        }
-        break;
-      case "password":
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#.+^=])[A-Za-z\d@$!%*?&\-_#.+^=]{8,}$/;
-        if (!passwordRegex.test(value)) {
-          errorMessage = "8자 이상, 대/소문자/숫자/특수문자를 모두 포함해야 합니다.";
-        }
-        break;
-      case "confirmPassword":
-        const passwordToCompare = name === "confirmPassword" ? allData.password : value;
-        const confirmToCompare = name === "confirmPassword" ? value : allData.confirmPassword;
-        if (passwordToCompare !== confirmToCompare) {
-          errorMessage = "비밀번호가 일치하지 않습니다.";
-        }
-        break;
-      default:
-        break;
-    }
-    return errorMessage;
-  };
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -69,7 +38,7 @@ const SignupForm = () => {
     }
 
     if (name === "password" && newData.confirmPassword) {
-      const confirmMsg = value !== newData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
+      const confirmMsg = validateField("confirmPassword", newData.confirmPassword, newData);
       setErrors((prev) => ({...prev, confirmPassword: confirmMsg}));
     }
   };
@@ -124,7 +93,7 @@ const SignupForm = () => {
     const usernameError = validateField("username", formData.username);
     const nicknameError = validateField("nickname", formData.nickname);
     const passwordError = validateField("password", formData.password);
-    const confirmError = formData.password !== formData.confirmPassword ? "비밀번호가 일치하지 않습니다." : "";
+    const confirmError = validateField("confirmPassword", formData.confirmPassword, formData);
 
     if (usernameError || nicknameError || passwordError || confirmError ||
         !formData.username || !formData.nickname || !formData.password) {
