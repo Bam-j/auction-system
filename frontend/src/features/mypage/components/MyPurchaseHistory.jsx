@@ -10,7 +10,7 @@ import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import { getMyPurchaseRequests, cancelPurchaseRequest } from "../../product/api/productApi";
 import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import Swal from "sweetalert2";
+import { successAlert, errorAlert, confirmDanger } from "@/utils/swalUtils";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
 import {
   CATEGORY_FILTER_CONFIG,
@@ -73,46 +73,20 @@ const MyPurchaseHistory = () => {
   };
 
   const handleCancel = async (id) => {
-    const result = await Swal.fire({
-      title: "요청 취소",
-      text: "정말로 이 구매 요청을 취소하시겠습니까?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "취소하기",
-      cancelButtonText: "닫기",
-      customClass: {
-        confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
-        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
-      },
-      buttonsStyling: false
-    });
+    const result = await confirmDanger(
+      "요청 취소",
+      "정말로 이 구매 요청을 취소하시겠습니까?",
+      "취소하기"
+    );
 
     if (result.isConfirmed) {
       try {
         await cancelPurchaseRequest(id);
         await fetchPurchaseHistory();
-        Swal.fire({
-          title: "취소 완료",
-          text: "구매 요청이 성공적으로 취소되었습니다.",
-          icon: "success",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
+        successAlert("취소 완료", "구매 요청이 성공적으로 취소되었습니다.");
       } catch (error) {
         console.error("Failed to cancel purchase request:", error);
-        Swal.fire({
-          title: "취소 실패",
-          text: error.response?.data?.message || "요청 취소 중 오류가 발생했습니다.",
-          icon: "error",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
+        errorAlert("취소 실패", error.response?.data?.message || "요청 취소 중 오류가 발생했습니다.");
       }
     }
   };

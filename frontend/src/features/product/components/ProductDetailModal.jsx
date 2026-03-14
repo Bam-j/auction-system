@@ -2,7 +2,12 @@ import React, {useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 import {Typography, Button, Input, Chip} from "@material-tailwind/react";
 import {CubeIcon, UserCircleIcon, CalendarDaysIcon} from "@heroicons/react/24/outline";
-import Swal from "sweetalert2";
+import {
+  successAlert,
+  errorAlert,
+  warningAlert,
+  confirmAction
+} from "../../../utils/swalUtils";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
@@ -31,12 +36,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
           setProduct(response.data);
         } catch (error) {
           console.error("Failed to fetch product detail:", error);
-          Swal.fire({
-            title: "오류",
-            text: "상품 정보를 불러올 수 없습니다.",
-            icon: "error",
-            confirmButtonText: "확인",
-          });
+          errorAlert("오류", "상품 정보를 불러올 수 없습니다.");
           handleOpen(); // 모달 닫기
         } finally {
           setIsLoading(false);
@@ -65,13 +65,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   const checkAuth = () => {
     if (!user) {
-      Swal.fire({
-        title: "로그인을 해주세요",
-        icon: "warning",
-        timer: 1000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-      }).then(() => {
+      warningAlert("로그인을 해주세요").then(() => {
         handleOpen();
         navigate("/login");
       });
@@ -87,18 +81,10 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
     const bidIncrement = isNaN(product.bidIncrement) ? 0 : Number(product.bidIncrement);
     const nextBidPrice = currentPrice + bidIncrement;
 
-    const result = await Swal.fire({
+    const result = await confirmAction({
       title: "입찰 확인",
       text: `${nextBidPrice.toLocaleString()}${product.priceUnit}에 입찰하시겠습니까?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "입찰",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
-        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
-      },
-      buttonsStyling: false,
+      confirmButtonText: "입찰"
     });
 
     if (!result.isConfirmed) return;
@@ -109,30 +95,12 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
         bidPrice: nextBidPrice
       });
 
-      await Swal.fire({
-        title: "입찰 완료",
-        text: "입찰이 정상적으로 처리되었습니다.",
-        icon: "success",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await successAlert("입찰 완료", "입찰이 정상적으로 처리되었습니다.");
       handleOpen();
     } catch (error) {
       console.error("Bid failed:", error);
       const errorMessage = error.response?.data?.message || "입찰 중 오류가 발생했습니다.";
-      Swal.fire({
-        title: "오류",
-        text: errorMessage,
-        icon: "error",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await errorAlert("오류", errorMessage);
     }
   };
 
@@ -144,18 +112,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       ? Number(price).toLocaleString() 
       : price;
 
-    const result = await Swal.fire({
+    const result = await confirmAction({
       title: "즉시 구매 확인",
       text: `${displayPrice}${product.priceUnit}에 즉시 구매하시겠습니까?`,
-      icon: "question",
-      showCancelButton: true,
       confirmButtonText: "구매",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
-        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
-      },
-      buttonsStyling: false,
+      confirmButtonColor: "#10B981" // green color
     });
 
     if (!result.isConfirmed) return;
@@ -165,30 +126,12 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
         auctionId: product.auctionId
       });
 
-      await Swal.fire({
-        title: "구매 요청 완료",
-        text: "즉시 구매 요청이 판매자에게 전달되었습니다.",
-        icon: "success",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await successAlert("구매 요청 완료", "즉시 구매 요청이 판매자에게 전달되었습니다.");
       handleOpen();
     } catch (error) {
       console.error("Instant purchase failed:", error);
       const errorMessage = error.response?.data?.message || "구매 중 오류가 발생했습니다.";
-      Swal.fire({
-        title: "오류",
-        text: errorMessage,
-        icon: "error",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await errorAlert("오류", errorMessage);
     }
   };
 
@@ -196,31 +139,14 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
     if (!checkAuth()) return;
 
     if (parseInt(purchaseAmount) > product.stock) {
-      Swal.fire({
-        title: "수량 오류",
-        text: "재고를 초과하는 양을 요청할 수 없습니다.",
-        icon: "warning",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await warningAlert("수량 오류", "재고를 초과하는 양을 요청할 수 없습니다.");
       return;
     }
 
-    const result = await Swal.fire({
+    const result = await confirmAction({
       title: "구매 요청",
       text: `${product.title} ${purchaseAmount}개를 구매 요청하시겠습니까?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "요청",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
-        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
-      },
-      buttonsStyling: false,
+      confirmButtonText: "요청"
     });
 
     if (!result.isConfirmed) {
@@ -234,31 +160,13 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       });
       
       if (response.status === 200) {
-        await Swal.fire({
-          title: "성공",
-          text: "구매 요청이 성공적으로 전송되었습니다.",
-          icon: "success",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg"
-          },
-          buttonsStyling: false,
-        });
+        await successAlert("성공", "구매 요청이 성공적으로 전송되었습니다.");
         handleOpen();
       }
     } catch (error) {
       console.error("Purchase request failed:", error);
       const errorMessage = error.response?.data?.message || "구매 요청 중 오류가 발생했습니다.";
-      Swal.fire({
-        title: "오류",
-        text: errorMessage,
-        icon: "error",
-        confirmButtonText: "확인",
-        customClass: {
-          confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg"
-        },
-        buttonsStyling: false,
-      });
+      await errorAlert("오류", errorMessage);
     }
   };
 

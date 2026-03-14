@@ -4,7 +4,7 @@ import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
-import Swal from "sweetalert2";
+import {errorAlert, warningAlert} from "@/utils/swalUtils.js";
 import CommonModal from "../../../components/ui/CommonModal";
 import {loginUser} from "../api/authApi";
 
@@ -19,12 +19,7 @@ const LoginForm = ({onLoginSuccess}) => {
     e.preventDefault();
 
     if (!username || !password) {
-      Swal.fire({
-        icon: "warning",
-        title: "입력 오류",
-        text: "아이디와 비밀번호를 모두 입력해주세요.",
-        confirmButtonColor: "#3B82F6",
-      });
+      warningAlert("입력 오류", "아이디와 비밀번호를 모두 입력해주세요.");
       return;
     }
 
@@ -42,13 +37,7 @@ const LoginForm = ({onLoginSuccess}) => {
     } catch (error) {
       console.error("로그인 실패:", error);
       const message = error.response?.data?.message || "아이디 또는 비밀번호가 일치하지 않습니다.";
-
-      Swal.fire({
-        icon: "error",
-        title: "로그인 실패",
-        text: message,
-        confirmButtonColor: "#EF4444",
-      });
+      errorAlert("로그인 실패", message);
     }
   };
 

@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Typography, Textarea} from "@material-tailwind/react";
 import {PhotoIcon} from "@heroicons/react/24/outline";
-import Swal from "sweetalert2";
+import { successAlert, errorAlert } from "@/utils/swalUtils";
 import CommonModal from "../../../components/ui/CommonModal";
 import CommonProductForm from "./forms/CommonProductForm";
 import FixedProductForm from "./forms/FixedProductForm";
@@ -37,7 +37,7 @@ const ProductRegisterModal = () => {
     // Client-side validation for FIXED
     if (formData.type === "FIXED") {
       if (Number(formData.stock) < 1) {
-        Swal.fire({ icon: "error", title: "입력 오류", text: "재고 수량은 1개 이상이어야 합니다." });
+        errorAlert("입력 오류", "재고 수량은 1개 이상이어야 합니다.");
         return;
       }
     }
@@ -47,19 +47,19 @@ const ProductRegisterModal = () => {
       const now = new Date();
       const endedAt = new Date(formData.ended_at);
       if (endedAt <= now) {
-        Swal.fire({ icon: "error", title: "입력 오류", text: "경매 마감일은 현재 시간 이후여야 합니다." });
+        errorAlert("입력 오류", "경매 마감일은 현재 시간 이후여야 합니다.");
         return;
       }
       if (Number(formData.start_price) < 0) {
-        Swal.fire({ icon: "error", title: "입력 오류", text: "경매 시작가는 0 이상이어야 합니다." });
+        errorAlert("입력 오류", "경매 시작가는 0 이상이어야 합니다.");
         return;
       }
       if (Number(formData.min_bid_increment) < 1) {
-        Swal.fire({ icon: "error", title: "입력 오류", text: "최소 입찰 단위는 1 이상이어야 합니다." });
+        errorAlert("입력 오류", "최소 입찰 단위는 1 이상이어야 합니다.");
         return;
       }
       if (formData.instant_purchase_price && Number(formData.instant_purchase_price) < 0) {
-        Swal.fire({ icon: "error", title: "입력 오류", text: "즉시 구매가는 0 이상이어야 합니다." });
+        errorAlert("입력 오류", "즉시 구매가는 0 이상이어야 합니다.");
         return;
       }
     }
@@ -67,14 +67,10 @@ const ProductRegisterModal = () => {
     try {
       await registerProduct(formData);
 
-      Swal.fire({
-        icon: "success",
-        title: "상품 등록 완료!",
-        text: "상품이 성공적으로 등록되었습니다.",
-        confirmButtonColor: "#10B981",
-      }).then(() => {
-        navigate("/");
-      });
+      successAlert("상품 등록 완료!", "상품이 성공적으로 등록되었습니다.")
+          .then(() => {
+            navigate("/");
+          });
 
     } catch (error) {
       console.error("등록 실패 상세:", error.response?.data);
@@ -86,12 +82,7 @@ const ProductRegisterModal = () => {
         errorText = Object.values(validationErrors).join("\n");
       }
 
-      Swal.fire({
-        icon: "error",
-        title: "등록 실패",
-        text: errorText,
-        confirmButtonColor: "#EF4444",
-      });
+      errorAlert("등록 실패", errorText);
     }
   };
 

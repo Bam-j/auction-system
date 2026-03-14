@@ -4,7 +4,9 @@ import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
-import Swal from "sweetalert2";
+import {
+  successAlert, errorAlert, warningAlert
+} from "@/utils/swalUtils.js";
 import {signup, checkUsername, checkNickname} from "../api/authApi";
 import {validateField} from "@/utils/validation.js";
 
@@ -45,34 +47,34 @@ const SignupForm = () => {
 
   const handleCheckUsername = async () => {
     if (errors.username || !formData.username) {
-      Swal.fire({icon: "warning", title: "알림", text: "유효한 아이디를 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("알림", "유효한 아이디를 먼저 입력해주세요.");
       return;
     }
     try {
       await checkUsername(formData.username);
 
-      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 아이디입니다.", confirmButtonColor: "#10B981"});
+      successAlert("확인 완료", "사용 가능한 아이디입니다.");
       setIsUsernameChecked(true);
     } catch (error) {
       const msg = error.response?.data?.message || "이미 사용 중인 아이디입니다.";
-      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      errorAlert("사용 불가", msg);
       setIsUsernameChecked(false);
     }
   };
 
   const handleCheckNickname = async () => {
     if (errors.nickname || !formData.nickname) {
-      Swal.fire({icon: "warning", title: "알림", text: "유효한 닉네임을 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("알림", "유효한 닉네임을 먼저 입력해주세요.");
       return;
     }
     try {
       await checkNickname(formData.nickname);
 
-      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 닉네임입니다.", confirmButtonColor: "#10B981"});
+      successAlert("확인 완료", "사용 가능한 닉네임입니다.");
       setIsNicknameChecked(true);
     } catch (error) {
       const msg = error.response?.data?.message || "이미 사용 중인 닉네임입니다.";
-      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      errorAlert("사용 불가", msg);
       setIsNicknameChecked(false);
     }
   };
@@ -81,12 +83,7 @@ const SignupForm = () => {
     e.preventDefault();
 
     if (!isUsernameChecked || !isNicknameChecked) {
-      Swal.fire({
-        icon: "warning",
-        title: "중복 확인 필요",
-        text: "아이디와 닉네임 중복 확인을 완료해주세요.",
-        confirmButtonColor: "#F59E0B",
-      });
+      warningAlert("중복 확인 필요", "아이디와 닉네임 중복 확인을 완료해주세요.");
       return;
     }
 
@@ -115,19 +112,14 @@ const SignupForm = () => {
 
       await signup(requestData);
 
-      Swal.fire({
-        icon: "success",
-        title: "회원가입 성공!",
-        text: "로그인 페이지로 이동합니다.",
-        confirmButtonColor: "#10B981",
-      }).then(() => {
+      successAlert("회원가입 성공!", "로그인 페이지로 이동합니다.").then(() => {
         navigate("/login");
       });
 
     } catch (error) {
       console.error("회원가입 실패:", error);
       const serverMessage = error.response?.data?.message || "회원가입 중 오류가 발생했습니다.";
-      Swal.fire({icon: "error", title: "가입 실패", text: serverMessage, confirmButtonColor: "#EF4444"});
+      errorAlert("가입 실패", serverMessage);
     }
   };
 

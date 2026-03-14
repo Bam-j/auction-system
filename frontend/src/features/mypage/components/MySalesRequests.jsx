@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
-import Swal from "sweetalert2";
+import {successAlert, errorAlert, confirmAction} from "@/utils/swalUtils";
 import CommonTable from "../../../components/ui/CommonTable";
 import Pagination from "../../../components/ui/Pagination";
 import PriceTag from "../../../components/ui/PriceTag";
@@ -11,10 +11,10 @@ import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { 
-  getIncomingPurchaseRequests, 
-  approvePurchaseRequest, 
-  rejectPurchaseRequest 
+import {
+  getIncomingPurchaseRequests,
+  approvePurchaseRequest,
+  rejectPurchaseRequest
 } from "../../product/api/productApi";
 import {
   CATEGORY_FILTER_CONFIG,
@@ -41,7 +41,7 @@ const MySalesRequests = () => {
       setRequests(response.data);
 
       if (location.state?.openProductId) {
-        setSelectedProduct({ id: location.state.openProductId });
+        setSelectedProduct({id: location.state.openProductId});
         setOpenDetail(true);
       }
     } catch (error) {
@@ -69,7 +69,7 @@ const MySalesRequests = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct({ id: item.productId });
+    setSelectedProduct({id: item.productId});
     setOpenDetail(true);
   };
 
@@ -77,20 +77,12 @@ const MySalesRequests = () => {
     const isAccept = action === "ACCEPT";
     const actionText = isAccept ? "수락" : "거절";
 
-    const result = await Swal.fire({
+    const result = await confirmAction({
       title: `요청 ${actionText}`,
       text: `정말로 이 요청을 ${actionText}하시겠습니까?`,
       icon: "question",
-      showCancelButton: true,
       confirmButtonText: actionText,
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: isAccept
-            ? "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-            : "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
-        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
-      },
-      buttonsStyling: false
+      confirmButtonColor: isAccept ? "#10B981" : "#EF4444"
     });
 
     if (result.isConfirmed) {
@@ -103,28 +95,10 @@ const MySalesRequests = () => {
 
         await fetchIncomingRequests();
 
-        Swal.fire({
-          title: "처리 완료",
-          text: `요청이 ${actionText}되었습니다.`,
-          icon: "success",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
+        successAlert("처리 완료", `요청이 ${actionText}되었습니다.`);
       } catch (error) {
         console.error(`Failed to ${action} purchase request:`, error);
-        Swal.fire({
-          title: "처리 실패",
-          text: error.response?.data?.message || "요청 처리 중 오류가 발생했습니다.",
-          icon: "error",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
+        errorAlert("처리 실패", error.response?.data?.message || "요청 처리 중 오류가 발생했습니다.");
       }
     }
   };
@@ -139,7 +113,7 @@ const MySalesRequests = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : requests.length === 0 ? (
             <EmptyState message="들어온 구매 요청이 없습니다."/>
@@ -149,13 +123,13 @@ const MySalesRequests = () => {
                   title="구매 요청 관리"
                   headers={TABLE_HEAD}
                   pagination={
-                    requests.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(requests.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      requests.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(requests.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {requests.map((req) => (
@@ -164,9 +138,9 @@ const MySalesRequests = () => {
                       <td className="p-4 font-bold text-blue-gray-900">{req.productName}</td>
                       <td className="p-4 text-gray-600">{req.quantity}개</td>
                       <td className="p-4">
-                        <PriceTag 
-                          price={req.price} 
-                          unit={req.priceUnit}
+                        <PriceTag
+                            price={req.price}
+                            unit={req.priceUnit}
                         />
                       </td>
                       <td className="p-4">

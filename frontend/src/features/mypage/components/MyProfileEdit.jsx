@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {
   Card, CardHeader, CardBody, Typography, Input, Button
 } from "@material-tailwind/react";
-import Swal from "sweetalert2";
+import {successAlert, errorAlert, warningAlert, infoAlert} from "@/utils/swalUtils";
 import CommonModal from "../../../components/ui/CommonModal";
 import api from "@/api/axiosInstance.js";
 import useAuthStore from "@/stores/useAuthStore";
@@ -64,44 +64,44 @@ const MyProfileEdit = () => {
 
   const handleCheckNickname = async () => {
     if (errors.nickname || !nickname) {
-      Swal.fire({icon: "warning", title: "알림", text: "유효한 닉네임을 먼저 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("알림", "유효한 닉네임을 먼저 입력해주세요.");
       return;
     }
 
     if (nickname === user?.nickname) {
-      Swal.fire({icon: "info", title: "알림", text: "기존 닉네임과 동일합니다.", confirmButtonColor: "#3B82F6"});
+      infoAlert("알림", "기존 닉네임과 동일합니다.");
       setIsNicknameChecked(true);
       return;
     }
 
     try {
       await checkNickname(nickname);
-      Swal.fire({icon: "success", title: "확인 완료", text: "사용 가능한 닉네임입니다.", confirmButtonColor: "#10B981"});
+      successAlert("확인 완료", "사용 가능한 닉네임입니다.");
       setIsNicknameChecked(true);
     } catch (error) {
       const msg = error.response?.data?.message || "이미 사용 중인 닉네임입니다.";
-      Swal.fire({icon: "error", title: "사용 불가", text: msg, confirmButtonColor: "#EF4444"});
+      errorAlert("사용 불가", msg);
       setIsNicknameChecked(false);
     }
   };
 
   const handleNicknameUpdate = async () => {
     if (!nickname) {
-      Swal.fire({icon: "info", title: "안내", text: "변경할 새 닉네임을 입력해주세요.", confirmButtonColor: "#3B82F6"});
+      infoAlert("안내", "변경할 새 닉네임을 입력해주세요.");
       return;
     }
     if (errors.nickname) {
-      Swal.fire({icon: "warning", title: "입력 확인", text: "닉네임 형식을 확인해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("입력 확인", "닉네임 형식을 확인해주세요.");
       return;
     }
 
     if (!isNicknameChecked) {
-      Swal.fire({icon: "warning", title: "중복 확인 필요", text: "닉네임 중복 확인을 완료해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("중복 확인 필요", "닉네임 중복 확인을 완료해주세요.");
       return;
     }
 
     if (nickname === user?.nickname) {
-      Swal.fire({icon: "info", title: "알림", text: "기존 닉네임과 동일합니다.", confirmButtonColor: "#3B82F6"});
+      infoAlert("알림", "기존 닉네임과 동일합니다.");
       return;
     }
 
@@ -110,29 +110,29 @@ const MyProfileEdit = () => {
 
       updateNickname(nickname);
 
-      Swal.fire({icon: "success", title: "성공", text: "닉네임이 성공적으로 변경되었습니다.", confirmButtonColor: "#3B82F6"});
+      successAlert("성공", "닉네임이 성공적으로 변경되었습니다.");
 
     } catch (error) {
       console.error("닉네임 변경 실패:", error);
       const serverMessage = error.response?.data?.message || "닉네임 변경에 실패했습니다.";
-      Swal.fire({icon: "error", title: "실패", text: serverMessage, confirmButtonColor: "#EF4444"});
+      errorAlert("실패", serverMessage);
     }
   };
 
   const handlePasswordUpdate = async () => {
     if (!password) {
-      Swal.fire({icon: "info", title: "안내", text: "변경할 새 비밀번호를 입력해주세요.", confirmButtonColor: "#3B82F6"});
+      infoAlert("안내", "변경할 새 비밀번호를 입력해주세요.");
       return;
     }
     if (errors.password || errors.confirmPassword) {
-      Swal.fire({icon: "warning", title: "입력 확인", text: "비밀번호 입력 조건을 다시 확인해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("입력 확인", "비밀번호 입력 조건을 다시 확인해주세요.");
       return;
     }
 
     try {
       await api.patch(`/users/me/password`, {newPassword: password});
 
-      Swal.fire({icon: "success", title: "성공", text: "비밀번호가 성공적으로 변경되었습니다.", confirmButtonColor: "#10B981"});
+      successAlert("성공", "비밀번호가 성공적으로 변경되었습니다.");
 
       setPassword("");
       setConfirmPassword("");
@@ -140,13 +140,13 @@ const MyProfileEdit = () => {
     } catch (error) {
       console.error("비밀번호 변경 실패:", error);
       const serverMessage = error.response?.data?.message || "비밀번호 변경에 실패했습니다.";
-      Swal.fire({icon: "error", title: "실패", text: serverMessage, confirmButtonColor: "#EF4444"});
+      errorAlert("실패", serverMessage);
     }
   };
 
   const handleDeleteAccount = async () => {
     if (!deletePassword) {
-      Swal.fire({icon: "warning", title: "입력 필요", text: "본인 확인을 위해 비밀번호를 입력해주세요.", confirmButtonColor: "#F59E0B"});
+      warningAlert("입력 필요", "본인 확인을 위해 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -155,7 +155,7 @@ const MyProfileEdit = () => {
         data: {password: deletePassword}
       });
 
-      Swal.fire({icon: "success", title: "탈퇴 완료", text: "회원 탈퇴가 완료되었습니다.", confirmButtonColor: "#10B981"})
+      successAlert("탈퇴 완료", "회원 탈퇴가 완료되었습니다.")
           .then(() => {
             setOpenDeleteModal(false);
             logout();
@@ -164,7 +164,7 @@ const MyProfileEdit = () => {
     } catch (error) {
       console.error("탈퇴 실패:", error);
       const serverMessage = error.response?.data?.message || "비밀번호가 틀렸거나 탈퇴에 실패했습니다.";
-      Swal.fire({icon: "error", title: "탈퇴 실패", text: serverMessage, confirmButtonColor: "#EF4444"});
+      errorAlert("탈퇴 실패", serverMessage);
     }
   };
 

@@ -2,8 +2,12 @@ import React, {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Typography, Button, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon} from "@heroicons/react/24/outline";
-import Swal from "sweetalert2";
+import {
+  successAlert, errorAlert, confirmDanger
+} from "@/utils/swalUtils.js";
+
 import CommonTable from "../../../components/ui/CommonTable";
+
 import Pagination from "../../../components/ui/Pagination";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
@@ -11,7 +15,7 @@ import EmptyState from "../../../components/ui/EmptyState";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import ProductManagementModal from "../../product/components/ProductManagementModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getMyProducts, endSale } from "../../product/api/productApi";
+import {getMyProducts, endSale} from "../../product/api/productApi";
 import {
   CATEGORY_FILTER_CONFIG,
   STATUS_FILTER_CONFIG,
@@ -36,7 +40,7 @@ const MyProductList = () => {
       setProducts(response.data);
 
       if (location.state?.openProductId) {
-        setSelectedProduct({ id: location.state.openProductId });
+        setSelectedProduct({id: location.state.openProductId});
         setOpenModal(true);
       }
     } catch (error) {
@@ -68,46 +72,23 @@ const MyProductList = () => {
   };
 
   const handleEndSale = async (productId) => {
-    const result = await Swal.fire({
-      title: "판매 종료",
-      text: "정말로 판매를 종료하시겠습니까?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "종료하기",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
-        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
-      },
-      buttonsStyling: false
-    });
+    const result = await confirmDanger(
+        "판매 종료",
+        "정말로 판매를 종료하시겠습니까?",
+        "종료하기"
+    );
 
     if (result.isConfirmed) {
       try {
         await endSale(productId);
-        Swal.fire({
-          title: "완료",
-          text: "판매가 종료되었습니다.",
-          icon: "success",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
-        await fetchMyProducts(); // 목록 새로고침
+        await successAlert("완료", "판매가 종료되었습니다.");
+        await fetchMyProducts();
       } catch (error) {
         console.error("Failed to end sale:", error);
-        Swal.fire({
-          title: "오류",
-          text: error.response?.data?.message || "판매 종료 중 오류가 발생했습니다.",
-          icon: "error",
-          confirmButtonText: "확인",
-          customClass: {
-            confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
-          },
-          buttonsStyling: false
-        });
+        await errorAlert(
+            "오류",
+            error.response?.data?.message || "판매 종료 중 오류가 발생했습니다."
+        );
       }
     }
   };
@@ -122,7 +103,7 @@ const MyProductList = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : products.length === 0 ? (
             <EmptyState message="등록한 상품이 없습니다."/>
@@ -132,13 +113,13 @@ const MyProductList = () => {
                   title="내 등록 상품 목록"
                   headers={TABLE_HEAD}
                   pagination={
-                    products.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(products.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      products.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(products.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {products.map((product) => (
@@ -149,16 +130,16 @@ const MyProductList = () => {
                         {new Date(product.createdAt).toLocaleDateString()}
                       </td>
                       <td className="p-4 text-left">
-                        <PriceTag 
-                          price={product.price} 
-                          unit={product.priceUnit}
+                        <PriceTag
+                            price={product.price}
+                            unit={product.priceUnit}
                         />
                       </td>
                       <td className="p-4 text-left text-gray-600">
                         {product.type === "AUCTION" || product.status === "AUCTION" ? "-" : `${product.stock || 0}개`}
                       </td>
                       <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
-                      
+
                       <td className="p-4 text-left">
                         <Tooltip content="상품 상세 보기">
                           <IconButton

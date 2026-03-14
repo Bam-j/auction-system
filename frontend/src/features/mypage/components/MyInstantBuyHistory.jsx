@@ -9,7 +9,7 @@ import { getMyInstantBuyRequests, approveInstantBuy, rejectInstantBuy } from "..
 import { Typography, Button, IconButton, Tooltip } from "@material-tailwind/react";
 import { CheckIcon, XMarkIcon, EyeIcon } from "@heroicons/react/24/outline";
 import useAuthStore from "../../../stores/useAuthStore";
-import Swal from "sweetalert2";
+import { successAlert, errorAlert, infoAlert, confirmAction, confirmDanger } from "@/utils/swalUtils";
 import ProductDetailModal from "../../product/components/ProductDetailModal";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import {
@@ -58,53 +58,38 @@ const MyInstantBuyHistory = () => {
   };
 
   const handleApprove = async (id) => {
-    const result = await Swal.fire({
+    const result = await confirmAction({
       title: "요청 수락",
       text: "이 즉시 구매 요청을 수락하시겠습니까?",
-      icon: "question",
-      showCancelButton: true,
       confirmButtonText: "수락",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded",
-        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
-      },
-      buttonsStyling: false
+      confirmButtonColor: "#10B981"
     });
 
     if (result.isConfirmed) {
       try {
         await approveInstantBuy(id);
         await fetchInstantBuyHistory(searchParams);
-        Swal.fire("수락 완료", "요청이 수락되었습니다.", "success");
+        successAlert("수락 완료", "요청이 수락되었습니다.");
       } catch (error) {
-        Swal.fire("오류", error.response?.data?.message || "처리 중 오류가 발생했습니다.", "error");
+        errorAlert("오류", error.response?.data?.message || "처리 중 오류가 발생했습니다.");
       }
     }
   };
 
   const handleReject = async (id) => {
-    const result = await Swal.fire({
-      title: "요청 거절",
-      text: "이 즉시 구매 요청을 거절하시겠습니까?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "거절",
-      cancelButtonText: "취소",
-      customClass: {
-        confirmButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded",
-        cancelButton: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2"
-      },
-      buttonsStyling: false
-    });
+    const result = await confirmDanger(
+      "요청 거절",
+      "이 즉시 구매 요청을 거절하시겠습니까?",
+      "거절"
+    );
 
     if (result.isConfirmed) {
       try {
         await rejectInstantBuy(id);
         await fetchInstantBuyHistory(searchParams);
-        Swal.fire("거절 완료", "요청이 거절되었습니다.", "info");
+        infoAlert("거절 완료", "요청이 거절되었습니다.");
       } catch (error) {
-        Swal.fire("오류", error.response?.data?.message || "처리 중 오류가 발생했습니다.", "error");
+        errorAlert("오류", error.response?.data?.message || "처리 중 오류가 발생했습니다.");
       }
     }
   };

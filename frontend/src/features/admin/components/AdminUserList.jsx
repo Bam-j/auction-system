@@ -6,7 +6,8 @@ import TableActionButtons from "../../../components/ui/TableActionButtons";
 import EmptyState from "../../../components/ui/EmptyState";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getAllUsers, blockUser, unblockUser } from "../api/adminApi";
+import {getAllUsers, blockUser, unblockUser} from "../api/adminApi";
+import {successAlert, errorAlert, confirmAction} from "@/utils/swalUtils";
 import {
   USER_STATUS_FILTER_CONFIG,
   mapFilterParams
@@ -49,19 +50,13 @@ const AdminUserList = () => {
   const handleToggleBlock = async (user) => {
     const isBlocking = user.status !== "BLOCKED";
     const actionText = isBlocking ? "차단" : "차단 해제";
-    
-    const result = await Swal.fire({
+
+    const result = await confirmAction({
       title: `회원 ${actionText}`,
       text: `정말로 ${user.nickname} 회원을 ${actionText}하시겠습니까?`,
       icon: "warning",
-      showCancelButton: true,
       confirmButtonText: "예",
       cancelButtonText: "아니오",
-      customClass: {
-        confirmButton: "bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg mx-2",
-        cancelButton: "bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg mx-2"
-      },
-      buttonsStyling: false,
     });
 
     if (result.isConfirmed) {
@@ -71,23 +66,12 @@ const AdminUserList = () => {
         } else {
           await unblockUser(user.id);
         }
-        
-        Swal.fire({
-          title: "완료",
-          text: `회원이 성공적으로 ${actionText}되었습니다.`,
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        
+
+        successAlert("완료", `회원이 성공적으로 ${actionText}되었습니다.`);
         fetchUsers();
       } catch (error) {
         console.error(`Failed to ${actionText} user:`, error);
-        Swal.fire({
-          title: "오류",
-          text: `회원 ${actionText} 중 오류가 발생했습니다.`,
-          icon: "error",
-        });
+        errorAlert("오류", `회원 ${actionText} 중 오류가 발생했습니다.`);
       }
     }
   };
@@ -102,7 +86,7 @@ const AdminUserList = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : users.length === 0 ? (
             <EmptyState message="회원이 없습니다."/>
@@ -111,13 +95,13 @@ const AdminUserList = () => {
                 title="전체 회원 관리"
                 headers={TABLE_HEAD}
                 pagination={
-                  users.length > 0 && (
-                    <Pagination 
-                      active={page} 
-                      total={Math.ceil(users.length / 10) || 1} 
-                      onChange={setPage}
-                    />
-                  )
+                    users.length > 0 && (
+                        <Pagination
+                            active={page}
+                            total={Math.ceil(users.length / 10) || 1}
+                            onChange={setPage}
+                        />
+                    )
                 }
             >
               {users.map((user) => (
