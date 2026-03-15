@@ -29,6 +29,9 @@ public class BidService {
     private final BidRepository bidRepository;
     private final UserRepository userRepository;
     private final AuctionRepository auctionRepository;
+    private final org.springframework.data.redis.core.RedisTemplate<String, Object> redisTemplate;
+
+    private static final String AUCTION_PRICE_KEY = "auction:price:";
 
     @Transactional
     public Long createBid(Long userId, BidCreateRequest request) {
@@ -41,15 +44,41 @@ public class BidService {
         Auction auction = auctionRepository.findById(request.getAuctionId())
                 .orElseThrow(() -> new RuntimeException("경매 정보를 찾을 수 없습니다."));
 
-        // 본인 경매 입찰 방지
         if (auction.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("자신의 경매 상품에는 입찰할 수 없습니다.");
         }
 
-        // 경매 최고가 업데이트 (엔티티 내부에서 검증 로직 수행)
-        auction.updateCurrentPrice(request.getBidPrice());
+        String redisKey = AUCTION_PRICE_KEY + auction.getAuctionId();
+        
+        String script =
+            "local current_price = redis.call('get', KEYS[1]) " +
+            "if not current_price then " +
+            "  redis.call('set', KEYS[1], ARGV[2]) " +
+            "  current_price = ARGV[2] " +
+            "end " +
+            "if tonumber(ARGV[1]) >= tonumber(current_price) + tonumber(ARGV[3]) then " +
+            "  redis.call('set', KEYS[1], ARGV[1]) " +
+            "  return 1 " +
+            "else " +
+            "  return 0 " +
+            "end";
 
-        // 입찰 기록 생성
+        org.springframework.data.redis.core.script.DefaultRedisScript<Long> redisScript = new org.springframework.data.redis.core.script.DefaultRedisScript<>();
+        redisScript.setScriptText(script);
+        redisScript.setResultType(Long.class);
+
+        Long result = redisTemplate.execute(redisScript,
+                java.util.Collections.singletonList(redisKey), 
+                request.getBidPrice().toString(), 
+                auction.getCurrentPrice().toString(), 
+                auction.getMinBidIncrement().toString());
+
+        if (result == null || result == 0) {
+            throw new RuntimeException("입찰 가격이 현재가보다 낮거나 최소 입찰 단위를 충족하지 못했습니다.");
+        }
+
+        auction.updateCurrentPrice(request.getBidPrice());
+        
         Bid bid = Bid.createBid(user, auction, request.getBidPrice());
         bidRepository.save(bid);
 
@@ -90,17 +119,14 @@ public class BidService {
         Auction auction = bid.getAuction();
         Product product = auction.getProduct();
 
-        // 경매가 종료되었는지 확인 (마감 기한 지남 or 상태가 SOLD_OUT/INSTANT_BUY)
         boolean isEnded = LocalDateTime.now().isAfter(auction.getEndedAt()) ||
                 product.getSalesStatus() == SalesStatus.SOLD_OUT ||
                 product.getSalesStatus() == SalesStatus.INSTANT_BUY;
 
         if (isEnded) {
             if (product.getSalesStatus() == SalesStatus.INSTANT_BUY) {
-                // 즉시 구매로 판매된 경우 모든 입찰은 패찰
                 status = BidStatus.FAILED;
             } else {
-                // 경매 최고가(currentPrice)와 입찰가가 일치하는 경우만 낙찰(SUCCESS), 나머지는 패찰(FAILED)
                 if (bid.getBidPrice().equals(auction.getCurrentPrice())) {
                     status = BidStatus.SUCCESS;
                 } else {
