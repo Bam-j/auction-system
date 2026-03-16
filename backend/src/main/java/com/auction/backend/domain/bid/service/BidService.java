@@ -67,13 +67,18 @@ public class BidService {
         redisScript.setScriptText(script);
         redisScript.setResultType(Long.class);
 
+        // Redis에 값이 없을 경우 초기값 설정 (이미 있으면 무시)
+        redisTemplate.opsForValue().setIfAbsent(redisKey, auction.getCurrentPrice());
+
         Long result = redisTemplate.execute(redisScript,
                 java.util.Collections.singletonList(redisKey), 
-                request.getBidPrice().toString(), 
-                auction.getCurrentPrice().toString(), 
-                auction.getMinBidIncrement().toString());
+                request.getBidPrice(), 
+                auction.getCurrentPrice(), 
+                auction.getMinBidIncrement());
 
         if (result == null || result == 0) {
+            Object currentRedisPrice = redisTemplate.opsForValue().get(redisKey);
+            log.warn("Bid failed. requestPrice: {}, currentRedisPrice: {}", request.getBidPrice(), currentRedisPrice);
             throw new RuntimeException("입찰 가격이 현재가보다 낮거나 최소 입찰 단위를 충족하지 못했습니다.");
         }
 
