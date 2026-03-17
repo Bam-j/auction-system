@@ -36,7 +36,7 @@ const AdminPurchaseHistory = () => {
 
   useEffect(() => {
     fetchPurchases(searchParams);
-  }, []);
+  }, [searchParams]);
 
   const purchaseFilters = [
     CATEGORY_FILTER_CONFIG,
@@ -54,7 +54,7 @@ const AdminPurchaseHistory = () => {
   return (
       <div className="flex flex-col gap-4 h-full">
         <CommonFilterBar
-            searchPlaceholder="판매자 또는 구매자 검색"
+            searchPlaceholder="상품명, 판매자 또는 요청자 검색"
             filterConfigs={purchaseFilters}
             onSearch={handleSearch}
         />
@@ -64,10 +64,10 @@ const AdminPurchaseHistory = () => {
               <LoadingSpinner size="large" />
             </div>
         ) : purchases.length === 0 ? (
-            <EmptyState message="일반 구매 기록이 없습니다."/>
+            <EmptyState message="구매 요청 기록이 없습니다."/>
         ) : (
             <CommonTable
-                title="전체 일반 구매 기록"
+                title="전체 구매 요청 기록"
                 headers={TABLE_HEAD}
                 pagination={
                   purchases.length > 0 && (

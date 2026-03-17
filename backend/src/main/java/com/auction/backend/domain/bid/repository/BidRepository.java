@@ -15,9 +15,10 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
             "(:category IS NULL OR b.auction.product.category = :category) AND " +
             "(:status IS NULL OR b.bidStatus = :status) AND " +
             "(:keyword IS NULL OR " +
+            "  (:searchType = 'productName' AND b.auction.product.productName LIKE %:keyword%) OR " +
             "  (:searchType = 'seller' AND (b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword%)) OR " +
             "  (:searchType = 'bidder' AND (b.user.username LIKE %:keyword% OR b.user.nickname LIKE %:keyword%)) OR " +
-            "  (:searchType IS NULL AND (b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword% OR b.user.username LIKE %:keyword% OR b.user.nickname LIKE %:keyword%))" +
+            "  (:searchType IS NULL AND (b.auction.product.productName LIKE %:keyword% OR b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword% OR b.user.username LIKE %:keyword% OR b.user.nickname LIKE %:keyword%))" +
             ")")
     List<Bid> findByFilters(
             @org.springframework.data.repository.query.Param("category") com.auction.backend.global.enums.ProductCategory category,
@@ -29,6 +30,7 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
             "(:category IS NULL OR b.auction.product.category = :category) AND " +
             "(:status IS NULL OR b.bidStatus = :status) AND " +
             "(:keyword IS NULL OR " +
+            "  (:searchType = 'productName' AND b.auction.product.productName LIKE %:keyword%) OR " +
             "  (:searchType = 'seller' AND (b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword%)) OR " +
             "  (:searchType IS NULL AND (b.auction.product.productName LIKE %:keyword% OR b.auction.user.username LIKE %:keyword% OR b.auction.user.nickname LIKE %:keyword%))" +
             ") ORDER BY b.createdAt DESC")

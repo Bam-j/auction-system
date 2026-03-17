@@ -41,7 +41,7 @@ const AdminBidHistory = () => {
 
   useEffect(() => {
     fetchBids(searchParams);
-  }, []);
+  }, [searchParams]);
 
   const bidFilters = [
     CATEGORY_FILTER_CONFIG,
@@ -64,7 +64,7 @@ const AdminBidHistory = () => {
   return (
       <div className="flex flex-col gap-4 h-full">
         <CommonFilterBar
-            searchPlaceholder="판매자 또는 입찰자 검색"
+            searchPlaceholder="상품명, 판매자 또는 입찰자 검색"
             filterConfigs={bidFilters}
             onSearch={handleSearch}
         />

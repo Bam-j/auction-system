@@ -24,7 +24,7 @@ export const BID_STATUS_OPTIONS = [
   {label: "전체", value: "ALL"},
   {label: "진행 중", value: "BIDDING"},
   {label: "낙찰", value: "SUCCESS"},
-  {label: "유찰/패배", value: "FAILED"},
+  {label: "패찰", value: "FAILED"},
 ];
 
 export const PURCHASE_REQUEST_STATUS_OPTIONS = [
@@ -49,14 +49,16 @@ export const ADMIN_SEARCH_TYPE_OPTIONS = [
 
 export const BIDDER_SELLER_SEARCH_TYPE_OPTIONS = [
   {label: "전체", value: "ALL"},
+  {label: "상품명", value: "productName"},
   {label: "판매자", value: "seller"},
   {label: "입찰자", value: "bidder"},
 ];
 
 export const BUYER_SELLER_SEARCH_TYPE_OPTIONS = [
   {label: "전체", value: "ALL"},
+  {label: "상품명", value: "productName"},
   {label: "판매자", value: "seller"},
-  {label: "구매자", value: "buyer"},
+  {label: "요청자", value: "buyer"},
 ];
 
 export const PRODUCT_ADMIN_SEARCH_TYPE_OPTIONS = [
