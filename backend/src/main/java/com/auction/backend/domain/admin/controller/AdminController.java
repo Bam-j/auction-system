@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class AdminController {
     @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공")
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getAllUsers(
-            @Parameter(description = "검색어 (아이디 또는 닉네임)", example = "홍길동")
+            @Parameter(description = "검색어 (아이디 또는 닉네임)", example = "im_user000")
             @RequestParam(required = false) String keyword,
             @Parameter(description = "사용자 상태 (ACTIVE, DELETED, BLOCKED)", example = "ACTIVE")
             @RequestParam(required = false) String status) {
@@ -67,7 +66,7 @@ public class AdminController {
             @RequestParam(required = false) String status,
             @Parameter(description = "검색 타입 (상품명/판매자)", example = "PRODUCT_NAME")
             @RequestParam(required = false) String searchType,
-            @Parameter(description = "검색어")
+            @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(adminService.getAllProducts(category, status, searchType, keyword));
     }
@@ -82,7 +81,7 @@ public class AdminController {
             @RequestParam(required = false) String status,
             @Parameter(description = "검색 타입 (상품명/요청자/판매자)", example = "PRODUCT_NAME")
             @RequestParam(required = false) String searchType,
-            @Parameter(description = "검색어")
+            @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(adminService.getAllPurchaseRequests(category, status, searchType, keyword));
     }
@@ -97,7 +96,7 @@ public class AdminController {
             @RequestParam(required = false) String status,
             @Parameter(description = "검색 타입 (상품명/입찰자/판매자)", example = "PRODUCT_NAME")
             @RequestParam(required = false) String searchType,
-            @Parameter(description = "검색어")
+            @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         return ResponseEntity.ok(adminService.getAllBids(category, status, searchType, keyword));
     }

@@ -4,6 +4,10 @@ import com.auction.backend.domain.user.dto.profile.DeleteAccountRequest;
 import com.auction.backend.domain.user.dto.profile.UpdateNicknameRequest;
 import com.auction.backend.domain.user.dto.profile.UpdatePasswordRequest;
 import com.auction.backend.domain.user.service.UserCommandService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "User", description = "회원 정보 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -18,9 +23,13 @@ public class UserController {
 
     private final UserCommandService userCommandService;
 
+    @Operation(summary = "닉네임 변경 요청", description = "닉네임 변경 요청. 변경 과정에서 중복 검사 수행")
+    @ApiResponse(responseCode = "200", description = "닉네임 변경 성공")
     @PatchMapping("/me/nickname")
     public ResponseEntity<Void> updateNickname(
+            @Parameter(hidden = true)
             @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "닉네임 변경 정보. 변경할 닉네임을 담은 DTO")
             @Valid @RequestBody UpdateNicknameRequest request) {
 
         Long userId = Long.valueOf(userDetails.getUsername());
@@ -29,9 +38,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "패스워드 변경 요청", description = "패스워드 변경 요청. 변경 과정에서 중복 검사 수행 및 저장 전 암호화")
+    @ApiResponse(responseCode = "200", description = "패스워드 변경 성공")
     @PatchMapping("/me/password")
     public ResponseEntity<Void> updatePassword(
+            @Parameter(hidden = true)
             @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "패스워드 변경 정보. 변경할 패스워드를 담은 DTO")
             @Valid @RequestBody UpdatePasswordRequest request) {
 
         Long userId = Long.valueOf(userDetails.getUsername());
@@ -40,9 +53,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "회원 탈퇴", description = "회원 탈퇴 요청. Soft Delete 방식으로 탈퇴(삭제) 수행")
+    @ApiResponse(responseCode = "204", description = "회원 탈퇴 요청 성공")
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteAccount(
+            @Parameter(hidden = true)
             @AuthenticationPrincipal UserDetails userDetails,
+            @Parameter(description = "회원 탈퇴 정보. 탈퇴를 위한 비밀번호 정보 DTO")
             @Valid @RequestBody DeleteAccountRequest request) {
 
         Long userId = Long.valueOf(userDetails.getUsername());
