@@ -48,18 +48,19 @@ const MyBidHistory = () => {
 
   useEffect(() => {
     fetchMyBids(searchParams);
-  }, [location.state]); // location.state 변경 시에도 체크
+  }, [location.state, searchParams]); // location.state 변경 시에도 체크
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
     {
       ...BID_STATUS_FILTER_CONFIG,
-      label: "입찰 결과",
+      label: "상태",
     },
     {
       ...SEARCH_TYPE_FILTER_CONFIG,
       options: [
         {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
         {label: "판매자", value: "seller"},
       ],
     }

@@ -51,7 +51,7 @@ const MyPurchaseHistory = () => {
 
   useEffect(() => {
     fetchPurchaseHistory(searchParams);
-  }, [location.state]);
+  }, [location.state, searchParams]);
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -60,6 +60,7 @@ const MyPurchaseHistory = () => {
       ...SEARCH_TYPE_FILTER_CONFIG,
       options: [
         {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
         {label: "판매자", value: "seller"},
       ],
     }

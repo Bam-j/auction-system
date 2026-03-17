@@ -53,7 +53,7 @@ const MySalesRequests = () => {
 
   useEffect(() => {
     fetchIncomingRequests(searchParams);
-  }, [location.state]);
+  }, [location.state, searchParams]);
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -120,7 +120,7 @@ const MySalesRequests = () => {
         ) : (
             <>
               <CommonTable
-                  title="구매 요청 관리"
+                  title="들어온 구매 요청"
                   headers={TABLE_HEAD}
                   pagination={
                       requests.length > 0 && (

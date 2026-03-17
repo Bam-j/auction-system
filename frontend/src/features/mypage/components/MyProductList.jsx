@@ -52,7 +52,7 @@ const MyProductList = () => {
 
   useEffect(() => {
     fetchMyProducts(searchParams);
-  }, [location.state]);
+  }, [location.state, searchParams]);
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,

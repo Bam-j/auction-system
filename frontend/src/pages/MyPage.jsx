@@ -8,9 +8,9 @@ import {
 const MyPage = () => {
   const myPageMenus = [
     {name: "내 판매 상품", path: "/mypage/products", icon: CubeIcon},
-    {name: "구매 요청 관리", path: "/mypage/requests", icon: BellAlertIcon},
+    {name: "들어온 구매 요청", path: "/mypage/requests", icon: BellAlertIcon},
     {name: "즉시 구매 기록", path: "/mypage/instant-buys", icon: CurrencyDollarIcon},
-    {name: "내 구매 기록", path: "/mypage/purchases", icon: ShoppingBagIcon},
+    {name: "내 구매 요청", path: "/mypage/purchases", icon: ShoppingBagIcon},
     {name: "내 입찰 기록", path: "/mypage/bids", icon: CurrencyDollarIcon},
     {name: "내 정보 수정", path: "/mypage/profile", icon: UserCircleIcon},
   ];

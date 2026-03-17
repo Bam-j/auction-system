@@ -15,6 +15,7 @@ import CommonFilterBar from "../../../components/ui/CommonFilterBar";
 import {
   CATEGORY_FILTER_CONFIG,
   PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+  SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
 
@@ -43,11 +44,19 @@ const MyInstantBuyHistory = () => {
 
   useEffect(() => {
     fetchInstantBuyHistory(searchParams);
-  }, []);
+  }, [searchParams]);
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
-    PURCHASE_REQUEST_STATUS_FILTER_CONFIG
+    PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
+    {
+      ...SEARCH_TYPE_FILTER_CONFIG,
+      options: [
+        {label: "전체", value: "ALL"},
+        {label: "상품명", value: "productName"},
+        {label: "판매자", value: "nickname"},
+      ],
+    }
   ];
 
   const handleSearch = (searchData) => {
@@ -102,7 +111,7 @@ const MyInstantBuyHistory = () => {
   return (
     <div className="flex flex-col gap-4 h-full">
       <CommonFilterBar
-        searchPlaceholder="상품명 또는 상대방 닉네임 검색"
+        searchPlaceholder="상품명 또는 판매자 닉네임 검색"
         filterConfigs={filterConfigs}
         onSearch={handleSearch}
       />
