@@ -58,10 +58,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   const isAuction = product?.type === "AUCTION";
   const currentStatus = product?.status?.toString().toUpperCase();
-  const isInstantBuy = currentStatus === "INSTANT_BUY";
   
   // 경매 마감 여부 확인
   const isAuctionEnded = isAuction && product?.endedAt && new Date(product.endedAt) < new Date();
+
+  const isOwner = user && product?.seller === user.nickname;
 
   const checkAuth = () => {
     if (!user) {
@@ -76,6 +77,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   const handleBid = async () => {
     if (!checkAuth()) return;
+
+    if (isOwner) {
+      await warningAlert("알림", "자신의 상품에는 입찰할 수 없습니다.");
+      return;
+    }
     
     const currentPrice = isNaN(product.currentPrice) ? 0 : Number(product.currentPrice);
     const bidIncrement = isNaN(product.bidIncrement) ? 0 : Number(product.bidIncrement);
@@ -107,6 +113,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const handleBuyNow = async () => {
     if (!checkAuth()) return;
 
+    if (isOwner) {
+      await warningAlert("알림", "자신의 상품에는 즉시 구매 요청을 할 수 없습니다.");
+      return;
+    }
+
     const price = product.instantPrice;
     const displayPrice = !isNaN(parseFloat(price)) && isFinite(price) 
       ? Number(price).toLocaleString() 
@@ -137,6 +148,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
   const handlePurchase = async () => {
     if (!checkAuth()) return;
+
+    if (isOwner) {
+      await warningAlert("알림", "자신의 상품에는 구매 요청을 할 수 없습니다.");
+      return;
+    }
 
     if (parseInt(purchaseAmount) > product.stock) {
       await warningAlert("수량 오류", "재고를 초과하는 양을 요청할 수 없습니다.");
