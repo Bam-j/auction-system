@@ -11,6 +11,8 @@ import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.enums.PriceUnit;
+import com.auction.backend.global.enums.ProductCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -94,14 +96,14 @@ public class BidService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.domain.bid.entity.BidStatus bidStatus = null;
+        BidStatus bidStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            bidStatus = com.auction.backend.domain.bid.entity.BidStatus.valueOf(status);
+            bidStatus = BidStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -153,7 +155,7 @@ public class BidService {
                 .build();
     }
 
-    private String getPriceUnitDisplayName(com.auction.backend.global.enums.PriceUnit unit) {
+    private String getPriceUnitDisplayName(PriceUnit unit) {
         if (unit == null) return "에메랄드";
         return switch (unit) {
             case EMERALD -> "에메랄드";

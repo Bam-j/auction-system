@@ -6,6 +6,7 @@ import com.auction.backend.domain.sale.fixedsale.dto.FixedSaleRegisterRequest;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
+import com.auction.backend.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class FixedSaleService {
 
     private final ProductRepository productRepository;
     private final FixedSaleRepository fixedSaleRepository;
-    private final com.auction.backend.domain.user.repository.UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Long registerFixedSale(Long userId, FixedSaleRegisterRequest request, String imageUrl) {

@@ -1,6 +1,7 @@
 package com.auction.backend.domain.admin.service;
 
 import com.auction.backend.domain.bid.dto.BidResponse;
+import com.auction.backend.domain.bid.entity.BidStatus;
 import com.auction.backend.domain.bid.repository.BidRepository;
 import com.auction.backend.domain.bid.service.BidService;
 import com.auction.backend.domain.product.dto.ProductListResponse;
@@ -14,6 +15,7 @@ import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.user.entity.UserStatus;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.enums.RequestStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,9 +84,9 @@ public class AdminService {
             productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        RequestStatus requestStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+            requestStatus = RequestStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -108,9 +110,9 @@ public class AdminService {
             productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.domain.bid.entity.BidStatus bidStatus = null;
+        BidStatus bidStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            bidStatus = com.auction.backend.domain.bid.entity.BidStatus.valueOf(status);
+            bidStatus = BidStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;

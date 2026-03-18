@@ -2,11 +2,14 @@ package com.auction.backend.domain.product.service;
 
 import com.auction.backend.domain.product.dto.ProductListResponse;
 import com.auction.backend.domain.product.entity.Product;
+import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.product.repository.ProductRepository;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.enums.PriceUnit;
+import com.auction.backend.global.enums.ProductCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +28,14 @@ public class ProductService {
     private final UserRepository userRepository;
 
     public List<ProductListResponse> getAllProducts(String category, String status, String searchType, String keyword) {
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.domain.product.entity.SalesStatus salesStatus = null;
+        SalesStatus salesStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            salesStatus = com.auction.backend.domain.product.entity.SalesStatus.valueOf(status);
+            salesStatus = SalesStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -54,14 +57,14 @@ public class ProductService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.domain.product.entity.SalesStatus salesStatus = null;
+        SalesStatus salesStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            salesStatus = com.auction.backend.domain.product.entity.SalesStatus.valueOf(status);
+            salesStatus = SalesStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -95,7 +98,7 @@ public class ProductService {
     private ProductListResponse convertToResponse(Product product) {
         String type = "FIXED";
         String price = "0";
-        String priceUnit = "원";
+        String priceUnit = "에메랄드";
         Integer stock = null;
         java.time.LocalDateTime endedAt = null;
         Integer startPrice = null;
@@ -110,7 +113,7 @@ public class ProductService {
             var fixedSale = fixedSaleOpt.get();
             price = fixedSale.getPrice();
             type = "FIXED";
-            priceUnit = "원";
+            priceUnit = "에메랄드";
             stock = fixedSale.getStock();
             fixedSaleId = fixedSale.getFixedSaleId();
         } else {
@@ -127,7 +130,7 @@ public class ProductService {
                 auctionId = auction.getAuctionId();
                 
                 // 즉시 구매 완료된 경우 가격을 즉시 구매가로 설정
-                if (product.getSalesStatus() == com.auction.backend.domain.product.entity.SalesStatus.INSTANT_BUY && instantPrice != null) {
+                if (product.getSalesStatus() == SalesStatus.INSTANT_BUY && instantPrice != null) {
                     price = instantPrice;
                 } else {
                     price = String.valueOf(auction.getCurrentPrice());
@@ -158,7 +161,7 @@ public class ProductService {
                 .build();
     }
 
-    private String getPriceUnitDisplayName(com.auction.backend.global.enums.PriceUnit unit) {
+    private String getPriceUnitDisplayName(PriceUnit unit) {
         if (unit == null) return "에메랄드";
         return switch (unit) {
             case EMERALD -> "에메랄드";

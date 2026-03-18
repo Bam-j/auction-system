@@ -1,5 +1,6 @@
 package com.auction.backend.domain.purchaserequest.service;
 
+import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.purchaserequest.dto.InstantBuyCreateRequest;
 import com.auction.backend.domain.purchaserequest.dto.InstantBuyRequestResponse;
 import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestCreateRequest;
@@ -16,6 +17,9 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.domain.fixedsalesorder.entity.FixedSalesOrder;
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSalesOrderRepository;
+import com.auction.backend.global.enums.PriceUnit;
+import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.global.enums.RequestStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -101,14 +105,14 @@ public class PurchaseRequestService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        RequestStatus requestStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+            requestStatus = RequestStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -130,14 +134,14 @@ public class PurchaseRequestService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        RequestStatus requestStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+            requestStatus = RequestStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -151,14 +155,14 @@ public class PurchaseRequestService {
     }
 
     public List<InstantBuyRequestResponse> getAllInstantBuyRequests(String category, String status, String searchType, String keyword) {
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        RequestStatus requestStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+            requestStatus = RequestStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -180,14 +184,14 @@ public class PurchaseRequestService {
         User seller = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        com.auction.backend.global.enums.ProductCategory productCategory = null;
+        ProductCategory productCategory = null;
         if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = com.auction.backend.global.enums.ProductCategory.valueOf(category);
+            productCategory = ProductCategory.valueOf(category);
         }
 
-        com.auction.backend.global.enums.RequestStatus requestStatus = null;
+        RequestStatus requestStatus = null;
         if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            requestStatus = com.auction.backend.global.enums.RequestStatus.valueOf(status);
+            requestStatus = RequestStatus.valueOf(status);
         }
 
         String searchKeyword = keyword;
@@ -214,7 +218,7 @@ public class PurchaseRequestService {
             throw new RuntimeException("판매자만 요청을 수락할 수 있습니다.");
         }
 
-        if (com.auction.backend.domain.product.entity.SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
+        if (SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
             throw new RuntimeException("이미 품절된 상품입니다.");
         }
 
@@ -238,8 +242,8 @@ public class PurchaseRequestService {
             throw new RuntimeException("판매자만 요청을 수락할 수 있습니다.");
         }
 
-        if (com.auction.backend.domain.product.entity.SalesStatus.SOLD_OUT.equals(request.getAuction().getProduct().getSalesStatus()) || 
-            com.auction.backend.domain.product.entity.SalesStatus.INSTANT_BUY.equals(request.getAuction().getProduct().getSalesStatus())) {
+        if (SalesStatus.SOLD_OUT.equals(request.getAuction().getProduct().getSalesStatus()) ||
+            SalesStatus.INSTANT_BUY.equals(request.getAuction().getProduct().getSalesStatus())) {
             throw new RuntimeException("이미 낙찰 또는 판매 완료된 상품입니다.");
         }
 
@@ -292,7 +296,7 @@ public class PurchaseRequestService {
                 .sellerName(request.getFixedSale().getUser().getNickname())
                 .quantity(request.getQuantity())
                 .price(request.getFixedSale().getPrice())
-                .priceUnit("원") // 일반 판매는 현재 "원" 단위를 기본으로 사용하지만, 통일성을 위해 하드코딩 유지하거나 추후 확장 가능
+                .priceUnit("에메랄드")
                 .status(request.getRequestStatus())
                 .requestDate(request.getCreatedAt())
                 .build();
@@ -312,7 +316,7 @@ public class PurchaseRequestService {
                 .build();
     }
 
-    private String getPriceUnitDisplayName(com.auction.backend.global.enums.PriceUnit unit) {
+    private String getPriceUnitDisplayName(PriceUnit unit) {
         if (unit == null) return "에메랄드";
         return switch (unit) {
             case EMERALD -> "에메랄드";
