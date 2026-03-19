@@ -1,4 +1,4 @@
-package com.auction.backend.domain.purchaserequest.dto;
+package com.auction.backend.domain.sale.auction.dto;
 
 import com.auction.backend.global.enums.RequestStatus;
 import lombok.Builder;
@@ -8,13 +8,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PurchaseRequestResponse {
+public class InstantBuyRequestResponse {
     private Long id;
     private Long productId;
     private String productName;
-    private String buyerName;
-    private String sellerName;
-    private Integer quantity;
+    private String requesterNickname;
+    private String sellerNickname;
     private String price;
     private String priceUnit;
     private RequestStatus status;

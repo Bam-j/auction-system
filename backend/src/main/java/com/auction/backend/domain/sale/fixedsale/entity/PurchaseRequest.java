@@ -1,6 +1,5 @@
-package com.auction.backend.domain.purchaserequest.entity;
+package com.auction.backend.domain.sale.fixedsale.entity;
 
-import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.global.entity.BaseTimeEntity;
 import com.auction.backend.global.enums.RequestStatus;

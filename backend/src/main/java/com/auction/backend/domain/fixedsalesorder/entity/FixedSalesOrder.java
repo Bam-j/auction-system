@@ -1,6 +1,6 @@
 package com.auction.backend.domain.fixedsalesorder.entity;
 
-import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
+import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

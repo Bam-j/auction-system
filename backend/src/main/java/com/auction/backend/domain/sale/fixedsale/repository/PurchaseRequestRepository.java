@@ -1,6 +1,6 @@
-package com.auction.backend.domain.purchaserequest.repository;
+package com.auction.backend.domain.sale.fixedsale.repository;
 
-import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
+import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

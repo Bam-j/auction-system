@@ -55,7 +55,7 @@ export const purchaseFixedSale = (purchaseData) => {
 
 // 경매 즉시 구매 요청
 export const purchaseInstantBuy = (instantBuyData) => {
-  return api.post("/purchase-requests/instant", instantBuyData);
+  return api.post("/instant-buy-requests", instantBuyData);
 };
 
 // 경매 입찰
@@ -85,22 +85,22 @@ export const getMyPurchaseRequests = (params) => {
 
 // 내 즉시 구매 요청 내역 조회 (보낸 것 + 받은 것)
 export const getMyInstantBuyRequests = (params) => {
-  return api.get("/purchase-requests/instant/me", { params });
+  return api.get("/instant-buy-requests/me", { params });
 };
 
 // 모든 즉시 구매 요청 조회 (관리자용)
 export const getAllInstantBuyRequests = (params) => {
-  return api.get("/purchase-requests/instant/admin", { params });
+  return api.get("/instant-buy-requests/admin", { params });
 };
 
 // 즉시 구매 요청 수락
 export const approveInstantBuy = (requestId) => {
-  return api.post(`/purchase-requests/instant/${requestId}/approve`);
+  return api.post(`/instant-buy-requests/${requestId}/approve`);
 };
 
 // 즉시 구매 요청 거절
 export const rejectInstantBuy = (requestId) => {
-  return api.post(`/purchase-requests/instant/${requestId}/reject`);
+  return api.post(`/instant-buy-requests/${requestId}/reject`);
 };
 
 // 내 입찰 내역 조회

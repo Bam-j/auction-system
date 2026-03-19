@@ -1,4 +1,4 @@
-package com.auction.backend.domain.purchaserequest.dto;
+package com.auction.backend.domain.sale.auction.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

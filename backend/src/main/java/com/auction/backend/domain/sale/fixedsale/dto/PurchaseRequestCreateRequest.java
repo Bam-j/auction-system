@@ -1,4 +1,4 @@
-package com.auction.backend.domain.purchaserequest.dto;
+package com.auction.backend.domain.sale.fixedsale.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

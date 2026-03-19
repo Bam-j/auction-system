@@ -1,8 +1,8 @@
-package com.auction.backend.domain.purchaserequest.service;
+package com.auction.backend.domain.sale.fixedsale.service;
 
-import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestCreateRequest;
-import com.auction.backend.domain.purchaserequest.entity.PurchaseRequest;
-import com.auction.backend.domain.purchaserequest.repository.PurchaseRequestRepository;
+import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestCreateRequest;
+import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
+import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;

@@ -3,7 +3,7 @@ package com.auction.backend.domain.admin.controller;
 import com.auction.backend.domain.admin.service.AdminService;
 import com.auction.backend.domain.bid.dto.BidResponse;
 import com.auction.backend.domain.product.dto.ProductListResponse;
-import com.auction.backend.domain.purchaserequest.dto.PurchaseRequestResponse;
+import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestResponse;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

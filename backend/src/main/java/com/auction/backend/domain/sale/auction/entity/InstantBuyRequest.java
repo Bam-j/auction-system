@@ -1,6 +1,5 @@
-package com.auction.backend.domain.purchaserequest.entity;
+package com.auction.backend.domain.sale.auction.entity;
 
-import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.global.enums.RequestStatus;
 import jakarta.persistence.*;
