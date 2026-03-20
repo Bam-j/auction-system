@@ -8,6 +8,7 @@ import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,19 +17,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class AuctionService {
+@Transactional
+public class AuctionCommandService {
 
     private final ProductRepository productRepository;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    //경매 상품 등록
     public Long registerAuction(Long userId, AuctionRegisterRequest request, String imageUrl) {
         log.info("Registering auction for user: {}, product: {}", userId, request.getProductName());
-        
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
         Product product = Product.builder()
                 .user(user)

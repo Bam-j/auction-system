@@ -1,6 +1,7 @@
 package com.auction.backend.domain.admin.controller;
 
-import com.auction.backend.domain.admin.service.AdminService;
+import com.auction.backend.domain.admin.service.AdminCommandService;
+import com.auction.backend.domain.admin.service.AdminQueryService;
 import com.auction.backend.domain.bid.dto.BidResponse;
 import com.auction.backend.domain.product.dto.ProductListResponse;
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestResponse;
@@ -21,7 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final AdminService adminService;
+    private final AdminCommandService adminCommandService;
+    private final AdminQueryService adminQueryService;
 
     @Operation(summary = "모든 사용자 조회", description = "시스템 내에 등록된 모든 사용자 조회. 키워드 검색과 상태 필터링 제공.")
     @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공")
@@ -31,7 +33,7 @@ public class AdminController {
             @RequestParam(required = false) String keyword,
             @Parameter(description = "사용자 상태 (ACTIVE, DELETED, BLOCKED)", example = "ACTIVE")
             @RequestParam(required = false) String status) {
-        return ResponseEntity.ok(adminService.getAllUsers(keyword, status));
+        return ResponseEntity.ok(adminQueryService.getAllUsers(keyword, status));
     }
 
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단. 차단된 유저는 로그인 불가능")
@@ -41,7 +43,7 @@ public class AdminController {
             @Parameter(description = "차단 대상 유저 ID", example = "1")
             @PathVariable Long userId
     ) {
-        adminService.blockUser(userId);
+        adminCommandService.blockUser(userId);
         return ResponseEntity.ok().build();
     }
 
@@ -52,7 +54,7 @@ public class AdminController {
             @Parameter(description = "차단 해제 대상 유저 ID", example = "1")
             @PathVariable Long userId
     ) {
-        adminService.unblockUser(userId);
+        adminCommandService.unblockUser(userId);
         return ResponseEntity.ok().build();
     }
 
@@ -68,7 +70,7 @@ public class AdminController {
             @RequestParam(required = false) String searchType,
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(adminService.getAllProducts(category, status, searchType, keyword));
+        return ResponseEntity.ok(adminQueryService.getAllProducts(category, status, searchType, keyword));
     }
 
     @Operation(summary = "모든 구매 요청 조회", description = "시스템에 등록된 모든 구매 요청 조회. 필터링, 검색, 상품 상세 보기 제공")
@@ -83,7 +85,7 @@ public class AdminController {
             @RequestParam(required = false) String searchType,
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(adminService.getAllPurchaseRequests(category, status, searchType, keyword));
+        return ResponseEntity.ok(adminQueryService.getAllPurchaseRequests(category, status, searchType, keyword));
     }
 
     @Operation(summary = "모든 입찰 조회", description = "시스템에 등록된 모든 입찰 조회. 필터링, 검색, 상품 상세 보기 제공")
@@ -98,6 +100,6 @@ public class AdminController {
             @RequestParam(required = false) String searchType,
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(adminService.getAllBids(category, status, searchType, keyword));
+        return ResponseEntity.ok(adminQueryService.getAllBids(category, status, searchType, keyword));
     }
 }

@@ -10,6 +10,8 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.utils.SearchParamParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,79 +22,44 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ProductService {
+public class ProductQueryService {
 
     private final ProductRepository productRepository;
     private final FixedSaleRepository fixedSaleRepository;
     private final AuctionRepository auctionRepository;
     private final UserRepository userRepository;
 
+    //모든 상품 조회
     public List<ProductListResponse> getAllProducts(String category, String status, String searchType, String keyword) {
-        ProductCategory productCategory = null;
-        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = ProductCategory.valueOf(category);
-        }
-
-        SalesStatus salesStatus = null;
-        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            salesStatus = SalesStatus.valueOf(status);
-        }
-
-        String searchKeyword = keyword;
-        if (keyword != null && keyword.isEmpty()) {
-            searchKeyword = null;
-        }
-
-        String stype = searchType;
-        if (searchType != null && (searchType.isEmpty() || searchType.equals("ALL"))) {
-            stype = null;
-        }
+        ProductCategory productCategory = SearchParamParser.parseEnum(ProductCategory.class, category);
+        SalesStatus salesStatus = SearchParamParser.parseEnum(SalesStatus.class, status);
+        String searchKeyword = SearchParamParser.parseString(keyword);
+        String stype = SearchParamParser.parseString(searchType);
 
         return productRepository.findByFilters(productCategory, salesStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
+    //특정 유저의 등록 상품 조회
     public List<ProductListResponse> getUserProducts(Long userId, String category, String status, String keyword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
-        ProductCategory productCategory = null;
-        if (category != null && !category.equals("ALL") && !category.isEmpty()) {
-            productCategory = ProductCategory.valueOf(category);
-        }
-
-        SalesStatus salesStatus = null;
-        if (status != null && !status.equals("ALL") && !status.isEmpty()) {
-            salesStatus = SalesStatus.valueOf(status);
-        }
-
-        String searchKeyword = keyword;
-        if (keyword != null && keyword.isEmpty()) {
-            searchKeyword = null;
-        }
+        ProductCategory productCategory = SearchParamParser.parseEnum(ProductCategory.class, category);
+        SalesStatus salesStatus = SearchParamParser.parseEnum(SalesStatus.class, status);
+        String searchKeyword = SearchParamParser.parseString(keyword);
 
         return productRepository.findByUserWithFilters(user, productCategory, salesStatus, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
+    //상품 상세 정보 조회
     public ProductListResponse getProductDetail(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("상품을 찾을 수 없습니다."));
         return convertToResponse(product);
-    }
-
-    @Transactional
-    public void endSale(Long productId, Long userId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
-
-        if (!product.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("상품 소유자만 판매를 종료할 수 있습니다.");
-        }
-
-        product.soldOut();
     }
 
     private ProductListResponse convertToResponse(Product product) {
@@ -121,7 +88,7 @@ public class ProductService {
             if (auctionOpt.isPresent()) {
                 var auction = auctionOpt.get();
                 type = "AUCTION";
-                priceUnit = getPriceUnitDisplayName(auction.getPriceUnit());
+                priceUnit = PriceUnit.getDisplayName(auction.getPriceUnit());
                 endedAt = auction.getEndedAt();
                 startPrice = auction.getStartPrice();
                 currentPrice = auction.getCurrentPrice();
@@ -159,14 +126,5 @@ public class ProductService {
                 .bidIncrement(bidIncrement)
                 .instantPrice(instantPrice)
                 .build();
-    }
-
-    private String getPriceUnitDisplayName(PriceUnit unit) {
-        if (unit == null) return "에메랄드";
-        return switch (unit) {
-            case EMERALD -> "에메랄드";
-            case EMERALD_BLOCK -> "에메랄드 블록";
-            case EMERALD_COIN -> "에메랄드 주화";
-        };
     }
 }

@@ -2,7 +2,8 @@ package com.auction.backend.domain.bid.controller;
 
 import com.auction.backend.domain.bid.dto.BidCreateRequest;
 import com.auction.backend.domain.bid.dto.BidResponse;
-import com.auction.backend.domain.bid.service.BidService;
+import com.auction.backend.domain.bid.service.BidCommandService;
+import com.auction.backend.domain.bid.service.BidQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BidController {
 
-    private final BidService bidService;
+    private final BidCommandService bidCommandService;
+    private final BidQueryService bidQueryService;
 
     @Operation(summary = "입찰 생성", description = "입찰 단위에 따른 현재 최고가 입찰 생성")
     @ApiResponse(responseCode = "200", description = "입찰 생성 성공")
@@ -33,7 +35,7 @@ public class BidController {
             @Parameter(description = "입찰 정보. 경매 ID, 입찰가 정보를 가진 DTO")
             @Valid @RequestBody BidCreateRequest request) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(bidService.createBid(userId, request));
+        return ResponseEntity.ok(bidCommandService.createBid(userId, request));
     }
 
     @Operation(summary = "입찰 기록 조회", description = "자신이 입찰했던 모든 기록을 조회")
@@ -51,6 +53,6 @@ public class BidController {
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(bidService.getMyBids(userId, category, status, searchType, keyword));
+        return ResponseEntity.ok(bidQueryService.getMyBids(userId, category, status, searchType, keyword));
     }
 }

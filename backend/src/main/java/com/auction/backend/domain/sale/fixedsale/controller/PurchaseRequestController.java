@@ -2,7 +2,8 @@ package com.auction.backend.domain.sale.fixedsale.controller;
 
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestCreateRequest;
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestResponse;
-import com.auction.backend.domain.sale.fixedsale.service.PurchaseRequestService;
+import com.auction.backend.domain.sale.fixedsale.service.PurchaseRequestCommandService;
+import com.auction.backend.domain.sale.fixedsale.service.PurchaseRequestQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +26,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PurchaseRequestController {
 
-    private final PurchaseRequestService purchaseRequestService;
+    private final PurchaseRequestCommandService purchaseRequestCommandService;
+    private final PurchaseRequestQueryService purchaseRequestQueryService;
 
     @Operation(summary = "구매 요청 생성", description = "일반 판매 상품에 대한 구매 요청 생성")
     @ApiResponse(responseCode = "200", description = "구매 요청 생성 성공")
@@ -35,9 +37,9 @@ public class PurchaseRequestController {
             @AuthenticationPrincipal User principal,
             @Parameter(description = "구매 요청 정보. 대상 상품 ID, 수량 정보를 가진 DTO")
             @Valid @RequestBody PurchaseRequestCreateRequest request) {
-        
+
         Long userId = Long.parseLong(principal.getUsername());
-        Long purchaseRequestId = purchaseRequestService.createPurchaseRequest(userId, request);
+        Long purchaseRequestId = purchaseRequestCommandService.createPurchaseRequest(userId, request);
 
         return ResponseEntity.ok(Map.of("purchaseRequestId", purchaseRequestId));
     }
@@ -57,7 +59,7 @@ public class PurchaseRequestController {
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(purchaseRequestService.getUserPurchaseRequests(userId, category, status, searchType, keyword));
+        return ResponseEntity.ok(purchaseRequestQueryService.getUserPurchaseRequests(userId, category, status, searchType, keyword));
     }
 
     @Operation(summary = "들어온 구매 요청 목록 조회", description = "내가 판매 등록한 상품에 대해 들어온 구매 요청 목록 조회")
@@ -75,7 +77,7 @@ public class PurchaseRequestController {
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(purchaseRequestService.getSellerPurchaseRequests(userId, category, status, searchType, keyword));
+        return ResponseEntity.ok(purchaseRequestQueryService.getSellerPurchaseRequests(userId, category, status, searchType, keyword));
     }
 
     @Operation(summary = "들어온 구매 요청 승인", description = "내가 판매 등록한 상품에 대해 들어온 구매 요청 승인")
@@ -87,7 +89,7 @@ public class PurchaseRequestController {
             @Parameter(description = "승인 대상 구매 요청 ID")
             @PathVariable Long requestId) {
         Long userId = Long.parseLong(principal.getUsername());
-        purchaseRequestService.approvePurchaseRequest(userId, requestId);
+        purchaseRequestCommandService.approvePurchaseRequest(userId, requestId);
         return ResponseEntity.ok().build();
     }
 
@@ -100,7 +102,7 @@ public class PurchaseRequestController {
             @Parameter(description = "거부 대상 구매 요청 ID")
             @PathVariable Long requestId) {
         Long userId = Long.parseLong(principal.getUsername());
-        purchaseRequestService.rejectPurchaseRequest(userId, requestId);
+        purchaseRequestCommandService.rejectPurchaseRequest(userId, requestId);
         return ResponseEntity.ok().build();
     }
 
@@ -113,7 +115,7 @@ public class PurchaseRequestController {
             @Parameter(description = "요청 취소할 구매 요청 ID")
             @PathVariable Long requestId) {
         Long userId = Long.parseLong(principal.getUsername());
-        purchaseRequestService.cancelPurchaseRequest(userId, requestId);
+        purchaseRequestCommandService.cancelPurchaseRequest(userId, requestId);
         return ResponseEntity.ok().build();
     }
 }

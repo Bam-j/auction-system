@@ -1,7 +1,8 @@
 package com.auction.backend.domain.product.controller;
 
 import com.auction.backend.domain.product.dto.ProductListResponse;
-import com.auction.backend.domain.product.service.ProductService;
+import com.auction.backend.domain.product.service.ProductCommandService;
+import com.auction.backend.domain.product.service.ProductQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductCommandService productCommandService;
+    private final ProductQueryService productQueryService;
 
     @Operation(summary = "모든 상품 조회", description = "시스템 내에 등록된 모든 상품 조회")
     @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공")
@@ -34,7 +36,7 @@ public class ProductController {
             @RequestParam(required = false) String searchType,
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(productService.getAllProducts(category, status, searchType, keyword));
+        return ResponseEntity.ok(productQueryService.getAllProducts(category, status, searchType, keyword));
     }
 
     @Operation(summary = "사용자의 등록 상품 조회", description = "특정 사용자가 본인이 등록한 상품의 전체 조회")
@@ -50,7 +52,7 @@ public class ProductController {
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(productService.getUserProducts(userId, category, status, keyword));
+        return ResponseEntity.ok(productQueryService.getUserProducts(userId, category, status, keyword));
     }
 
     @Operation(summary = "상품 상세 정보 조회", description = "해당 상품의 상세 정보 조회")
@@ -59,7 +61,7 @@ public class ProductController {
     public ResponseEntity<ProductListResponse> getProductDetail(
             @Parameter(description = "조회 대상 상품 ID", example = "1")
             @PathVariable Long productId) {
-        return ResponseEntity.ok(productService.getProductDetail(productId));
+        return ResponseEntity.ok(productQueryService.getProductDetail(productId));
     }
 
     @Operation(summary = "판매 종료", description = "등록자가 수동으로 판매 종료(취소)")
@@ -71,7 +73,7 @@ public class ProductController {
             @Parameter(description = "종료 대상 상품 ID", example = "1")
             @PathVariable Long productId) {
         Long userId = Long.parseLong(principal.getUsername());
-        productService.endSale(productId, userId);
+        productCommandService.endSale(productId, userId);
         return ResponseEntity.ok().build();
     }
 }

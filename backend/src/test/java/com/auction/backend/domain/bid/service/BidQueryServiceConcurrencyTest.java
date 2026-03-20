@@ -31,10 +31,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class BidServiceConcurrencyTest {
+class BidQueryServiceConcurrencyTest {
 
     @Autowired
-    private BidService bidService;
+    private BidQueryService bidQueryService;
 
     @Autowired
     private UserRepository userRepository;
@@ -133,7 +133,7 @@ class BidServiceConcurrencyTest {
             executorService.submit(() -> {
                 try {
                     latch.await();
-                    bidService.createBid(bidder.getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
+                    bidQueryService.createBid(bidder.getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();

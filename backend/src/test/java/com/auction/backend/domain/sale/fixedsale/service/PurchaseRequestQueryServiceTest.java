@@ -24,10 +24,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class PurchaseRequestServiceTest {
+class PurchaseRequestQueryServiceTest {
 
     @InjectMocks
-    private PurchaseRequestService purchaseRequestService;
+    private PurchaseRequestQueryService purchaseRequestQueryService;
 
     @Mock
     private PurchaseRequestRepository purchaseRequestRepository;
@@ -63,7 +63,7 @@ class PurchaseRequestServiceTest {
         given(fixedSaleRepository.findById(fixedSaleId)).willReturn(Optional.of(fixedSale));
 
         // when
-        purchaseRequestService.createPurchaseRequest(userId, request);
+        purchaseRequestQueryService.createPurchaseRequest(userId, request);
 
         // then
         verify(purchaseRequestRepository).save(any(PurchaseRequest.class));
@@ -93,7 +93,7 @@ class PurchaseRequestServiceTest {
 
         // when & then
         RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> purchaseRequestService.createPurchaseRequest(userId, request));
+                () -> purchaseRequestQueryService.createPurchaseRequest(userId, request));
         assertThat(exception.getMessage()).isEqualTo("자신의 상품은 구매할 수 없습니다.");
     }
 
@@ -123,7 +123,7 @@ class PurchaseRequestServiceTest {
 
         // when & then
         RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> purchaseRequestService.createPurchaseRequest(userId, request));
+                () -> purchaseRequestQueryService.createPurchaseRequest(userId, request));
         assertThat(exception.getMessage()).isEqualTo("재고가 부족합니다.");
     }
 }

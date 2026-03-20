@@ -1,7 +1,7 @@
 package com.auction.backend.domain.sale.auction.controller;
 
 import com.auction.backend.domain.sale.auction.dto.AuctionRegisterRequest;
-import com.auction.backend.domain.sale.auction.service.AuctionService;
+import com.auction.backend.domain.sale.auction.service.AuctionCommandService;
 import com.auction.backend.global.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuctionController {
 
-    private final AuctionService auctionService;
+    private final AuctionCommandService auctionCommandService;
     private final FileService fileService;
 
     @Operation(summary = "경매 상품 등록", description = "경매 방식으로 판매 상품을 등록")
@@ -44,7 +44,7 @@ public class AuctionController {
         String imageUrl = fileService.uploadFile(request.getImage());
 
         Long userId = Long.parseLong(principal.getUsername());
-        Long auctionId = auctionService.registerAuction(userId, request, imageUrl);
+        Long auctionId = auctionCommandService.registerAuction(userId, request, imageUrl);
 
         return ResponseEntity.ok(Map.of("auctionId", auctionId));
     }

@@ -5,6 +5,7 @@ import com.auction.backend.domain.user.dto.auth.LoginResponse;
 import com.auction.backend.domain.user.dto.auth.SignUpRequest;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.service.AuthCommandService;
+import com.auction.backend.domain.user.service.AuthQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthCommandService authCommandService;
+    private final AuthQueryService authQueryService;
 
     @Operation(summary = "회원 가입", description = "회원 가입. 중복 검사 수행.")
     @ApiResponse(responseCode = "201", description = "회원 생성 성공")
@@ -46,7 +48,7 @@ public class AuthController {
             @RequestParam("username") String username
     ) {
         try {
-            authCommandService.checkUsername(username);
+            authQueryService.checkUsername(username);
             return ResponseEntity.ok().build();
         } catch (DuplicateUserException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -65,7 +67,7 @@ public class AuthController {
             @RequestParam("nickname") String nickname
     ) {
         try {
-            authCommandService.checkNickname(nickname);
+            authQueryService.checkNickname(nickname);
             return ResponseEntity.ok().build();
         } catch (DuplicateUserException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -80,7 +82,7 @@ public class AuthController {
             @Parameter(description = "로그인 정보. username, password 정보를 포함한 DTO")
             @Valid @RequestBody LoginRequest loginRequest
     ) {
-        LoginResponse response = authCommandService.login(loginRequest);
+        LoginResponse response = authQueryService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
 }

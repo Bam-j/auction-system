@@ -7,6 +7,7 @@ import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,19 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class FixedSaleService {
+@Transactional
+public class FixedSaleCommandService {
 
     private final ProductRepository productRepository;
     private final FixedSaleRepository fixedSaleRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    //일반 판매(고정가 판매) 상품 등록
     public Long registerFixedSale(Long userId, FixedSaleRegisterRequest request, String imageUrl) {
         log.info("Registering fixed sale for user: {}, product: {}, price: {}, stock: {}, category: {}", 
                 userId, request.getProductName(), request.getPrice(), request.getStock(), request.getCategory());
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
         Product product = Product.createProduct(
                 user,

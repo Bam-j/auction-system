@@ -1,4 +1,4 @@
-package com.auction.backend.global.error;
+package com.auction.backend.global.exception;
 
 import lombok.Builder;
 import lombok.Getter;

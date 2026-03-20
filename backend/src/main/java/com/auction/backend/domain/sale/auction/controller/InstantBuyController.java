@@ -2,7 +2,8 @@ package com.auction.backend.domain.sale.auction.controller;
 
 import com.auction.backend.domain.sale.auction.dto.InstantBuyCreateRequest;
 import com.auction.backend.domain.sale.auction.dto.InstantBuyRequestResponse;
-import com.auction.backend.domain.sale.auction.service.InstantBuyRequestService;
+import com.auction.backend.domain.sale.auction.service.InstantBuyRequestCommandService;
+import com.auction.backend.domain.sale.auction.service.InstantBuyRequestQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +26,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InstantBuyController {
 
-    private final InstantBuyRequestService instantBuyRequestService;
+    private final InstantBuyRequestCommandService instantBuyRequestCommandService;
+    private final InstantBuyRequestQueryService instantBuyRequestQueryService;
 
     @Operation(summary = "즉시 구매 요청 생성", description = "경매 상품에 대한 즉시 구매 요청 생성")
     @ApiResponse(responseCode = "200", description = "즉시 구매 요청 생성 성공")
@@ -35,9 +37,9 @@ public class InstantBuyController {
             @AuthenticationPrincipal User principal,
             @Parameter(description = "즉시 구매 요청 정보. 대상 상품 ID 정보를 가진 DTO")
             @Valid @RequestBody InstantBuyCreateRequest request) {
-        
+
         Long userId = Long.parseLong(principal.getUsername());
-        Long instantBuyRequestId = instantBuyRequestService.createInstantBuyRequest(userId, request);
+        Long instantBuyRequestId = instantBuyRequestCommandService.createInstantBuyRequest(userId, request);
 
         return ResponseEntity.ok(Map.of("instantBuyRequestId", instantBuyRequestId));
     }
@@ -55,7 +57,7 @@ public class InstantBuyController {
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(instantBuyRequestService.getUserInstantBuyRequests(userId, category, status, keyword));
+        return ResponseEntity.ok(instantBuyRequestQueryService.getUserInstantBuyRequests(userId, category, status, keyword));
     }
 
     @Operation(summary = "전체 즉시 구매 요청 조회", description = "전체 즉시 구매 요청 목록 조회 (관리자용)")
@@ -70,7 +72,7 @@ public class InstantBuyController {
             @RequestParam(required = false) String searchType,
             @Parameter(description = "검색어", example = "나무 검")
             @RequestParam(required = false) String keyword) {
-        return ResponseEntity.ok(instantBuyRequestService.getAllInstantBuyRequests(category, status, searchType, keyword));
+        return ResponseEntity.ok(instantBuyRequestQueryService.getAllInstantBuyRequests(category, status, searchType, keyword));
     }
 
     @Operation(summary = "즉시 구매 요청 승인", description = "특정 즉시 구매 요청을 승인. 승인 후 해당 상품은 경매 종료(판매 종료)")
@@ -82,7 +84,7 @@ public class InstantBuyController {
             @Parameter(description = "승인 대상 즉시 구매 요청 ID")
             @PathVariable Long requestId) {
         Long userId = Long.parseLong(principal.getUsername());
-        instantBuyRequestService.approveInstantBuyRequest(userId, requestId);
+        instantBuyRequestCommandService.approveInstantBuyRequest(userId, requestId);
         return ResponseEntity.ok().build();
     }
 
@@ -95,7 +97,7 @@ public class InstantBuyController {
             @Parameter(description = "거부 대상 즉시 구매 요청 ID")
             @PathVariable Long requestId) {
         Long userId = Long.parseLong(principal.getUsername());
-        instantBuyRequestService.rejectInstantBuyRequest(userId, requestId);
+        instantBuyRequestCommandService.rejectInstantBuyRequest(userId, requestId);
         return ResponseEntity.ok().build();
     }
 }

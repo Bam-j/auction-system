@@ -1,6 +1,6 @@
 package com.auction.backend.domain.sale.fixedsale.controller;
 
-import com.auction.backend.domain.sale.fixedsale.service.FixedSaleService;
+import com.auction.backend.domain.sale.fixedsale.service.FixedSaleCommandService;
 import com.auction.backend.global.jwt.JwtTokenProvider;
 import com.auction.backend.global.service.FileService;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ class FixedSaleControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private FixedSaleService fixedSaleService;
+    private FixedSaleCommandService fixedSaleCommandService;
 
     @MockitoBean
     private FileService fileService;
@@ -41,7 +41,7 @@ class FixedSaleControllerTest {
                 "image", "test.jpg", "image/jpeg", "test image".getBytes());
 
         given(fileService.uploadFile(any())).willReturn("/uploads/test.jpg");
-        given(fixedSaleService.registerFixedSale(anyLong(), any(), anyString())).willReturn(1L);
+        given(fixedSaleCommandService.registerFixedSale(anyLong(), any(), anyString())).willReturn(1L);
 
         mockMvc.perform(multipart("/api/v1/fixed-sales")
                         .file(image)

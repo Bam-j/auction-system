@@ -1,7 +1,7 @@
 package com.auction.backend.domain.sale.fixedsale.controller;
 
 import com.auction.backend.domain.sale.fixedsale.dto.FixedSaleRegisterRequest;
-import com.auction.backend.domain.sale.fixedsale.service.FixedSaleService;
+import com.auction.backend.domain.sale.fixedsale.service.FixedSaleCommandService;
 import com.auction.backend.global.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,7 +23,7 @@ import java.util.Map;
 @lombok.extern.slf4j.Slf4j
 public class FixedSaleController {
 
-    private final FixedSaleService fixedSaleService;
+    private final FixedSaleCommandService fixedSaleCommandService;
     private final FileService fileService;
 
     @Operation(summary = "일반 판매 상품 등록", description = "일반 판매(구매 요청 - 승인/거부) 방식으로 판매할 상품 등록")
@@ -43,7 +43,7 @@ public class FixedSaleController {
         String imageUrl = fileService.uploadFile(request.getImage());
         
         Long userId = Long.parseLong(principal.getUsername());
-        Long fixedSaleId = fixedSaleService.registerFixedSale(userId, request, imageUrl);
+        Long fixedSaleId = fixedSaleCommandService.registerFixedSale(userId, request, imageUrl);
 
         return ResponseEntity.ok(Map.of("fixedSaleId", fixedSaleId));
     }
