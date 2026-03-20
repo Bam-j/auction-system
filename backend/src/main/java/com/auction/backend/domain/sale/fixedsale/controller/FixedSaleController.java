@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -27,7 +28,7 @@ public class FixedSaleController {
     private final FileService fileService;
 
     @Operation(summary = "일반 판매 상품 등록", description = "일반 판매(구매 요청 - 승인/거부) 방식으로 판매할 상품 등록")
-    @ApiResponse(responseCode = "200", description = "일반 판매 상품 등록 성공")
+    @ApiResponse(responseCode = "201", description = "일반 판매 상품 등록 성공")
     @PostMapping
     public ResponseEntity<Map<String, Long>> registerFixedSale(
             @Parameter(hidden = true)
@@ -45,6 +46,6 @@ public class FixedSaleController {
         Long userId = Long.parseLong(principal.getUsername());
         Long fixedSaleId = fixedSaleCommandService.registerFixedSale(userId, request, imageUrl);
 
-        return ResponseEntity.ok(Map.of("fixedSaleId", fixedSaleId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fixedSaleId", fixedSaleId));
     }
 }

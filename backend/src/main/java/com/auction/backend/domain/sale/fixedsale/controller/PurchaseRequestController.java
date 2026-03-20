@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -30,7 +31,7 @@ public class PurchaseRequestController {
     private final PurchaseRequestQueryService purchaseRequestQueryService;
 
     @Operation(summary = "구매 요청 생성", description = "일반 판매 상품에 대한 구매 요청 생성")
-    @ApiResponse(responseCode = "200", description = "구매 요청 생성 성공")
+    @ApiResponse(responseCode = "201", description = "구매 요청 생성 성공")
     @PostMapping
     public ResponseEntity<Map<String, Long>> createPurchaseRequest(
             @Parameter(hidden = true)
@@ -41,7 +42,7 @@ public class PurchaseRequestController {
         Long userId = Long.parseLong(principal.getUsername());
         Long purchaseRequestId = purchaseRequestCommandService.createPurchaseRequest(userId, request);
 
-        return ResponseEntity.ok(Map.of("purchaseRequestId", purchaseRequestId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("purchaseRequestId", purchaseRequestId));
     }
 
     @Operation(summary = "구매 요청 목록 조회", description = "특정 사용자의 자신의 구매 요청 목록 조회")

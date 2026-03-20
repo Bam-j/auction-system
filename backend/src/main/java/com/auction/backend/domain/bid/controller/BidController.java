@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -27,7 +28,7 @@ public class BidController {
     private final BidQueryService bidQueryService;
 
     @Operation(summary = "입찰 생성", description = "입찰 단위에 따른 현재 최고가 입찰 생성")
-    @ApiResponse(responseCode = "200", description = "입찰 생성 성공")
+    @ApiResponse(responseCode = "201", description = "입찰 생성 성공")
     @PostMapping
     public ResponseEntity<Long> createBid(
             @Parameter(hidden = true)
@@ -35,7 +36,8 @@ public class BidController {
             @Parameter(description = "입찰 정보. 경매 ID, 입찰가 정보를 가진 DTO")
             @Valid @RequestBody BidCreateRequest request) {
         Long userId = Long.parseLong(principal.getUsername());
-        return ResponseEntity.ok(bidCommandService.createBid(userId, request));
+        Long bidId = bidCommandService.createBid(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bidId);
     }
 
     @Operation(summary = "입찰 기록 조회", description = "자신이 입찰했던 모든 기록을 조회")

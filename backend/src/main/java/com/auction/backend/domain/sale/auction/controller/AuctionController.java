@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -28,7 +29,7 @@ public class AuctionController {
     private final FileService fileService;
 
     @Operation(summary = "경매 상품 등록", description = "경매 방식으로 판매 상품을 등록")
-    @ApiResponse(responseCode = "200", description = "경매로 상품 등록 성공")
+    @ApiResponse(responseCode = "201", description = "경매로 상품 등록 성공")
     @PostMapping
     public ResponseEntity<Map<String, Long>> registerAuction(
             @Parameter(hidden = true)
@@ -46,6 +47,6 @@ public class AuctionController {
         Long userId = Long.parseLong(principal.getUsername());
         Long auctionId = auctionCommandService.registerAuction(userId, request, imageUrl);
 
-        return ResponseEntity.ok(Map.of("auctionId", auctionId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("auctionId", auctionId));
     }
 }

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -30,7 +31,7 @@ public class InstantBuyController {
     private final InstantBuyRequestQueryService instantBuyRequestQueryService;
 
     @Operation(summary = "즉시 구매 요청 생성", description = "경매 상품에 대한 즉시 구매 요청 생성")
-    @ApiResponse(responseCode = "200", description = "즉시 구매 요청 생성 성공")
+    @ApiResponse(responseCode = "201", description = "즉시 구매 요청 생성 성공")
     @PostMapping
     public ResponseEntity<Map<String, Long>> createInstantBuyRequest(
             @Parameter(hidden = true)
@@ -41,7 +42,7 @@ public class InstantBuyController {
         Long userId = Long.parseLong(principal.getUsername());
         Long instantBuyRequestId = instantBuyRequestCommandService.createInstantBuyRequest(userId, request);
 
-        return ResponseEntity.ok(Map.of("instantBuyRequestId", instantBuyRequestId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("instantBuyRequestId", instantBuyRequestId));
     }
 
     @Operation(summary = "즉시 구매 요청 조회", description = "사용자 자신의 즉시 구매 요청 조회")

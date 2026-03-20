@@ -65,7 +65,7 @@ public class ProductController {
     }
 
     @Operation(summary = "판매 종료", description = "등록자가 수동으로 판매 종료(취소)")
-    @ApiResponse(responseCode = "200", description = "해당 상품 판매 종료")
+    @ApiResponse(responseCode = "204", description = "해당 상품 판매 종료")
     @PostMapping("/{productId}/end")
     public ResponseEntity<Void> endSale(
             @Parameter(hidden = true)
@@ -74,6 +74,6 @@ public class ProductController {
             @PathVariable Long productId) {
         Long userId = Long.parseLong(principal.getUsername());
         productCommandService.endSale(productId, userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
