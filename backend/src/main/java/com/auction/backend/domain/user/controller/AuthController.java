@@ -29,7 +29,7 @@ public class AuthController {
     private final AuthQueryService authQueryService;
 
     @Operation(summary = "회원 가입", description = "회원 가입. 중복 검사 수행.")
-    @ApiResponse(responseCode = "201", description = "회원 생성 성공")
+    @ApiResponse(responseCode = "201", description = "회원 가입 성공")
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(
             @Parameter(description = "회원 가입 정보. username, nickname, password 정보를 포함한 DTO")
@@ -40,8 +40,10 @@ public class AuthController {
     }
 
     @Operation(summary = "username 중복 검사", description = "username 중복 검사 후 결과 반환")
-    @ApiResponse(responseCode = "200", description = "중복 되는 username 없음")
-    @ApiResponse(responseCode = "409", description = "중복 되는 username 있음")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "중복되는 username 없음"),
+            @ApiResponse(responseCode = "409", description = "이미 해당 username이 존재")
+    })
     @GetMapping("/check/username")
     public ResponseEntity<?> checkUsername(
             @Parameter(description = "중복 검사할 username")
@@ -58,8 +60,8 @@ public class AuthController {
 
     @Operation(summary = "nickname 중복 검사", description = "nickname 중복 검사 후 결과 반환")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "중복 되는 nickname 없음"),
-            @ApiResponse(responseCode = "409", description = "중복 되는 nickname 있음")
+            @ApiResponse(responseCode = "200", description = "중복되는 nickname 없음"),
+            @ApiResponse(responseCode = "409", description = "이미 해당 nickname이 존재")
     })
     @GetMapping("/check/nickname")
     public ResponseEntity<?> checkNickname(
@@ -76,7 +78,12 @@ public class AuthController {
     }
 
     @Operation(summary = "로그인", description = "계정 로그인")
-    @ApiResponse(responseCode = "200", description = "로그인 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "401", description = "username 또는 password 입력 오류"),
+            @ApiResponse(responseCode = "403", description = "탈퇴/차단된 계정으로 로그인 시도"),
+            @ApiResponse(responseCode = "404", description = "로그인 하려는 username이 존재하지 않음")
+    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
             @Parameter(description = "로그인 정보. username, password 정보를 포함한 DTO")

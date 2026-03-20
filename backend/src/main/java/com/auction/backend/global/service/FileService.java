@@ -1,5 +1,6 @@
 package com.auction.backend.global.service;
 
+import com.auction.backend.global.exception.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class FileService {
             return "/uploads/" + savedFilename;
         } catch (IOException e) {
             log.error("파일 업로드 실패 (경로: " + uploadDir + ")", e);
-            throw new RuntimeException("파일 업로드 중 오류가 발생했습니다: " + e.getMessage());
+            throw new FileUploadException("파일 업로드 중 오류가 발생했습니다.", e);
         }
     }
 }

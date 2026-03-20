@@ -4,10 +4,13 @@ import com.auction.backend.domain.bid.exception.InvalidBidException;
 import com.auction.backend.domain.sale.auction.exception.InstantBuyNotAvailableException;
 import com.auction.backend.domain.sale.fixedsale.exception.InsufficientStockException;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
+import com.auction.backend.domain.user.exception.SamePasswordException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -52,6 +55,7 @@ public class GlobalExceptionHandler {
     // 400 BAD_REQUEST: 비즈니스 로직 위반 및 잘못된 인자
     @ExceptionHandler({
             IllegalArgumentException.class,
+            IllegalStateException.class,
             InstantBuyNotAvailableException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
@@ -62,9 +66,20 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // 403 FORBIDDEN: 권한 부족 및 계정 비활성화
+    // 401 UNAUTHORIZED: 인증 실패
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedExceptions(Exception ex) {
+        return ErrorResponse.toResponseEntity(
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.name(),
+                ex.getMessage()
+        );
+    }
+
+    // 403 FORBIDDEN: 권한 부족 및 계정 상태(탈퇴, 차단)
     @ExceptionHandler({
             DisabledException.class,
+            LockedException.class,
             UnauthorizedAccessException.class
     })
     public ResponseEntity<ErrorResponse> handleForbiddenExceptions(Exception ex) {
@@ -88,6 +103,7 @@ public class GlobalExceptionHandler {
     // 409 CONFLICT: 리소스 상태 충돌 (중복 회원, 재고 부족, 본인 상품 구매/입찰, 잘못된 판매 상태 등)
     @ExceptionHandler({
             DuplicateUserException.class,
+            SamePasswordException.class,
             InsufficientStockException.class,
             SelfPurchaseException.class,
             InvalidSalesStatusException.class,
@@ -97,6 +113,17 @@ public class GlobalExceptionHandler {
         return ErrorResponse.toResponseEntity(
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.name(),
+                ex.getMessage()
+        );
+    }
+
+    // 500 INTERNAL_SERVER_ERROR: 파일 업로드 오류
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex) {
+        log.error("File upload error: ", ex);
+        return ErrorResponse.toResponseEntity(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 ex.getMessage()
         );
     }

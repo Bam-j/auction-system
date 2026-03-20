@@ -9,7 +9,9 @@ import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,18 +42,18 @@ public class AuthQueryService {
     //로그인
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+                .orElseThrow(() -> new BadCredentialsException("존재하지 않는 아이디입니다."));
 
         if (user.getStatus() == UserStatus.DELETED) {
             throw new DisabledException("탈퇴한 계정입니다.");
         }
 
         if (user.getStatus() == UserStatus.BLOCKED) {
-            throw new IllegalArgumentException("차단된 계정입니다.");
+            throw new LockedException("차단된 계정입니다.");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
         String token = jwtTokenProvider.createToken(user.getUserId(), user.getRole().name());

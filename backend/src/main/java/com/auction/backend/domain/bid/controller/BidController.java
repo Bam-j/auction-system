@@ -7,6 +7,7 @@ import com.auction.backend.domain.bid.service.BidQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,11 @@ public class BidController {
     private final BidQueryService bidQueryService;
 
     @Operation(summary = "입찰 생성", description = "입찰 단위에 따른 현재 최고가 입찰 생성")
-    @ApiResponse(responseCode = "201", description = "입찰 생성 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "입찰 생성 성공"),
+            @ApiResponse(responseCode = "404", description = "요청한 사용자나 경매를 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "자신의 경매에는 입찰 불가, 입찰 요청 금액/단위가 잘못됨")
+    })
     @PostMapping
     public ResponseEntity<Long> createBid(
             @Parameter(hidden = true)
@@ -41,7 +46,11 @@ public class BidController {
     }
 
     @Operation(summary = "입찰 기록 조회", description = "자신이 입찰했던 모든 기록을 조회")
-    @ApiResponse(responseCode = "200", description = "입찰 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "입찰 목록 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "요청한 사용자를 찾을 수 없음")
+
+    })
     @GetMapping("/me")
     public ResponseEntity<List<BidResponse>> getMyBids(
             @Parameter(hidden = true)

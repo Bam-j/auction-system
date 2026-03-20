@@ -7,6 +7,7 @@ import com.auction.backend.domain.sale.auction.service.InstantBuyRequestQuerySer
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,12 @@ public class InstantBuyController {
     private final InstantBuyRequestQueryService instantBuyRequestQueryService;
 
     @Operation(summary = "즉시 구매 요청 생성", description = "경매 상품에 대한 즉시 구매 요청 생성")
-    @ApiResponse(responseCode = "201", description = "즉시 구매 요청 생성 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "즉시 구매 요청 생성 성공"),
+            @ApiResponse(responseCode = "400", description = "경매 상품이 즉시 구매가 가능하지 않음"),
+            @ApiResponse(responseCode = "404", description = "요청자 또는 경매 정보를 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "자신이 등록한 경매 상품은 즉시 구매할 수 없음")
+    })
     @PostMapping
     public ResponseEntity<Map<String, Long>> createInstantBuyRequest(
             @Parameter(hidden = true)
@@ -46,7 +52,10 @@ public class InstantBuyController {
     }
 
     @Operation(summary = "즉시 구매 요청 조회", description = "사용자 자신의 즉시 구매 요청 조회")
-    @ApiResponse(responseCode = "200", description = "즉시 구매 요청 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "즉시 구매 요청 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "대상 사용자를 찾을 수 없음")
+    })
     @GetMapping("/me")
     public ResponseEntity<List<InstantBuyRequestResponse>> getMyInstantBuyRequests(
             @Parameter(hidden = true)
@@ -77,7 +86,12 @@ public class InstantBuyController {
     }
 
     @Operation(summary = "즉시 구매 요청 승인", description = "특정 즉시 구매 요청을 승인. 승인 후 해당 상품은 경매 종료(판매 종료)")
-    @ApiResponse(responseCode = "200", description = "즉시 구매 요청 승인 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "즉시 구매 요청 승인 성공"),
+            @ApiResponse(responseCode = "403", description = "요청자가 판매자가 아니므로 요청을 승인할 수 없음"),
+            @ApiResponse(responseCode = "404", description = "해당 즉시 구매 요청을 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "이미 즉시 판매/낙찰된 상품에 대해 요청을 보냄")
+    })
     @PostMapping("/{requestId}/approve")
     public ResponseEntity<Void> approveInstantBuyRequest(
             @Parameter(hidden = true)
@@ -90,7 +104,11 @@ public class InstantBuyController {
     }
 
     @Operation(summary = "즉시 구매 요청 거부", description = "특정 즉시 구매 요청을 거부. 경매는 계속 진행.")
-    @ApiResponse(responseCode = "200", description = "즉시 구매 요청 거부 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "즉시 구매 요청 거부 성공"),
+            @ApiResponse(responseCode = "403", description = "요청자가 판매자가 아니므로 요청을 거부할 수 없음"),
+            @ApiResponse(responseCode = "404", description = "해당 즉시 구매 요청을 찾을 수 없음"),
+    })
     @PostMapping("/{requestId}/reject")
     public ResponseEntity<Void> rejectInstantBuyRequest(
             @Parameter(hidden = true)

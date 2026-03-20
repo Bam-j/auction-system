@@ -9,6 +9,7 @@ import com.auction.backend.domain.user.dto.profile.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,10 @@ public class AdminController {
     }
 
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단. 차단된 유저는 로그인 불가능")
-    @ApiResponse(responseCode = "200", description = "지정된 유저 차단 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "지정된 유저 차단 성공"),
+            @ApiResponse(responseCode = "404", description = "지정된 유저를 찾을 수 없음")
+    })
     @PostMapping("/users/{userId}/block")
     public ResponseEntity<Void> blockUser(
             @Parameter(description = "차단 대상 유저 ID", example = "1")
@@ -48,8 +52,10 @@ public class AdminController {
     }
 
     @Operation(summary = "사용자 차단 해제", description = "차단된 사용자를 차단 해제.")
-    @ApiResponse(responseCode = "200", description = "지정된 유저 차단 해제 성공")
-    @PostMapping("/users/{userId}/unblock")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "지정된 유저 차단 해제 성공"),
+            @ApiResponse(responseCode = "404", description = "지정된 유저를 찾을 수 없음")
+    })    @PostMapping("/users/{userId}/unblock")
     public ResponseEntity<Void> unblockUser(
             @Parameter(description = "차단 해제 대상 유저 ID", example = "1")
             @PathVariable Long userId

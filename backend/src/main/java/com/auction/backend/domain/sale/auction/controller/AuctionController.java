@@ -6,6 +6,7 @@ import com.auction.backend.global.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,11 @@ public class AuctionController {
     private final FileService fileService;
 
     @Operation(summary = "경매 상품 등록", description = "경매 방식으로 판매 상품을 등록")
-    @ApiResponse(responseCode = "201", description = "경매로 상품 등록 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "경매로 상품 등록 성공"),
+            @ApiResponse(responseCode = "404", description = "등록자(회원)을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "상품 이미지 등록 실패")
+    })
     @PostMapping
     public ResponseEntity<Map<String, Long>> registerAuction(
             @Parameter(hidden = true)

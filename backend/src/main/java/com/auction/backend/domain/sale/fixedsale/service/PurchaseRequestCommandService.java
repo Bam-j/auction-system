@@ -69,7 +69,7 @@ public class PurchaseRequestCommandService {
         }
 
         if (SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
-            throw new InsufficientStockException("이미 품절된 상품입니다.");
+            throw new InsufficientStockException("이미 판매 완료/품절된 상품입니다.");
         }
 
         request.approve();
