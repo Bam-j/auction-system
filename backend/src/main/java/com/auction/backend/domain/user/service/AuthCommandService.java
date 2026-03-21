@@ -4,7 +4,6 @@ import com.auction.backend.domain.user.dto.auth.SignUpRequest;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.repository.UserRepository;
-import com.auction.backend.global.jwt.JwtTokenProvider;
 import com.auction.backend.global.utils.TextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +18,6 @@ public class AuthCommandService {
     private final UserRepository userRepository;
     private final AuthQueryService authQueryService;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final TextFilter textFilter;
 
     //회원 가입

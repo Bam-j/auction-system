@@ -8,7 +8,7 @@ import com.auction.backend.domain.sale.auction.repository.InstantBuyRequestRepos
 import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
-import com.auction.backend.domain.fixedsalesorder.repository.FixedSalesOrderRepository;
+import com.auction.backend.domain.fixedsalesorder.repository.FixedSaleOrderRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
@@ -55,7 +55,7 @@ class BidQueryServiceConcurrencyTest {
     private FixedSaleRepository fixedSaleRepository;
 
     @Autowired
-    private FixedSalesOrderRepository fixedSalesOrderRepository;
+    private FixedSaleOrderRepository fixedSaleOrderRepository;
 
     @Autowired
     private PurchaseRequestRepository purchaseRequestRepository;
@@ -70,7 +70,7 @@ class BidQueryServiceConcurrencyTest {
     @BeforeEach
     void setUp() {
         //테이블 간 연관 관계 신경써서 삭제
-        fixedSalesOrderRepository.deleteAll();
+        fixedSaleOrderRepository.deleteAll();
         purchaseRequestRepository.deleteAll();
         instantBuyRequestRepository.deleteAll();
         bidRepository.deleteAll();

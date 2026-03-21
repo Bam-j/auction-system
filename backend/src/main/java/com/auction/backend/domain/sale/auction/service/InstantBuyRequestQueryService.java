@@ -4,7 +4,7 @@ import com.auction.backend.domain.sale.auction.dto.InstantBuyRequestResponse;
 import com.auction.backend.domain.sale.auction.entity.InstantBuyRequest;
 import com.auction.backend.domain.sale.auction.repository.InstantBuyRequestRepository;
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.global.enums.ProductCategory;
 import com.auction.backend.global.enums.RequestStatus;
@@ -25,12 +25,11 @@ import java.util.stream.Collectors;
 public class InstantBuyRequestQueryService {
 
     private final InstantBuyRequestRepository instantBuyRequestRepository;
-    private final UserRepository userRepository;
+    private final UserQueryService userQueryService;
 
     //특정 유저의 즉시 구매 요청 조회
     public List<InstantBuyRequestResponse> getUserInstantBuyRequests(Long userId, String category, String status, String keyword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+        User user = userQueryService.getUser(userId);
 
         ProductCategory productCategory = SearchParamParser.parseEnum(ProductCategory.class, category);
         RequestStatus requestStatus = SearchParamParser.parseEnum(RequestStatus.class, status);
@@ -51,6 +50,12 @@ public class InstantBuyRequestQueryService {
         return instantBuyRequestRepository.findByFilters(productCategory, requestStatus, stype, searchKeyword).stream()
                 .map(this::convertToInstantResponse)
                 .collect(Collectors.toList());
+    }
+
+    //즉시 구매 요청 획득
+    public InstantBuyRequest getRequest(Long requestId) {
+        return instantBuyRequestRepository.findById(requestId)
+                .orElseThrow(() -> new ResourceNotFoundException("즉시 구매 요청을 찾을 수 없습니다."));
     }
 
     private InstantBuyRequestResponse convertToInstantResponse(InstantBuyRequest request) {

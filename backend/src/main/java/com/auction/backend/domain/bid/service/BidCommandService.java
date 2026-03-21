@@ -5,10 +5,9 @@ import com.auction.backend.domain.bid.entity.Bid;
 import com.auction.backend.domain.bid.exception.InvalidBidException;
 import com.auction.backend.domain.bid.repository.BidRepository;
 import com.auction.backend.domain.sale.auction.entity.Auction;
-import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
+import com.auction.backend.domain.sale.auction.service.AuctionQueryService;
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.repository.UserRepository;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.exception.SelfPurchaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +25,8 @@ import java.util.Collections;
 public class BidCommandService {
 
     private final BidRepository bidRepository;
-    private final UserRepository userRepository;
-    private final AuctionRepository auctionRepository;
+    private final UserQueryService userQueryService;
+    private final AuctionQueryService auctionQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
 
     private static final String AUCTION_PRICE_KEY = "auction:price:";
@@ -47,16 +46,12 @@ public class BidCommandService {
                     "end";
 
     //입찰 생성
-    @Transactional
     public Long createBid(Long userId, BidCreateRequest request) {
         log.info("Creating bid for user: {}, auction: {}, price: {}",
                 userId, request.getAuctionId(), request.getBidPrice());
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
-
-        Auction auction = auctionRepository.findById(request.getAuctionId())
-                .orElseThrow(() -> new ResourceNotFoundException("경매 정보를 찾을 수 없습니다."));
+        User user = userQueryService.getUser(userId);
+        Auction auction = auctionQueryService.getAuction(request.getAuctionId());
 
         if (auction.getUser().getUserId().equals(userId)) {
             throw new SelfPurchaseException("자신의 경매 상품에는 입찰할 수 없습니다.");

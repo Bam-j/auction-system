@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "fixed_sales_orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class FixedSalesOrder extends BaseTimeEntity {
+public class FixedSaleOrder extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +30,14 @@ public class FixedSalesOrder extends BaseTimeEntity {
     private Integer quantity;
 
     @Builder
-    public FixedSalesOrder(PurchaseRequest purchaseRequest, String finalPrice, Integer quantity) {
+    public FixedSaleOrder(PurchaseRequest purchaseRequest, String finalPrice, Integer quantity) {
         this.purchaseRequest = purchaseRequest;
         this.finalPrice = finalPrice;
         this.quantity = quantity;
     }
 
-    public static FixedSalesOrder createOrder(PurchaseRequest purchaseRequest, String finalPrice, Integer quantity) {
-        return FixedSalesOrder.builder()
+    public static FixedSaleOrder createOrder(PurchaseRequest purchaseRequest, String finalPrice, Integer quantity) {
+        return FixedSaleOrder.builder()
                 .purchaseRequest(purchaseRequest)
                 .finalPrice(finalPrice)
                 .quantity(quantity)

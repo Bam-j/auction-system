@@ -1,9 +1,9 @@
 package com.auction.backend.domain.fixedsalesorder.repository;
 
-import com.auction.backend.domain.fixedsalesorder.entity.FixedSalesOrder;
+import com.auction.backend.domain.fixedsalesorder.entity.FixedSaleOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FixedSalesOrderRepository extends JpaRepository<FixedSalesOrder, Long> {
+public interface FixedSaleOrderRepository extends JpaRepository<FixedSaleOrder, Long> {
 }

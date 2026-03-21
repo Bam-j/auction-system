@@ -1,8 +1,7 @@
 package com.auction.backend.domain.admin.service;
 
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.repository.UserRepository;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.domain.user.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,22 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AdminCommandService {
 
-    private final UserRepository userRepository;
+    private final UserQueryService userQueryService;
 
-    //특정 유저 차단
+    //특정 회원 차단
     public void blockUser(Long userId) {
-        User user = getUser(userId);
+        User user = userQueryService.getUser(userId);
         user.block();
     }
 
-    //특정 유저 차단 해제
+    //특정 회원 차단 해제
     public void unblockUser(Long userId) {
-        User user = getUser(userId);
+        User user = userQueryService.getUser(userId);
         user.unblock();
-    }
-
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
     }
 }

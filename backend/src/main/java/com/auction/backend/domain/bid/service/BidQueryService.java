@@ -8,14 +8,11 @@ import com.auction.backend.domain.bid.repository.BidRepository;
 import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.sale.auction.entity.Auction;
-import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.enums.PriceUnit;
-import com.auction.backend.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +27,25 @@ import java.util.stream.Collectors;
 public class BidQueryService {
 
     private final BidRepository bidRepository;
-    private final UserRepository userRepository;
-    private final AuctionRepository auctionRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final UserQueryService userQueryService;
 
-    private static final String AUCTION_PRICE_KEY = "auction:price:";
+    //시스템에 등록된 모든 입찰 조회
+    public List<BidResponse> getAllBids(String category, String status, String searchType, String keyword) {
+        BidSearchCondition condition = BidSearchCondition.of(category, status, keyword, searchType);
+
+        return bidRepository.findByFilters(
+                        condition.getCategory(),
+                        condition.getStatus(),
+                        condition.getSearchType(),
+                        condition.getKeyword()
+                ).stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
 
     //자신의 입찰 기록 조회
     public List<BidResponse> getMyBids(Long userId, String category, String status, String searchType, String keyword) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
-
+        User user = userQueryService.getUser(userId);
         BidSearchCondition condition = BidSearchCondition.of(category, status, keyword, searchType);
 
         return bidRepository.findByUserWithFilters(
