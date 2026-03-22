@@ -79,7 +79,7 @@ const ProductCard = ({product}) => {
             
             <div className="min-h-[15px]">
               {product.type !== "AUCTION" ? (
-                <Typography color="gray" className="text-[10px] font-medium opacity-80">
+                <Typography variant="small" className="text-[11px] text-blue-gray-500 font-medium">
                   남은 수량: {product.stock != null ? `${product.stock}개` : "정보없음"}
                 </Typography>
               ) : (

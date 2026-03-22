@@ -7,16 +7,16 @@ import {
   errorAlert,
   warningAlert,
   confirmAction
-} from "../../../utils/swalUtils";
+} from "@/utils/swalUtils.js";
 import defaultImage from "@/assets/images/general/grass_block.jpeg";
 import CommonModal from "../../../components/ui/CommonModal";
 import StatusBadge from "../../../components/ui/StatusBadge";
 import PriceTag from "../../../components/ui/PriceTag";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy } from "../api/productApi";
-import { translateCategory } from "../../../utils/categoryTranslations";
+import { translateCategory } from "@/utils/categoryTranslations.js";
 import useAuthStore from "../../../stores/useAuthStore";
-import { getFullImageUrl } from "../../../utils/imageUtils";
+import { getFullImageUrl } from "@/utils/imageUtils.js";
 
 const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
         } catch (error) {
           console.error("Failed to fetch product detail:", error);
           errorAlert("오류", "상품 정보를 불러올 수 없습니다.");
-          handleOpen(); // 모달 닫기
+          handleOpen();
         } finally {
           setIsLoading(false);
         }
@@ -127,7 +127,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       title: "즉시 구매 확인",
       text: `${displayPrice}${product.priceUnit}에 즉시 구매하시겠습니까?`,
       confirmButtonText: "구매",
-      confirmButtonColor: "#10B981" // green color
+      confirmButtonColor: "#10B981"
     });
 
     if (!result.isConfirmed) return;
@@ -254,11 +254,12 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                   <div className="grid grid-cols-2 gap-y-3 text-blue-gray-900">
                     <div className="flex items-center gap-2">
                       <UserCircleIcon className="h-5 w-5 text-gray-500"/>
-                      <Typography className="font-bold">{product.seller}</Typography>
+                      <Typography className="font-bold">판매자: {product.seller}</Typography>
                     </div>
                     <div className="flex items-center gap-2">
                       <CalendarDaysIcon className="h-5 w-5 text-gray-500"/>
                       <Typography className="font-bold">
+                        등록일:
                         {product.createdAt ? new Date(product.createdAt).toLocaleString('ko-KR', {
                           year: 'numeric',
                           month: 'numeric',

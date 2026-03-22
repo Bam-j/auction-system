@@ -146,7 +146,9 @@ const HomePage = () => {
                             })}
                           </Typography>
                         ) : (
-                          <div className="h-[15px]" /> /* 일반 상품용 높이 보정용 공백 */
+                          <Typography variant="small" className="text-[11px] text-blue-gray-500 font-medium">
+                            남은 수량: {product.stock != null ? `${product.stock}개` : "정보없음"}
+                          </Typography>
                         )}
                       </div>
                     </CardBody>
