@@ -11,6 +11,10 @@ import java.util.List;
 public interface BidRepository extends JpaRepository<Bid, Long> {
     List<Bid> findByUserOrderByCreatedAtDesc(User user);
 
+    java.util.Optional<Bid> findTopByAuctionOrderByBidPriceDesc(com.auction.backend.domain.sale.auction.entity.Auction auction);
+
+    List<Bid> findByAuctionOrderByBidPriceDesc(com.auction.backend.domain.sale.auction.entity.Auction auction);
+
     @org.springframework.data.jpa.repository.Query("SELECT b FROM Bid b WHERE " +
             "(:category IS NULL OR b.auction.product.category = :category) AND " +
             "(:status IS NULL OR b.bidStatus = :status) AND " +

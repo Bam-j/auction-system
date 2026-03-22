@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {
   Menu,
@@ -11,63 +11,97 @@ import {
   Button
 } from "@material-tailwind/react";
 import {BellIcon} from "@heroicons/react/24/outline";
+import {fetchNotifications, markAsRead, markAllAsRead, subscribeToNotifications} from "../api/notificationApi";
 
 const NotificationDropdown = () => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      message: "새로운 입찰이 등록되었습니다. (경테상1)",
-      time: "5분 전",
-      isRead: false,
-      type: "/mypage/products",
-      productId: 3
-    },
-    {
-      id: 2,
-      message: "경매가 종료되었습니다. (경테상1)",
-      time: "1시간 전",
-      isRead: false,
-      type: "/mypage/products",
-      productId: 3
-    },
-    {
-      id: 3,
-      message: "새로운 구매 요청이 들어왔습니다. (테상2)",
-      time: "2시간 전",
-      isRead: false,
-      type: "/mypage/requests",
-      productId: 2
-    },
-    {
-      id: 4,
-      message: "상품 등록이 완료되었습니다. (테상1)",
-      time: "5시간 전",
-      isRead: true,
-      type: "/mypage/products",
-      productId: 1
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    // 초기 알림 로드
+    const loadNotifications = async () => {
+      try {
+        const data = await fetchNotifications();
+        setNotifications(data);
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      }
+    };
+
+    loadNotifications();
+
+    // SSE 구독
+    const eventSource = subscribeToNotifications();
+    if (eventSource) {
+      eventSource.addEventListener("notification", (event) => {
+        try {
+          const newNotification = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          setNotifications((prev) => [newNotification, ...prev]);
+        } catch (err) {
+          console.error("Failed to parse notification data:", err);
+        }
+      });
+
+      return () => {
+        eventSource.close();
+      };
+    }
+  }, []);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const handleReadAll = () => {
-    // 알림 목록을 삭제하지 않고, 모든 알림의 isRead 상태를 true로 변경
-    setNotifications(prev => prev.map(n => ({...n, isRead: true})));
+  const handleReadAll = async () => {
+    try {
+      await markAllAsRead();
+      setNotifications(prev => prev.map(n => ({...n, isRead: true})));
+    } catch (error) {
+      console.error("Failed to mark all as read:", error);
+    }
   };
 
-  const handleNotificationClick = (notification) => {
+  const handleNotificationClick = async (notification) => {
     // 읽음 처리
-    setNotifications(prev =>
-        prev.map(n => n.id === notification.id ? {...n, isRead: true} : n)
-    );
+    try {
+      if (!notification.isRead) {
+        await markAsRead(notification.id);
+        setNotifications(prev =>
+            prev.map(n => n.id === notification.id ? {...n, isRead: true} : n)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to mark as read:", error);
+    }
 
     // 이동 및 상품 ID 전달
-    if (notification.type) {
-      navigate(notification.type, {
-        state: {openProductId: notification.productId}
-      });
+    // 알림 타입에 따라 적절한 페이지로 이동
+    let path = "/mypage/products";
+    switch (notification.type) {
+      case "PURCHASE_REQUEST_RECEIVED":
+        path = "/mypage/requests";
+        break;
+      case "PURCHASE_REQUEST_APPROVED":
+      case "PURCHASE_REQUEST_REJECTED":
+        path = "/mypage/purchases";
+        break;
+      case "INSTANT_BUY_REQUEST_RECEIVED":
+      case "INSTANT_BUY_REQUEST_APPROVED":
+      case "INSTANT_BUY_REQUEST_REJECTED":
+        path = "/mypage/instant-buys";
+        break;
+      case "OUTBID":
+      case "BID_WON":
+        path = "/mypage/bids";
+        break;
+      case "AUCTION_EXPIRED":
+        path = "/mypage/products";
+        break;
+      default:
+        path = "/mypage/products";
     }
+
+    navigate(path, {
+      state: {openProductId: notification.targetId}
+    });
   };
 
   const BellButton = (
@@ -75,6 +109,17 @@ const NotificationDropdown = () => {
         <BellIcon className="h-6 w-6"/>
       </IconButton>
   );
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000); // seconds
+
+    if (diff < 60) return "방금 전";
+    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+    return `${Math.floor(diff / 86400)}일 전`;
+  };
 
   return (
       <Menu placement="bottom-end">
@@ -132,7 +177,7 @@ const NotificationDropdown = () => {
                         )}
                       </div>
                       <Typography variant="small" className="text-[11px] text-font-muted">
-                        {notification.time}
+                        {formatTime(notification.createdAt)}
                       </Typography>
                     </MenuItem>
                 ))

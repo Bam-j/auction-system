@@ -1,0 +1,54 @@
+import axiosInstance from "../../../api/axiosInstance";
+
+export const fetchNotifications = async () => {
+  const response = await axiosInstance.get("/notifications");
+  return response.data;
+};
+
+export const markAsRead = async (notificationId) => {
+  const response = await axiosInstance.patch(`/notifications/${notificationId}/read`);
+  return response.data;
+};
+
+export const markAllAsRead = async () => {
+  const response = await axiosInstance.patch("/notifications/read-all");
+  return response.data;
+};
+
+export const subscribeToNotifications = () => {
+  const authStorage = localStorage.getItem("auth-storage");
+  if (!authStorage) {
+    console.error("Notification subscribe: No auth-storage found");
+    return null;
+  }
+
+  const authData = JSON.parse(authStorage);
+  let token = authData?.state?.token;
+
+  if (!token) {
+    console.error("Notification subscribe: No token found in auth-storage");
+    return null;
+  }
+
+  // 만약 토큰에 'Bearer '가 포함되어 있다면 제거
+  if (token.startsWith("Bearer ")) {
+    token = token.substring(7);
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api/v1";
+  const subscribeUrl = `${baseUrl}/notifications/subscribe?token=${token}`;
+  
+  console.log("Notification subscribe attempt:", subscribeUrl);
+  const eventSource = new EventSource(subscribeUrl);
+
+  eventSource.onopen = () => {
+    console.log("SSE Connection opened");
+  };
+
+  eventSource.onerror = (error) => {
+    console.error("SSE Connection error:", error);
+    eventSource.close();
+  };
+
+  return eventSource;
+};

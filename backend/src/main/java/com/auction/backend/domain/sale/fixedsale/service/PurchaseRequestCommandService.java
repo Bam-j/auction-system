@@ -2,6 +2,7 @@ package com.auction.backend.domain.sale.fixedsale.service;
 
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSaleOrderRepository;
 import com.auction.backend.domain.fixedsalesorder.service.FixedSalesOrderCommandService;
+import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestCreateRequest;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
@@ -29,6 +30,7 @@ public class PurchaseRequestCommandService {
     private final UserQueryService userQueryService;
     private final FixedSaleOrderRepository fixedSaleOrderRepository;
     private final FixedSalesOrderCommandService fixedSalesOrderCommandService;
+    private final NotificationCommandService notificationCommandService;
 
     //구매 요청 생성
     public Long createPurchaseRequest(Long userId, PurchaseRequestCreateRequest request) {
@@ -50,6 +52,14 @@ public class PurchaseRequestCommandService {
         PurchaseRequest purchaseRequest = PurchaseRequest.createPurchaseRequest(user, fixedSale, request.getQuantity());
         purchaseRequestRepository.save(purchaseRequest);
 
+        // 알림 전송: 판매자에게 구매 요청 알림
+        notificationCommandService.send(
+                fixedSale.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_RECEIVED,
+                String.format("[%s] 상품에 새로운 구매 요청이 들어왔습니다.", fixedSale.getProduct().getProductName()),
+                fixedSale.getProduct().getProductId()
+        );
+
         return purchaseRequest.getPurchaseRequestId();
     }
 
@@ -68,6 +78,14 @@ public class PurchaseRequestCommandService {
         request.approve();
         request.getFixedSale().decreaseStock(request.getQuantity());
         fixedSalesOrderCommandService.createFixedSaleOrder(request);
+
+        // 알림 전송: 구매자에게 승인 알림
+        notificationCommandService.send(
+                request.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_APPROVED,
+                String.format("[%s] 상품의 구매 요청이 승인되었습니다.", request.getFixedSale().getProduct().getProductName()),
+                request.getFixedSale().getProduct().getProductId()
+        );
     }
 
     //구매 요청 거부
@@ -79,6 +97,14 @@ public class PurchaseRequestCommandService {
         }
 
         request.reject();
+
+        // 알림 전송: 구매자에게 거절 알림
+        notificationCommandService.send(
+                request.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_REJECTED,
+                String.format("[%s] 상품의 구매 요청이 거절되었습니다.", request.getFixedSale().getProduct().getProductName()),
+                request.getFixedSale().getProduct().getProductId()
+        );
     }
 
     //송신한 구매 요청 취소

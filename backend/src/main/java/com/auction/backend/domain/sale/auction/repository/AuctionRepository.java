@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
     Optional<Auction> findByProduct(Product product);
+    java.util.List<Auction> findByEndedAtBeforeAndProductSalesStatus(java.time.LocalDateTime now, com.auction.backend.domain.product.entity.SalesStatus status);
 }

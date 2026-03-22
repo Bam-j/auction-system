@@ -1,5 +1,6 @@
 package com.auction.backend.domain.sale.auction.service;
 
+import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.sale.auction.dto.InstantBuyCreateRequest;
 import com.auction.backend.domain.sale.auction.entity.Auction;
@@ -26,6 +27,8 @@ public class InstantBuyRequestCommandService {
     private final InstantBuyRequestQueryService instantBuyRequestQueryService;
     private final AuctionQueryService auctionQueryService;
     private final UserQueryService userQueryService;
+    private final NotificationCommandService notificationCommandService;
+    private final com.auction.backend.domain.bid.repository.BidRepository bidRepository;
 
     //즉시 구매 요청 생성
     public Long createInstantBuyRequest(Long userId, InstantBuyCreateRequest request) {
@@ -46,6 +49,14 @@ public class InstantBuyRequestCommandService {
         InstantBuyRequest instantBuyRequest = InstantBuyRequest.createInstantBuyRequest(user, auction);
         instantBuyRequestRepository.save(instantBuyRequest);
 
+        // 알림 전송: 판매자에게 즉시 구매 요청 알림
+        notificationCommandService.send(
+                auction.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.INSTANT_BUY_REQUEST_RECEIVED,
+                String.format("[%s] 상품에 새로운 즉시 구매 요청이 들어왔습니다.", auction.getProduct().getProductName()),
+                auction.getProduct().getProductId()
+        );
+
         return instantBuyRequest.getInstantBuyRequestId();
     }
 
@@ -64,6 +75,30 @@ public class InstantBuyRequestCommandService {
 
         request.approve();
         request.getAuction().getProduct().instantBuy();
+
+        // 알림 전송: 구매자에게 승인 알림
+        notificationCommandService.send(
+                request.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.INSTANT_BUY_REQUEST_APPROVED,
+                String.format("[%s] 상품의 즉시 구매 요청이 승인되었습니다.", request.getAuction().getProduct().getProductName()),
+                request.getAuction().getProduct().getProductId()
+        );
+
+        // 알림 전송: 기존 입찰자들에게 패찰 알림
+        java.util.List<com.auction.backend.domain.bid.entity.Bid> bids = bidRepository.findByAuctionOrderByBidPriceDesc(request.getAuction());
+        java.util.Set<Long> notifiedUserIds = new java.util.HashSet<>();
+        for (com.auction.backend.domain.bid.entity.Bid bid : bids) {
+            Long bidderId = bid.getUser().getUserId();
+            if (!notifiedUserIds.contains(bidderId)) {
+                notificationCommandService.send(
+                        bid.getUser(),
+                        com.auction.backend.domain.notification.entity.NotificationType.OUTBID,
+                        String.format("[%s] 상품이 다른 사람에 의해 즉시 구매되어 패찰되었습니다.", request.getAuction().getProduct().getProductName()),
+                        request.getAuction().getProduct().getProductId()
+                );
+                notifiedUserIds.add(bidderId);
+            }
+        }
     }
 
     //즉시 구매 요청 거부
@@ -75,5 +110,13 @@ public class InstantBuyRequestCommandService {
         }
 
         request.reject();
+
+        // 알림 전송: 구매자에게 거절 알림
+        notificationCommandService.send(
+                request.getUser(),
+                com.auction.backend.domain.notification.entity.NotificationType.INSTANT_BUY_REQUEST_REJECTED,
+                String.format("[%s] 상품의 즉시 구매 요청이 거절되었습니다.", request.getAuction().getProduct().getProductName()),
+                request.getAuction().getProduct().getProductId()
+        );
     }
 }

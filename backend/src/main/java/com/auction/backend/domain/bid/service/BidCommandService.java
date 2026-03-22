@@ -4,6 +4,7 @@ import com.auction.backend.domain.bid.dto.BidCreateRequest;
 import com.auction.backend.domain.bid.entity.Bid;
 import com.auction.backend.domain.bid.exception.InvalidBidException;
 import com.auction.backend.domain.bid.repository.BidRepository;
+import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.service.AuctionQueryService;
 import com.auction.backend.domain.user.entity.User;
@@ -28,6 +29,7 @@ public class BidCommandService {
     private final UserQueryService userQueryService;
     private final AuctionQueryService auctionQueryService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final NotificationCommandService notificationCommandService;
 
     private static final String AUCTION_PRICE_KEY = "auction:price:";
 
@@ -77,6 +79,19 @@ public class BidCommandService {
         }
 
         auction.updateCurrentPrice(request.getBidPrice());
+
+        // 알림 전송: 이전 최고 입찰자에게 패찰 알림
+        bidRepository.findTopByAuctionOrderByBidPriceDesc(auction)
+                .ifPresent(previousBid -> {
+                    if (!previousBid.getUser().getUserId().equals(userId)) {
+                        notificationCommandService.send(
+                                previousBid.getUser(),
+                                com.auction.backend.domain.notification.entity.NotificationType.OUTBID,
+                                String.format("[%s] 상품에 더 높은 입찰가가 등록되어 패찰되었습니다.", auction.getProduct().getProductName()),
+                                auction.getProduct().getProductId()
+                        );
+                    }
+                });
 
         Bid bid = Bid.createBid(user, auction, request.getBidPrice());
         bidRepository.save(bid);
