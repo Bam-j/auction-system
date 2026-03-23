@@ -1,21 +1,24 @@
-import React, {useState, useEffect} from "react";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import PriceTag from "../../../components/ui/PriceTag";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getAllBids } from "../api/adminApi";
-import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
-import { EyeIcon } from "@heroicons/react/24/outline";
-import ProductDetailModal from "../../product/components/ProductDetailModal";
+import {useState, useEffect} from "react";
+
+import {Typography, IconButton, Tooltip} from "@material-tailwind/react";
+import {EyeIcon} from "@heroicons/react/24/outline";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import StatusBadge from "@/components/ui/StatusBadge";
+import PriceTag from "@/components/ui/PriceTag";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import ProductDetailModal from "@/features/product/components/ProductDetailModal";
 import {
-  CATEGORY_FILTER_CONFIG,
-  BID_STATUS_FILTER_CONFIG,
-  BIDDER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, BID_STATUS_FILTER_CONFIG, BIDDER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
+
+//admin 도메인 내부 api
+import {getAllBids} from "../api/adminApi";
 
 const TABLE_HEAD = ["ID", "판매자", "상품명", "입찰자", "입찰일", "입찰금액", "결과", "상세"];
 
@@ -57,7 +60,7 @@ const AdminBidHistory = () => {
   };
 
   const handleViewDetail = (bid) => {
-    setSelectedProduct({ id: bid.productId });
+    setSelectedProduct({id: bid.productId});
     setOpenDetail(true);
   };
 
@@ -71,7 +74,7 @@ const AdminBidHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : bids.length === 0 ? (
             <EmptyState message="입찰 기록이 없습니다."/>
@@ -81,13 +84,13 @@ const AdminBidHistory = () => {
                   title="전체 입찰 기록"
                   headers={TABLE_HEAD}
                   pagination={
-                    bids.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(bids.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      bids.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(bids.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {bids.map((bid) => (
@@ -105,13 +108,13 @@ const AdminBidHistory = () => {
                       </td>
                       <td className="p-4">
                         <Tooltip content="상세 보기">
-                          <IconButton 
-                            size="sm" 
-                            variant="text" 
-                            color="blue-gray"
-                            onClick={() => handleViewDetail(bid)}
+                          <IconButton
+                              size="sm"
+                              variant="text"
+                              color="blue-gray"
+                              onClick={() => handleViewDetail(bid)}
                           >
-                            <EyeIcon className="h-4 w-4" />
+                            <EyeIcon className="h-4 w-4"/>
                           </IconButton>
                         </Tooltip>
                       </td>
@@ -120,9 +123,9 @@ const AdminBidHistory = () => {
               </CommonTable>
 
               <ProductDetailModal
-                open={openDetail}
-                handleOpen={() => setOpenDetail(!openDetail)}
-                product={selectedProduct}
+                  open={openDetail}
+                  handleOpen={() => setOpenDetail(!openDetail)}
+                  product={selectedProduct}
               />
             </>
         )}

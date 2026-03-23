@@ -1,11 +1,16 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+
 import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
 import {errorAlert, warningAlert} from "@/utils/swalUtils.js";
-import CommonModal from "../../../components/ui/CommonModal";
+
+//절대 경로 모듈
+import CommonModal from "@/components/ui/CommonModal";
+
+//auth 도메인 내부 api
 import {loginUser} from "../api/authApi";
 
 const LoginForm = ({onLoginSuccess}) => {

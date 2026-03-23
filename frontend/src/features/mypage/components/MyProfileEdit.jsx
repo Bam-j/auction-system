@@ -1,23 +1,22 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {
-  Card, CardHeader, CardBody, Typography, Input, Button
-} from "@material-tailwind/react";
+
+import {Card, CardHeader, CardBody, Typography, Input, Button} from "@material-tailwind/react";
 import {successAlert, errorAlert, warningAlert, infoAlert} from "@/utils/swalUtils";
-import CommonModal from "../../../components/ui/CommonModal";
+
+//절대 경로 모듈
 import api from "@/api/axiosInstance.js";
-import useAuthStore from "@/stores/useAuthStore";
+import CommonModal from "@/components/ui/CommonModal";
 import {checkNickname} from "@/features/auth/api/authApi";
+import useAuthStore from "@/stores/useAuthStore";
 import {validateField} from "@/utils/validation.js";
 
 const MyProfileEdit = () => {
   const navigate = useNavigate();
-
   const {user, logout, updateNickname} = useAuthStore();
-
   const userId = user?.id || user?.username;
-
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
   const handleOpenDelete = () => {
     setOpenDeleteModal(!openDeleteModal);
     setDeletePassword("");

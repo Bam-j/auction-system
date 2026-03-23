@@ -1,8 +1,4 @@
-import React from "react";
-import {
-  Card, CardHeader, Typography,
-  CardBody, CardFooter,
-} from "@material-tailwind/react";
+import {Card, CardHeader, Typography, CardBody, CardFooter} from "@material-tailwind/react";
 
 const CommonTable = ({title, headers, children, pagination}) => {
   return (

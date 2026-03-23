@@ -1,21 +1,24 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
+
 import {Button, Typography, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, CheckIcon, XMarkIcon} from "@heroicons/react/24/outline";
 import {successAlert, errorAlert, confirmAction} from "@/utils/swalUtils";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import PriceTag from "../../../components/ui/PriceTag";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import ProductManagementModal from "../../product/components/ProductManagementModal";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import PriceTag from "@/components/ui/PriceTag";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import StatusBadge from "@/components/ui/StatusBadge";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import ProductManagementModal from "@/features/product/components/ProductManagementModal";
 import {
   getIncomingPurchaseRequests,
   approvePurchaseRequest,
   rejectPurchaseRequest
-} from "../../product/api/productApi";
+} from "@/features/product/api/productApi";
 import {
   CATEGORY_FILTER_CONFIG,
   PURCHASE_REQUEST_STATUS_FILTER_CONFIG,

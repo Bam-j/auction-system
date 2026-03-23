@@ -46,6 +46,10 @@ pids
 .env.test.local
 .env.production.local
 
+### Tools md ###
+GEMINI.md
+CLAUDE.md
+
 ### Etc. ###
 memo.txt
 *.sql

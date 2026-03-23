@@ -1,6 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import LoginForm from "../features/auth/components/LoginForm.jsx";
-import useAuthStore from "@/stores/useAuthStore"; // 1. 스토어 임포트
+import {useNavigate} from "react-router-dom";
+
+import LoginForm from "@/features/auth/components/LoginForm.jsx";
+import useAuthStore from "@/stores/useAuthStore";
 
 const LoginPage = () => {
   const navigate = useNavigate();

@@ -1,4 +1,3 @@
-import React from "react";
 import {Button, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon, TrashIcon, NoSymbolIcon} from "@heroicons/react/24/outline";
 

@@ -1,9 +1,9 @@
-import React from "react";
-import SideNavLayout from "../components/layouts/SideNavLayout.jsx";
 import {
   UserCircleIcon, ShoppingBagIcon,
   CurrencyDollarIcon, CubeIcon, BellAlertIcon
 } from "@heroicons/react/24/outline";
+
+import SideNavLayout from "@/components/layouts/SideNavLayout.jsx";
 
 const MyPage = () => {
   const myPageMenus = [

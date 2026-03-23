@@ -1,21 +1,24 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
+
 import {IconButton, Tooltip, Button, Typography} from "@material-tailwind/react";
 import {EyeIcon} from "@heroicons/react/24/outline";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import PriceTag from "../../../components/ui/PriceTag";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import ProductManagementModal from "../../product/components/ProductManagementModal";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getAllProducts } from "../api/adminApi";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import StatusBadge from "@/components/ui/StatusBadge";
+import PriceTag from "@/components/ui/PriceTag";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import ProductManagementModal from "@/features/product/components/ProductManagementModal";
 import {
-  CATEGORY_FILTER_CONFIG,
-  STATUS_FILTER_CONFIG,
-  PRODUCT_ADMIN_SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, STATUS_FILTER_CONFIG, PRODUCT_ADMIN_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
+
+//auth 도메인 내부 api
+import {getAllProducts} from "../api/adminApi";
 
 const AdminProductList = () => {
   const [page, setPage] = useState(1);
@@ -68,7 +71,7 @@ const AdminProductList = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : products.length === 0 ? (
             <EmptyState message="등록된 상품이 없습니다."/>
@@ -79,13 +82,13 @@ const AdminProductList = () => {
                   headers={["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"]}
 
                   pagination={
-                    products.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(products.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      products.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(products.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {products.map((product) => (
@@ -99,7 +102,7 @@ const AdminProductList = () => {
                         {product.type === "AUCTION" || product.status === "AUCTION" ? "-" : `${product.stock || 0}개`}
                       </td>
                       <td className="p-4 text-left"><StatusBadge status={product.status}/></td>
-                      
+
                       <td className="p-4 text-left">
                         <Tooltip content="상품 상세 보기">
                           <IconButton

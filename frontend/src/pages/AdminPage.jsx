@@ -1,9 +1,6 @@
-import React from "react";
-import SideNavLayout from "../components/layouts/SideNavLayout.jsx";
-import {
-  UsersIcon, ClipboardDocumentListIcon,
-  ShoppingBagIcon, CurrencyDollarIcon,
-} from "@heroicons/react/24/outline";
+import {UsersIcon, ClipboardDocumentListIcon, ShoppingBagIcon, CurrencyDollarIcon} from "@heroicons/react/24/outline";
+
+import SideNavLayout from "@/components/layouts/SideNavLayout.jsx";
 
 const AdminPage = () => {
   const adminMenus = [

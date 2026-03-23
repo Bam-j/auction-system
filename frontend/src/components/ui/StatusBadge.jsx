@@ -1,4 +1,3 @@
-import React from "react";
 import {Chip} from "@material-tailwind/react";
 
 const STATUS_CONFIG = {

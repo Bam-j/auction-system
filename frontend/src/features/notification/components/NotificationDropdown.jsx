@@ -1,16 +1,13 @@
 import {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+
 import {
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-  Typography,
-  IconButton,
-  Badge,
-  Button
+  Menu, MenuHandler, MenuList, MenuItem,
+  Typography, IconButton, Badge, Button
 } from "@material-tailwind/react";
 import {BellIcon} from "@heroicons/react/24/outline";
+
+//notification 도메인 내부 api
 import {fetchNotifications, markAsRead, markAllAsRead, subscribeToNotifications} from "../api/notificationApi";
 
 const NotificationDropdown = () => {
@@ -73,7 +70,7 @@ const NotificationDropdown = () => {
     }
 
     // 이동 및 상품 ID 전달
-    // 알림 타입에 따라 적절한 페이지로 이동
+    // 알림 타입에 따라 적절한 페이지(마이 페이지 탭)로 이동
     let path = "/mypage/products";
     switch (notification.type) {
       case "PURCHASE_REQUEST_RECEIVED":
@@ -115,9 +112,15 @@ const NotificationDropdown = () => {
     const now = new Date();
     const diff = Math.floor((now - date) / 1000); // seconds
 
-    if (diff < 60) return "방금 전";
-    if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+    if (diff < 60) {
+      return "방금 전";
+    }
+    if (diff < 3600) {
+      return `${Math.floor(diff / 60)}분 전`;
+    }
+    if (diff < 86400) {
+      return `${Math.floor(diff / 3600)}시간 전`;
+    }
     return `${Math.floor(diff / 86400)}일 전`;
   };
 
@@ -141,7 +144,8 @@ const NotificationDropdown = () => {
                 알림
               </Typography>
               {unreadCount > 0 && (
-                  <Typography variant="small" className="text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full">
+                  <Typography variant="small"
+                              className="text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full">
                     {unreadCount}개의 새로운 알림
                   </Typography>
               )}
@@ -151,7 +155,7 @@ const NotificationDropdown = () => {
           <div className="overflow-y-auto max-h-[300px] py-1">
             {notifications.length === 0 ? (
                 <div className="py-12 text-center flex flex-col items-center gap-2">
-                  <BellIcon className="h-8 w-8 text-blue-gray-100" />
+                  <BellIcon className="h-8 w-8 text-blue-gray-100"/>
                   <Typography variant="small" color="blue-gray" className="opacity-50">
                     새로운 알림이 없습니다.
                   </Typography>
@@ -173,7 +177,7 @@ const NotificationDropdown = () => {
                           {notification.message}
                         </Typography>
                         {!notification.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-primary mt-1 flex-shrink-0" />
+                            <span className="w-2 h-2 rounded-full bg-primary mt-1 flex-shrink-0"/>
                         )}
                       </div>
                       <Typography variant="small" className="text-[11px] text-font-muted">

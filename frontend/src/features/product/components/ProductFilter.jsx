@@ -1,9 +1,10 @@
 import {useState} from "react";
+
 import {Input, Button, Collapse, Card, Typography} from "@material-tailwind/react";
 import {MagnifyingGlassIcon, AdjustmentsHorizontalIcon} from "@heroicons/react/24/outline";
 
 const ProductFilter = () => {
-  const [openFilter, setOpenFilter] = useState(false); // 필터 토글 상태
+  const [openFilter, setOpenFilter] = useState(false);
 
   const toggleOpen = () => setOpenFilter((cur) => !cur);
 

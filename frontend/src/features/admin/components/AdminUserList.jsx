@@ -1,17 +1,20 @@
-import React, {useState, useEffect} from "react";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import {getAllUsers, blockUser, unblockUser} from "../api/adminApi";
+import {useState, useEffect} from "react";
+
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import StatusBadge from "@/components/ui/StatusBadge";
+import TableActionButtons from "@/components/ui/TableActionButtons";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import {successAlert, errorAlert, confirmAction} from "@/utils/swalUtils";
 import {
   USER_STATUS_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
+
+//auth 도메인 내부 api
+import {getAllUsers, blockUser, unblockUser} from "../api/adminApi";
 
 const TABLE_HEAD = ["ID", "아이디", "닉네임", "권한", "상태", "관리"];
 

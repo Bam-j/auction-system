@@ -1,8 +1,4 @@
-import React from "react";
-import {
-  Dialog, DialogHeader, DialogBody,
-  DialogFooter, Typography,
-} from "@material-tailwind/react";
+import {Dialog, DialogHeader, DialogBody, DialogFooter, Typography} from "@material-tailwind/react";
 import {XMarkIcon} from "@heroicons/react/24/outline";
 
 const CommonModal = ({

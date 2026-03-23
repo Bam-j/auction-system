@@ -1,13 +1,18 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+
 import {Button, Typography, Textarea} from "@material-tailwind/react";
 import {PhotoIcon} from "@heroicons/react/24/outline";
-import { successAlert, errorAlert } from "@/utils/swalUtils";
-import CommonModal from "../../../components/ui/CommonModal";
+
+//절대 경로 모듈
+import CommonModal from "@/components/ui/CommonModal";
+import {successAlert, errorAlert} from "@/utils/swalUtils";
+
+//product 도메인 내부 api, 자식 컴포넌트
+import {registerProduct} from "../api/productApi";
 import CommonProductForm from "./forms/CommonProductForm";
 import FixedProductForm from "./forms/FixedProductForm";
 import AuctionProductForm from "./forms/AuctionProductForm";
-import {registerProduct} from "../api/productApi";
 
 const ProductRegisterModal = () => {
   const navigate = useNavigate();
@@ -34,7 +39,6 @@ const ProductRegisterModal = () => {
   };
 
   const handleSubmit = async () => {
-    // Client-side validation for FIXED
     if (formData.type === "FIXED") {
       if (Number(formData.stock) < 1) {
         errorAlert("입력 오류", "재고 수량은 1개 이상이어야 합니다.");
@@ -42,7 +46,6 @@ const ProductRegisterModal = () => {
       }
     }
 
-    // Client-side validation for AUCTION
     if (formData.type === "AUCTION") {
       const now = new Date();
       const endedAt = new Date(formData.ended_at);
@@ -74,9 +77,10 @@ const ProductRegisterModal = () => {
 
     } catch (error) {
       console.error("등록 실패 상세:", error.response?.data);
+
       const serverMessage = error.response?.data?.message || "상품 등록 중 오류가 발생했습니다.";
       const validationErrors = error.response?.data?.validationErrors;
-      
+
       let errorText = serverMessage;
       if (validationErrors) {
         errorText = Object.values(validationErrors).join("\n");

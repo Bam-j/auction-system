@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Input, Button, Select, Option} from "@material-tailwind/react";
 import {MagnifyingGlassIcon, ArrowPathIcon} from "@heroicons/react/24/outline";
 

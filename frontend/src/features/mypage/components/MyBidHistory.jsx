@@ -1,21 +1,22 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import PriceTag from "../../../components/ui/PriceTag";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import ProductDetailModal from "../../product/components/ProductDetailModal";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getMyBids } from "../../product/api/productApi";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import StatusBadge from "@/components/ui/StatusBadge";
+import PriceTag from "@/components/ui/PriceTag";
+import TableActionButtons from "@/components/ui/TableActionButtons";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import ProductDetailModal from "@/features/product/components/ProductDetailModal";
+import {getMyBids} from "@/features/product/api/productApi";
 import {
-  CATEGORY_FILTER_CONFIG,
-  BID_STATUS_FILTER_CONFIG,
-  SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, BID_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
+
 
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 
@@ -33,10 +34,10 @@ const MyBidHistory = () => {
     try {
       const response = await getMyBids(params);
       setBids(response.data);
-      
+
       // 알림 등을 통해 특정 상품 상세를 열어야 하는 경우
       if (location.state?.openProductId) {
-        setSelectedProduct({ id: location.state.openProductId });
+        setSelectedProduct({id: location.state.openProductId});
         setOpenModal(true);
       }
     } catch (error) {
@@ -74,7 +75,7 @@ const MyBidHistory = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct({ id: item.productId });
+    setSelectedProduct({id: item.productId});
     setOpenModal(true);
   };
 
@@ -88,7 +89,7 @@ const MyBidHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : bids.length === 0 ? (
             <EmptyState message="입찰 참여 내역이 없습니다."/>
@@ -98,13 +99,13 @@ const MyBidHistory = () => {
                   title="내 입찰 기록"
                   headers={TABLE_HEAD}
                   pagination={
-                    bids.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(bids.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      bids.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(bids.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {bids.map((item) => (

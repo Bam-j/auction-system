@@ -1,4 +1,3 @@
-import React from "react";
 import {Typography} from "@material-tailwind/react";
 
 const PriceTag = ({price, unit = "에메랄드", className = ""}) => {
@@ -16,7 +15,7 @@ const PriceTag = ({price, unit = "에메랄드", className = ""}) => {
           className={`font-medium flex items-center gap-1 ${className}`}
       >
         <span>{formattedPrice}</span>
-        {/* 숫자인 경우에만 단위를 붙임 (문자열 가격은 이미 단위가 포함되어 있을 확률이 높음) */}
+        {/* 숫자인 경우에만 단위를 붙임. 문자열 형태 가격은 이미 단위가 문자열에 포함 */}
         {isNumeric && unit && (
           <span className="opacity-80 text-[0.85em] font-normal">{unit}</span>
         )}

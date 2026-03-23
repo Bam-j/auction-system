@@ -1,14 +1,14 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {
-  Card, CardBody, CardFooter,
-  Typography, Input, Button,
-} from "@material-tailwind/react";
-import {
-  successAlert, errorAlert, warningAlert
-} from "@/utils/swalUtils.js";
-import {signup, checkUsername, checkNickname} from "../api/authApi";
+
+import {Card, CardBody, CardFooter, Typography, Input, Button} from "@material-tailwind/react";
+import {successAlert, errorAlert, warningAlert} from "@/utils/swalUtils.js";
+
+//절대 경로 모듈
 import {validateField} from "@/utils/validation.js";
+
+//auth 도메인 내부 api
+import {signup, checkUsername, checkNickname} from "../api/authApi";
 
 const SignupForm = () => {
   const navigate = useNavigate();

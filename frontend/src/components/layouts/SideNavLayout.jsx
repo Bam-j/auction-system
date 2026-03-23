@@ -1,9 +1,6 @@
-import React from "react";
 import {NavLink, Outlet} from "react-router-dom";
-import {
-  Card, List, ListItem,
-  ListItemPrefix, Typography,
-} from "@material-tailwind/react";
+
+import {Card, List, ListItem, ListItemPrefix, Typography,} from "@material-tailwind/react";
 import {ChevronRightIcon} from "@heroicons/react/24/outline";
 
 const SideNavLayout = ({title, menuItems}) => {
@@ -22,9 +19,9 @@ const SideNavLayout = ({title, menuItems}) => {
                     {({isActive}) => (
                         <ListItem
                             className={`${
-                                isActive 
-                                ? "bg-blue-50 text-blue-600 focus:bg-blue-50 active:bg-blue-50" 
-                                : "hover:bg-gray-100 focus:bg-gray-100"
+                                isActive
+                                    ? "bg-blue-50 text-blue-600 focus:bg-blue-50 active:bg-blue-50"
+                                    : "hover:bg-gray-100 focus:bg-gray-100"
                             }`}
                             selected={isActive}
                         >

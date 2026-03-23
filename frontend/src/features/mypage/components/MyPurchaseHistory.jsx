@@ -1,25 +1,25 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import PriceTag from "../../../components/ui/PriceTag";
-import TableActionButtons from "../../../components/ui/TableActionButtons";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getMyPurchaseRequests, cancelPurchaseRequest } from "../../product/api/productApi";
-import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { successAlert, errorAlert, confirmDanger } from "@/utils/swalUtils";
-import ProductDetailModal from "../../product/components/ProductDetailModal";
+
+import {Typography, IconButton, Tooltip} from "@material-tailwind/react";
+import {XMarkIcon} from "@heroicons/react/24/outline";
+import {successAlert, errorAlert, confirmDanger} from "@/utils/swalUtils";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import PriceTag from "@/components/ui/PriceTag";
+import TableActionButtons from "@/components/ui/TableActionButtons";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import StatusBadge from "@/components/ui/StatusBadge";
+import {getMyPurchaseRequests, cancelPurchaseRequest} from "@/features/product/api/productApi";
+import ProductDetailModal from "@/features/product/components/ProductDetailModal";
 import {
-  CATEGORY_FILTER_CONFIG,
-  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
-  SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
-
-import StatusBadge from "../../../components/ui/StatusBadge";
 
 const TABLE_HEAD = ["ID", "상품명", "요청일", "가격", "수량", "상태", "상세", "관리"];
 
@@ -39,7 +39,7 @@ const MyPurchaseHistory = () => {
       setPurchases(response.data);
 
       if (location.state?.openProductId) {
-        setSelectedProduct({ id: location.state.openProductId });
+        setSelectedProduct({id: location.state.openProductId});
         setOpenModal(true);
       }
     } catch (error) {
@@ -75,9 +75,9 @@ const MyPurchaseHistory = () => {
 
   const handleCancel = async (id) => {
     const result = await confirmDanger(
-      "요청 취소",
-      "정말로 이 구매 요청을 취소하시겠습니까?",
-      "취소하기"
+        "요청 취소",
+        "정말로 이 구매 요청을 취소하시겠습니까?",
+        "취소하기"
     );
 
     if (result.isConfirmed) {
@@ -93,7 +93,7 @@ const MyPurchaseHistory = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct({ id: item.productId });
+    setSelectedProduct({id: item.productId});
     setOpenModal(true);
   };
 
@@ -107,7 +107,7 @@ const MyPurchaseHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : purchases.length === 0 ? (
             <EmptyState message="구매 내역이 없습니다."/>
@@ -117,13 +117,13 @@ const MyPurchaseHistory = () => {
                   title="내 구매 기록"
                   headers={TABLE_HEAD}
                   pagination={
-                    purchases.length > 0 && (
-                      <Pagination 
-                        active={page} 
-                        total={Math.ceil(purchases.length / 10) || 1} 
-                        onChange={setPage}
-                      />
-                    )
+                      purchases.length > 0 && (
+                          <Pagination
+                              active={page}
+                              total={Math.ceil(purchases.length / 10) || 1}
+                              onChange={setPage}
+                          />
+                      )
                   }
               >
                 {purchases.map((item) => (
@@ -134,9 +134,9 @@ const MyPurchaseHistory = () => {
                         {new Date(item.requestDate).toLocaleDateString()}
                       </td>
                       <td className="p-4">
-                        <PriceTag 
-                          price={item.price} 
-                          unit={item.priceUnit}
+                        <PriceTag
+                            price={item.price}
+                            unit={item.priceUnit}
                         />
                       </td>
                       <td className="p-4 text-gray-600">{item.quantity}개</td>

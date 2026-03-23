@@ -1,18 +1,20 @@
-import React, {useState, useEffect} from "react";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import PriceTag from "../../../components/ui/PriceTag";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import { getAllPurchaseRequests } from "../api/adminApi";
-import StatusBadge from "../../../components/ui/StatusBadge";
+import {useState, useEffect} from "react";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import PriceTag from "@/components/ui/PriceTag";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import StatusBadge from "@/components/ui/StatusBadge";
 import {
-  CATEGORY_FILTER_CONFIG,
-  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
-  BUYER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, BUYER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
+
+//auth 도메인 내부 api
+import {getAllPurchaseRequests} from "../api/adminApi";
 
 const TABLE_HEAD = ["ID", "판매자", "상품명", "구매자", "구매일", "구매금액", "구매량", "상태"];
 
@@ -61,7 +63,7 @@ const AdminPurchaseHistory = () => {
 
         {isLoading ? (
             <div className="flex justify-center items-center h-64">
-              <LoadingSpinner size="large" />
+              <LoadingSpinner size="large"/>
             </div>
         ) : purchases.length === 0 ? (
             <EmptyState message="구매 요청 기록이 없습니다."/>
@@ -70,13 +72,13 @@ const AdminPurchaseHistory = () => {
                 title="전체 구매 요청 기록"
                 headers={TABLE_HEAD}
                 pagination={
-                  purchases.length > 0 && (
-                    <Pagination 
-                      active={page} 
-                      total={Math.ceil(purchases.length / 10) || 1} 
-                      onChange={setPage}
-                    />
-                  )
+                    purchases.length > 0 && (
+                        <Pagination
+                            active={page}
+                            total={Math.ceil(purchases.length / 10) || 1}
+                            onChange={setPage}
+                        />
+                    )
                 }
             >
               {purchases.map((p) => (

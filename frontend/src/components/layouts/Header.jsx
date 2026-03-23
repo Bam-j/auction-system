@@ -1,8 +1,9 @@
-import {useEffect, useState} from "react";
 import {Link, useNavigate} from 'react-router-dom';
+
 import {Navbar, Typography, Button} from "@material-tailwind/react";
 import {PlusIcon} from "@heroicons/react/24/outline";
 
+//절대 경로 모듈
 import useAuthStore from "@/stores/useAuthStore.js";
 import {logoutUser} from "@/features/auth/api/authApi.js";
 import NotificationDropdown from "@/features/notification/components/NotificationDropdown.jsx";

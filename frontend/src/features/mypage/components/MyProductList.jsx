@@ -1,26 +1,23 @@
-import React, {useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
+
 import {Typography, Button, IconButton, Tooltip} from "@material-tailwind/react";
 import {EyeIcon} from "@heroicons/react/24/outline";
 import {
   successAlert, errorAlert, confirmDanger
 } from "@/utils/swalUtils.js";
 
-import CommonTable from "../../../components/ui/CommonTable";
-
-import Pagination from "../../../components/ui/Pagination";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import PriceTag from "../../../components/ui/PriceTag";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import ProductManagementModal from "../../product/components/ProductManagementModal";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
-import {getMyProducts, endSale} from "../../product/api/productApi";
-import {
-  CATEGORY_FILTER_CONFIG,
-  STATUS_FILTER_CONFIG,
-  mapFilterParams
-} from "@/constants/filterOptions.js";
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import StatusBadge from "@/components/ui/StatusBadge";
+import PriceTag from "@/components/ui/PriceTag";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import ProductManagementModal from "@/features/product/components/ProductManagementModal";
+import {getMyProducts, endSale} from "@/features/product/api/productApi";
+import {CATEGORY_FILTER_CONFIG, STATUS_FILTER_CONFIG, mapFilterParams} from "@/constants/filterOptions.js";
 
 const TABLE_HEAD = ["ID", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"];
 

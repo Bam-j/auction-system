@@ -1,20 +1,24 @@
-import axiosInstance from "../../../api/axiosInstance";
+import axiosInstance from "@/api/axiosInstance";
 
+//알림 조회
 export const fetchNotifications = async () => {
   const response = await axiosInstance.get("/notifications");
   return response.data;
 };
 
+//알림 한 개 읽음 표시
 export const markAsRead = async (notificationId) => {
   const response = await axiosInstance.patch(`/notifications/${notificationId}/read`);
   return response.data;
 };
 
+//알림 모두 읽음
 export const markAllAsRead = async () => {
   const response = await axiosInstance.patch("/notifications/read-all");
   return response.data;
 };
 
+//알림 송수신을 위한 연결
 export const subscribeToNotifications = () => {
   const authStorage = localStorage.getItem("auth-storage");
   if (!authStorage) {
@@ -30,7 +34,6 @@ export const subscribeToNotifications = () => {
     return null;
   }
 
-  // 만약 토큰에 'Bearer '가 포함되어 있다면 제거
   if (token.startsWith("Bearer ")) {
     token = token.substring(7);
   }

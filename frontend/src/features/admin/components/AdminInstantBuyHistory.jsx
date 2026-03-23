@@ -1,19 +1,20 @@
-import React, {useState, useEffect} from "react";
-import CommonTable from "../../../components/ui/CommonTable";
-import Pagination from "../../../components/ui/Pagination";
-import PriceTag from "../../../components/ui/PriceTag";
-import StatusBadge from "../../../components/ui/StatusBadge";
-import EmptyState from "../../../components/ui/EmptyState";
-import LoadingSpinner from "../../../components/ui/LoadingSpinner";
-import { getAllInstantBuyRequests } from "../../product/api/productApi";
-import { Typography, IconButton, Tooltip } from "@material-tailwind/react";
-import { EyeIcon } from "@heroicons/react/24/outline";
-import ProductDetailModal from "../../product/components/ProductDetailModal";
-import CommonFilterBar from "../../../components/ui/CommonFilterBar";
+import {useState, useEffect} from "react";
+
+import {Typography, IconButton, Tooltip} from "@material-tailwind/react";
+import {EyeIcon} from "@heroicons/react/24/outline";
+
+//절대 경로 모듈
+import CommonTable from "@/components/ui/CommonTable";
+import Pagination from "@/components/ui/Pagination";
+import PriceTag from "@/components/ui/PriceTag";
+import StatusBadge from "@/components/ui/StatusBadge";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import CommonFilterBar from "@/components/ui/CommonFilterBar";
+import {getAllInstantBuyRequests} from "@/features/product/api/productApi";
+import ProductDetailModal from "@/features/product/components/ProductDetailModal";
 import {
-  CATEGORY_FILTER_CONFIG,
-  PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
-  ADMIN_SEARCH_TYPE_FILTER_CONFIG,
+  CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, ADMIN_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
 } from "@/constants/filterOptions.js";
 
@@ -57,76 +58,76 @@ const AdminInstantBuyHistory = () => {
   };
 
   const handleViewDetail = (item) => {
-    setSelectedProduct({ id: item.productId });
+    setSelectedProduct({id: item.productId});
     setOpenDetail(true);
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <CommonFilterBar
-        searchPlaceholder="상품명, 요청자 또는 판매자 검색"
-        filterConfigs={instantBuyFilters}
-        onSearch={handleSearch}
-      />
+      <div className="flex flex-col gap-4">
+        <CommonFilterBar
+            searchPlaceholder="상품명, 요청자 또는 판매자 검색"
+            filterConfigs={instantBuyFilters}
+            onSearch={handleSearch}
+        />
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <LoadingSpinner size="large" />
-        </div>
-      ) : requests.length === 0 ? (
-        <EmptyState message="즉시 구매 요청 기록이 없습니다." />
-      ) : (
-        <>
-          <CommonTable
-            title="전체 즉시 구매 기록"
-            headers={TABLE_HEAD}
-            pagination={
-              <Pagination
-                active={page}
-                total={Math.ceil(requests.length / 10) || 1}
-                onChange={setPage}
+        {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <LoadingSpinner size="large"/>
+            </div>
+        ) : requests.length === 0 ? (
+            <EmptyState message="즉시 구매 요청 기록이 없습니다."/>
+        ) : (
+            <>
+              <CommonTable
+                  title="전체 즉시 구매 기록"
+                  headers={TABLE_HEAD}
+                  pagination={
+                    <Pagination
+                        active={page}
+                        total={Math.ceil(requests.length / 10) || 1}
+                        onChange={setPage}
+                    />
+                  }
+              >
+                {requests.map((item) => (
+                    <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
+                      <td className="p-4 text-gray-600 font-medium">{item.id}</td>
+                      <td className="p-4 font-bold text-blue-gray-900">{item.productName}</td>
+                      <td className="p-4 text-gray-900">{item.requesterNickname}</td>
+                      <td className="p-4 text-gray-900">{item.sellerNickname}</td>
+                      <td className="p-4 text-gray-600 text-sm">
+                        {new Date(item.requestDate).toLocaleDateString()}
+                      </td>
+                      <td className="p-4">
+                        <PriceTag price={item.price} unit={item.priceUnit}/>
+                      </td>
+                      <td className="p-4">
+                        <StatusBadge status={item.status}/>
+                      </td>
+                      <td className="p-4">
+                        <Tooltip content="상세 보기">
+                          <IconButton
+                              size="sm"
+                              variant="text"
+                              color="blue-gray"
+                              onClick={() => handleViewDetail(item)}
+                          >
+                            <EyeIcon className="h-4 w-4"/>
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                ))}
+              </CommonTable>
+
+              <ProductDetailModal
+                  open={openDetail}
+                  handleOpen={() => setOpenDetail(!openDetail)}
+                  product={selectedProduct}
               />
-            }
-          >
-            {requests.map((item) => (
-              <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
-                <td className="p-4 text-gray-600 font-medium">{item.id}</td>
-                <td className="p-4 font-bold text-blue-gray-900">{item.productName}</td>
-                <td className="p-4 text-gray-900">{item.requesterNickname}</td>
-                <td className="p-4 text-gray-900">{item.sellerNickname}</td>
-                <td className="p-4 text-gray-600 text-sm">
-                  {new Date(item.requestDate).toLocaleDateString()}
-                </td>
-                <td className="p-4">
-                  <PriceTag price={item.price} unit={item.priceUnit} />
-                </td>
-                <td className="p-4">
-                  <StatusBadge status={item.status} />
-                </td>
-                <td className="p-4">
-                  <Tooltip content="상세 보기">
-                    <IconButton 
-                      size="sm" 
-                      variant="text" 
-                      color="blue-gray"
-                      onClick={() => handleViewDetail(item)}
-                    >
-                      <EyeIcon className="h-4 w-4" />
-                    </IconButton>
-                  </Tooltip>
-                </td>
-              </tr>
-            ))}
-          </CommonTable>
-
-          <ProductDetailModal
-            open={openDetail}
-            handleOpen={() => setOpenDetail(!openDetail)}
-            product={selectedProduct}
-          />
-        </>
-      )}
-    </div>
+            </>
+        )}
+      </div>
   );
 };
 
