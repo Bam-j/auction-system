@@ -37,7 +37,6 @@ public class Auction extends BaseTimeEntity {
     @Column(name = "start_price", nullable = false)
     private Integer startPrice;
 
-    // ★ 현재 최고가 필드
     @Column(name = "current_price", nullable = false)
     private Integer currentPrice;
 
