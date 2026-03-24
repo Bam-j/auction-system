@@ -52,7 +52,15 @@ public class Auction extends BaseTimeEntity {
     private PriceUnit priceUnit;
 
     @Builder
-    public Auction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, Integer instantPurchasePrice, PriceUnit priceUnit) {
+    public Auction(
+            Product product,
+            User user,
+            LocalDateTime endedAt,
+            Integer startPrice,
+            Integer minBidIncrement,
+            Integer instantPurchasePrice,
+            PriceUnit priceUnit
+    ) {
         this.product = product;
         this.user = user;
         this.endedAt = endedAt;
@@ -63,7 +71,15 @@ public class Auction extends BaseTimeEntity {
         this.priceUnit = priceUnit != null ? priceUnit : PriceUnit.EMERALD_BLOCK;
     }
 
-    public static Auction createAuction(Product product, User user, LocalDateTime endedAt, Integer startPrice, Integer minBidIncrement, Integer instantPurchasePrice, PriceUnit priceUnit) {
+    public static Auction createAuction(
+            Product product,
+            User user,
+            LocalDateTime endedAt,
+            Integer startPrice,
+            Integer minBidIncrement,
+            Integer instantPurchasePrice,
+            PriceUnit priceUnit
+    ) {
         return Auction.builder()
                 .product(product)
                 .user(user)

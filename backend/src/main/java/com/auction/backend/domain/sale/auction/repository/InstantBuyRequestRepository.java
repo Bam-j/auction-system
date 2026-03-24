@@ -2,6 +2,8 @@ package com.auction.backend.domain.sale.auction.repository;
 
 import com.auction.backend.domain.sale.auction.entity.InstantBuyRequest;
 import com.auction.backend.domain.user.entity.User;
+import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.global.enums.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,8 +28,8 @@ public interface InstantBuyRequestRepository extends JpaRepository<InstantBuyReq
             "  (:searchType IS NULL AND (ibr.auction.product.productName LIKE %:keyword% OR ibr.user.username LIKE %:keyword% OR ibr.user.nickname LIKE %:keyword% OR ibr.auction.user.username LIKE %:keyword% OR ibr.auction.user.nickname LIKE %:keyword%))" +
             ")")
     List<InstantBuyRequest> findByFilters(
-            @Param("category") com.auction.backend.global.enums.ProductCategory category,
-            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("category") ProductCategory category,
+            @Param("status") RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
 
@@ -41,7 +43,7 @@ public interface InstantBuyRequestRepository extends JpaRepository<InstantBuyReq
             ")")
     List<InstantBuyRequest> findByUserOrSellerWithFilters(
             @Param("user") User user,
-            @Param("category") com.auction.backend.global.enums.ProductCategory category,
-            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("category") ProductCategory category,
+            @Param("status") RequestStatus status,
             @Param("keyword") String keyword);
 }

@@ -2,6 +2,7 @@ package com.auction.backend.domain.sale.fixedsale.service;
 
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSaleOrderRepository;
 import com.auction.backend.domain.fixedsalesorder.service.FixedSalesOrderCommandService;
+import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestCreateRequest;
@@ -13,6 +14,7 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.exception.SelfPurchaseException;
 import com.auction.backend.global.exception.UnauthorizedAccessException;
+import com.auction.backend.global.service.RedisLockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class PurchaseRequestCommandService {
     private final FixedSaleOrderRepository fixedSaleOrderRepository;
     private final FixedSalesOrderCommandService fixedSalesOrderCommandService;
     private final NotificationCommandService notificationCommandService;
+    private final RedisLockService redisLockService;
 
     //구매 요청 생성
     public Long createPurchaseRequest(Long userId, PurchaseRequestCreateRequest request) {
@@ -52,10 +55,9 @@ public class PurchaseRequestCommandService {
         PurchaseRequest purchaseRequest = PurchaseRequest.createPurchaseRequest(user, fixedSale, request.getQuantity());
         purchaseRequestRepository.save(purchaseRequest);
 
-        // 알림 전송: 판매자에게 구매 요청 알림
         notificationCommandService.send(
                 fixedSale.getUser(),
-                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_RECEIVED,
+                NotificationType.PURCHASE_REQUEST_RECEIVED,
                 String.format("[%s] 상품에 새로운 구매 요청이 들어왔습니다.", fixedSale.getProduct().getProductName()),
                 fixedSale.getProduct().getProductId()
         );
@@ -71,18 +73,24 @@ public class PurchaseRequestCommandService {
             throw new UnauthorizedAccessException("판매자만 요청을 수락할 수 있습니다.");
         }
 
-        if (SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
-            throw new InsufficientStockException("이미 판매 완료/품절된 상품입니다.");
-        }
+        redisLockService.runWithLock("fixedSale:" + request.getFixedSale().getFixedSaleId(), () -> {
+            if (SalesStatus.SOLD_OUT.equals(request.getFixedSale().getProduct().getSalesStatus())) {
+                throw new InsufficientStockException("이미 판매 완료/품절된 상품입니다.");
+            }
 
-        request.approve();
-        request.getFixedSale().decreaseStock(request.getQuantity());
-        fixedSalesOrderCommandService.createFixedSaleOrder(request);
+            if (request.getFixedSale().getStock() < request.getQuantity()) {
+                throw new InsufficientStockException("남은 재고가 부족하여 승인할 수 없습니다.");
+            }
 
-        // 알림 전송: 구매자에게 승인 알림
+            request.approve();
+            request.getFixedSale().decreaseStock(request.getQuantity());
+            fixedSalesOrderCommandService.createFixedSaleOrder(request);
+            return null;
+        });
+
         notificationCommandService.send(
                 request.getUser(),
-                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_APPROVED,
+                NotificationType.PURCHASE_REQUEST_APPROVED,
                 String.format("[%s] 상품의 구매 요청이 승인되었습니다.", request.getFixedSale().getProduct().getProductName()),
                 request.getFixedSale().getProduct().getProductId()
         );
@@ -98,10 +106,9 @@ public class PurchaseRequestCommandService {
 
         request.reject();
 
-        // 알림 전송: 구매자에게 거절 알림
         notificationCommandService.send(
                 request.getUser(),
-                com.auction.backend.domain.notification.entity.NotificationType.PURCHASE_REQUEST_REJECTED,
+                NotificationType.PURCHASE_REQUEST_REJECTED,
                 String.format("[%s] 상품의 구매 요청이 거절되었습니다.", request.getFixedSale().getProduct().getProductName()),
                 request.getFixedSale().getProduct().getProductId()
         );

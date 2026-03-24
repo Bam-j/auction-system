@@ -33,7 +33,9 @@ public class PurchaseRequestQueryService {
         String searchKeyword = SearchParamParser.parseString(keyword);
         String stype = SearchParamParser.parseString(searchType);
 
-        return purchaseRequestRepository.findByFilters(productCategory, requestStatus, stype, searchKeyword).stream()
+        return purchaseRequestRepository
+                .findByFilters(productCategory, requestStatus, stype, searchKeyword)
+                .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -47,7 +49,9 @@ public class PurchaseRequestQueryService {
         String searchKeyword = SearchParamParser.parseString(keyword);
         String stype = SearchParamParser.parseString(searchType);
 
-        return purchaseRequestRepository.findByUserWithFilters(user, productCategory, requestStatus, stype, searchKeyword).stream()
+        return purchaseRequestRepository
+                .findByUserWithFilters(user, productCategory, requestStatus, stype, searchKeyword)
+                .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -61,7 +65,9 @@ public class PurchaseRequestQueryService {
         String searchKeyword = SearchParamParser.parseString(keyword);
         String stype = SearchParamParser.parseString(searchType);
 
-        return purchaseRequestRepository.findBySellerWithFilters(seller, productCategory, requestStatus, stype, searchKeyword).stream()
+        return purchaseRequestRepository
+                .findBySellerWithFilters(seller, productCategory, requestStatus, stype, searchKeyword)
+                .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

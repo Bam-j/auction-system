@@ -2,6 +2,8 @@ package com.auction.backend.domain.sale.fixedsale.repository;
 
 import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.domain.user.entity.User;
+import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.global.enums.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,8 +28,8 @@ public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest
             "  (:searchType IS NULL AND (pr.fixedSale.product.productName LIKE %:keyword% OR pr.fixedSale.user.username LIKE %:keyword% OR pr.fixedSale.user.nickname LIKE %:keyword% OR pr.user.username LIKE %:keyword% OR pr.user.nickname LIKE %:keyword%))" +
             ")")
     List<PurchaseRequest> findByFilters(
-            @Param("category") com.auction.backend.global.enums.ProductCategory category,
-            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("category") ProductCategory category,
+            @Param("status") RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
 
@@ -41,8 +43,8 @@ public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest
             ")")
     List<PurchaseRequest> findByUserWithFilters(
             @Param("user") User user,
-            @Param("category") com.auction.backend.global.enums.ProductCategory category,
-            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("category") ProductCategory category,
+            @Param("status") RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
 
@@ -56,8 +58,8 @@ public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest
             ")")
     List<PurchaseRequest> findBySellerWithFilters(
             @Param("seller") User seller,
-            @Param("category") com.auction.backend.global.enums.ProductCategory category,
-            @Param("status") com.auction.backend.global.enums.RequestStatus status,
+            @Param("category") ProductCategory category,
+            @Param("status") RequestStatus status,
             @Param("searchType") String searchType,
             @Param("keyword") String keyword);
 }

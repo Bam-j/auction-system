@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class AuctionRegisterRequest {
 
     @NotNull(message = "경매 종료 시간은 필수입니다.")
     @Future(message = "경매 마감일은 현재 시간 이후여야 합니다.")
-    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endedAt;
 
     @NotNull(message = "시작가는 필수입니다.")

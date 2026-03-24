@@ -1,5 +1,7 @@
 package com.auction.backend.domain.sale.auction.service;
 
+import com.auction.backend.domain.bid.repository.BidRepository;
+import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.product.service.ProductCommandService;
@@ -23,7 +25,7 @@ public class AuctionCommandService {
     private final UserQueryService userQueryService;
     private final ProductCommandService productCommandService;
     private final NotificationCommandService notificationCommandService;
-    private final com.auction.backend.domain.bid.repository.BidRepository bidRepository;
+    private final BidRepository bidRepository;
 
     //경매 상품 등록
     public Long registerAuction(Long userId, AuctionRegisterRequest request, String imageUrl) {
@@ -62,7 +64,7 @@ public class AuctionCommandService {
         // 판매자에게 기한 마감 알림
         notificationCommandService.send(
                 auction.getUser(),
-                com.auction.backend.domain.notification.entity.NotificationType.AUCTION_EXPIRED,
+                NotificationType.AUCTION_EXPIRED,
                 String.format("[%s] 상품의 경매 기한이 마감되었습니다.", auction.getProduct().getProductName()),
                 auction.getProduct().getProductId()
         );
@@ -72,7 +74,7 @@ public class AuctionCommandService {
                 .ifPresent(winnerBid -> {
                     notificationCommandService.send(
                             winnerBid.getUser(),
-                            com.auction.backend.domain.notification.entity.NotificationType.BID_WON,
+                            NotificationType.BID_WON,
                             String.format("[%s] 상품 경매에 낙찰되셨습니다! 최종 낙찰가: %d",
                                     auction.getProduct().getProductName(), winnerBid.getBidPrice()),
                             auction.getProduct().getProductId()
