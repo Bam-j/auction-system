@@ -34,6 +34,7 @@ public class PurchaseRequestController {
     @Operation(summary = "구매 요청 생성", description = "일반 판매 상품에 대한 구매 요청 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "구매 요청 생성 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "요청자 또는 상품을 찾을 수 없음"),
             @ApiResponse(
                     responseCode = "409",
@@ -57,6 +58,7 @@ public class PurchaseRequestController {
     @Operation(summary = "구매 요청 목록 조회", description = "특정 사용자의 자신의 구매 요청 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "구매 요청 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "대상 사용자를 찾을 수 없음")
     })
     @GetMapping("/me")
@@ -78,6 +80,7 @@ public class PurchaseRequestController {
     @Operation(summary = "들어온 구매 요청 목록 조회", description = "내가 판매 등록한 상품에 대해 들어온 구매 요청 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "들어온 구매 요청 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "대상 사용자를 찾을 수 없음")
     })
     @GetMapping("/seller")
@@ -99,6 +102,7 @@ public class PurchaseRequestController {
     @Operation(summary = "들어온 구매 요청 승인", description = "내가 판매 등록한 상품에 대해 들어온 구매 요청 승인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "구매 요청 승인 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "403", description = "요청자가 판매자가 아니므로 승인할 수 없음"),
             @ApiResponse(responseCode = "404", description = "해당 요청을 찾을 수 없음"),
             @ApiResponse(responseCode = "409", description = "이미 판매 완료/품절된 상품은 승인할 수 없음")
@@ -117,6 +121,7 @@ public class PurchaseRequestController {
     @Operation(summary = "들어온 구매 요청 거부", description = "내가 판매 등록한 상품에 대해 들어온 구매 요청 거부")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "구매 요청 거부 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "403", description = "요청자가 판매자가 아니므로 거부할 수 없음"),
             @ApiResponse(responseCode = "404", description = "해당 요청을 찾을 수 없음")
     })
@@ -134,6 +139,7 @@ public class PurchaseRequestController {
     @Operation(summary = "보낸 구매 요청 취소", description = "보낸 구매 요청 취소")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "구매 요청 취소 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "403", description = "요청자가 구매 요청자가 아니므로 취소할 수 없음"),
             @ApiResponse(responseCode = "404", description = "해당 요청을 찾을 수 없음")
     })

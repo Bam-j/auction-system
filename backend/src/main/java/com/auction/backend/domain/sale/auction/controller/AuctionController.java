@@ -32,6 +32,7 @@ public class AuctionController {
     @Operation(summary = "경매 상품 등록", description = "경매 방식으로 판매 상품을 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "경매로 상품 등록 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "등록자(회원)을 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "상품 이미지 등록 실패")
     })

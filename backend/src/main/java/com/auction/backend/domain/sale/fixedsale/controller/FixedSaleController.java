@@ -31,6 +31,7 @@ public class FixedSaleController {
     @Operation(summary = "일반 판매 상품 등록", description = "일반 판매(구매 요청 - 승인/거부) 방식으로 판매할 상품 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "일반 판매 상품 등록 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "등록 요청자를 찾을 수 없음")
     })
     @PostMapping

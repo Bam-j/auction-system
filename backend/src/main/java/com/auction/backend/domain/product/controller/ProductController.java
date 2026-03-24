@@ -43,6 +43,7 @@ public class ProductController {
     @Operation(summary = "사용자의 등록 상품 조회", description = "특정 사용자가 본인이 등록한 상품의 전체 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "내 상품 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
     })
     @GetMapping("/me")
@@ -74,6 +75,7 @@ public class ProductController {
     @Operation(summary = "판매 종료", description = "등록자가 수동으로 판매 종료(취소)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "지정된 상품 판매 종료"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "403", description = "등록자가 보낸 요청이 아님"),
             @ApiResponse(responseCode = "404", description = "대상 상품을 찾을 수 없음")
     })

@@ -27,7 +27,10 @@ public class AdminController {
     private final AdminQueryService adminQueryService;
 
     @Operation(summary = "모든 사용자 조회", description = "시스템 내에 등록된 모든 사용자 조회. 키워드 검색과 상태 필터링 제공.")
-    @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @GetMapping("/users")
     public ResponseEntity<List<UserResponse>> getAllUsers(
             @Parameter(description = "검색어 (아이디 또는 닉네임)", example = "im_user000")
@@ -40,6 +43,7 @@ public class AdminController {
     @Operation(summary = "사용자 차단", description = "특정 사용자를 차단. 차단된 유저는 로그인 불가능")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "지정된 유저 차단 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "지정된 유저를 찾을 수 없음")
     })
     @PostMapping("/users/{userId}/block")
@@ -54,6 +58,7 @@ public class AdminController {
     @Operation(summary = "사용자 차단 해제", description = "차단된 사용자를 차단 해제.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "지정된 유저 차단 해제 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "지정된 유저를 찾을 수 없음")
     })    @PostMapping("/users/{userId}/unblock")
     public ResponseEntity<Void> unblockUser(
@@ -65,7 +70,10 @@ public class AdminController {
     }
 
     @Operation(summary = "모든 상품 조회", description = "시스템에 등록된 모든 상품 조회. 필터링, 검색, 상품 상세 보기 제공")
-    @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @GetMapping("/products")
     public ResponseEntity<List<ProductListResponse>> getAllProducts(
             @Parameter(description = "상품 카테고리", example = "WEAPON")
@@ -80,7 +88,10 @@ public class AdminController {
     }
 
     @Operation(summary = "모든 구매 요청 조회", description = "시스템에 등록된 모든 구매 요청 조회. 필터링, 검색, 상품 상세 보기 제공")
-    @ApiResponse(responseCode = "200", description = "구매 요청 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "구매 요청 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @GetMapping("/purchase-requests")
     public ResponseEntity<List<PurchaseRequestResponse>> getAllPurchaseRequests(
             @Parameter(description = "상품 카테고리", example = "WEAPON")
@@ -95,7 +106,10 @@ public class AdminController {
     }
 
     @Operation(summary = "모든 입찰 조회", description = "시스템에 등록된 모든 입찰 조회. 필터링, 검색, 상품 상세 보기 제공")
-    @ApiResponse(responseCode = "200", description = "입찰 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "입찰 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @GetMapping("/bids")
     public ResponseEntity<List<BidResponse>> getAllBids(
             @Parameter(description = "상품 카테고리", example = "WEAPON")

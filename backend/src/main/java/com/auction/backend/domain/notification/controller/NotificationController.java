@@ -44,7 +44,10 @@ public class NotificationController {
     }
 
     @Operation(summary = "알림 목록 조회", description = "현재 사용자의 모든 알림 목록 조회")
-    @ApiResponse(responseCode = "200", description = "알림 목록 조회 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "알림 목록 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @GetMapping
     public List<NotificationResponse> getNotifications() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -62,7 +65,10 @@ public class NotificationController {
     }
 
     @Operation(summary = "모든 알림 읽음 처리", description = "현재 사용자의 모든 알림을 읽음 상태로 변경")
-    @ApiResponse(responseCode = "200", description = "전체 읽음 처리 성공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 읽음 처리 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
     @PatchMapping("/read-all")
     public void markAllAsRead() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

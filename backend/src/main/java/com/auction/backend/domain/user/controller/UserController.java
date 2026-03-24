@@ -27,6 +27,7 @@ public class UserController {
     @Operation(summary = "닉네임 변경 요청", description = "닉네임 변경 요청. 변경 과정에서 중복 검사 수행")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "닉네임 변경 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "변경 대상 유저를 찾을 수 없음"),
             @ApiResponse(responseCode = "409", description = "변경하려는 닉네임이 이미 존재함")
     })
@@ -46,6 +47,7 @@ public class UserController {
     @Operation(summary = "패스워드 변경 요청", description = "패스워드 변경 요청. 변경 과정에서 중복 검사 수행 및 저장 전 암호화")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "패스워드 변경 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "변경 대상 사용자를 찾을 수 없음"),
             @ApiResponse(responseCode = "409", description = "현재 사용 중인 패스워드로는 변경 요청을 할 수 없음")
     })
@@ -66,7 +68,7 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "회원 탈퇴 요청 성공"),
             @ApiResponse(responseCode = "400", description = "이미 탈퇴한 사용자"),
-            @ApiResponse(responseCode = "401", description = "탈퇴 확인을 위한 비밀번호 입력 오류"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "탈퇴하려는 사용자를 찾을 수 없음")
     })
     @DeleteMapping("/me")
