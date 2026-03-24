@@ -7,6 +7,7 @@ import {PlusIcon} from "@heroicons/react/24/outline";
 import useAuthStore from "@/stores/useAuthStore.js";
 import {logoutUser} from "@/features/auth/api/authApi.js";
 import NotificationDropdown from "@/features/notification/components/NotificationDropdown.jsx";
+import {toast} from "@/utils/swalUtils.js";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Header = () => {
       console.warn("로그아웃 처리 중 서버 에러(무시 가능):", error);
     } finally {
       storeLogout();
+      toast("로그아웃 되었습니다.");
       navigate("/");
     }
   };

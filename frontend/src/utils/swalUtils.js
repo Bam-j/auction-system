@@ -119,3 +119,22 @@ export const showLoading = (title = "처리 중...", text = "잠시만 기다려
 export const closeLoading = () => {
   Swal.close();
 };
+
+export const toast = (title, icon = "success") => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+  
+  return Toast.fire({
+    icon: icon,
+    title: title
+  });
+};
