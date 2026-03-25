@@ -35,6 +35,27 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserStatus status;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.product.entity.Product> products = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.notification.entity.Notification> notifications = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.bid.entity.Bid> bids = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.FixedSale> fixedSales = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest> purchaseRequests = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.auction.entity.Auction> auctions = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.auction.entity.InstantBuyRequest> instantBuyRequests = new java.util.ArrayList<>();
+
     @Builder
     public User(String username, String password, String nickname, UserRole role, UserStatus status) {
         this.username = username;

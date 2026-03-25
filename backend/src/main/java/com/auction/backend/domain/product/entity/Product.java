@@ -41,6 +41,12 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false)
     private ProductCategory category;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.auction.entity.Auction> auctions = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.FixedSale> fixedSales = new java.util.ArrayList<>();
+
     @Builder
     public Product(User user, String productName, String description, String imageUrl, SalesStatus salesStatus, ProductCategory category) {
         this.user = user;

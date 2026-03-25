@@ -38,4 +38,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
             @Param("category") ProductCategory category,
             @Param("status") SalesStatus status,
             @Param("keyword") String keyword);
+
+    java.util.List<Product> findBySalesStatusAndUpdatedAtBefore(SalesStatus status, java.time.LocalDateTime dateTime);
 }

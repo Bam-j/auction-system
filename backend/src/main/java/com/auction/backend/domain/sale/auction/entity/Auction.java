@@ -50,6 +50,12 @@ public class Auction extends BaseTimeEntity {
     @Column(name = "price_unit")
     private PriceUnit priceUnit;
 
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<com.auction.backend.domain.bid.entity.Bid> bids = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<InstantBuyRequest> instantBuyRequests = new java.util.ArrayList<>();
+
     @Builder
     public Auction(
             Product product,

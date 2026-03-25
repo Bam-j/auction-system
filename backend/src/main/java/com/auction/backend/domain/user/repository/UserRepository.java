@@ -23,4 +23,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(:keyword IS NULL OR u.username LIKE %:keyword% OR u.nickname LIKE %:keyword%) AND " +
             "(:status IS NULL OR u.status = :status)")
     List<User> findByKeywordAndStatus(@Param("keyword") String keyword, @Param("status") UserStatus status);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByStatusAndUpdatedAtBefore(UserStatus status, java.time.LocalDateTime dateTime);
+
+    java.util.List<User> findByStatusAndUpdatedAtBefore(UserStatus status, java.time.LocalDateTime dateTime);
 }

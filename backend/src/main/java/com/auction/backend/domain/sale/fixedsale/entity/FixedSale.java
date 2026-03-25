@@ -34,6 +34,9 @@ public class FixedSale extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer stock;
 
+    @OneToMany(mappedBy = "fixedSale", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private java.util.List<PurchaseRequest> purchaseRequests = new java.util.ArrayList<>();
+
     @Builder
     public FixedSale(Product product, User user, String price, Integer stock) {
         this.product = product;
