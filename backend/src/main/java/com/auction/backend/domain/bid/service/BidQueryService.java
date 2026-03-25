@@ -1,7 +1,6 @@
 package com.auction.backend.domain.bid.service;
 
 import com.auction.backend.domain.bid.dto.BidResponse;
-import com.auction.backend.domain.bid.dto.BidSearchCondition;
 import com.auction.backend.domain.bid.entity.Bid;
 import com.auction.backend.domain.bid.entity.BidStatus;
 import com.auction.backend.domain.bid.repository.BidRepository;
@@ -11,6 +10,8 @@ import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.enums.PriceUnit;
+import com.auction.backend.global.enums.ProductCategory;
+import com.auction.backend.global.utils.SearchParamParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,14 +33,12 @@ public class BidQueryService {
 
     //시스템에 등록된 모든 입찰 조회
     public List<BidResponse> getAllBids(String category, String status, String searchType, String keyword) {
-        BidSearchCondition condition = BidSearchCondition.of(category, status, keyword, searchType);
+        ProductCategory productCategory = SearchParamParser.parseEnum(ProductCategory.class, category);
+        BidStatus bidStatus = SearchParamParser.parseEnum(BidStatus.class, status);
+        String searchKeyword = SearchParamParser.parseString(keyword);
+        String stype = SearchParamParser.parseString(searchType);
 
-        return bidRepository.findByFilters(
-                        condition.getCategory(),
-                        condition.getStatus(),
-                        condition.getSearchType(),
-                        condition.getKeyword()
-                ).stream()
+        return bidRepository.findByFiltersWithQueryDSL(productCategory, bidStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -47,15 +46,12 @@ public class BidQueryService {
     //자신의 입찰 기록 조회
     public List<BidResponse> getMyBids(Long userId, String category, String status, String searchType, String keyword) {
         User user = userQueryService.getUser(userId);
-        BidSearchCondition condition = BidSearchCondition.of(category, status, keyword, searchType);
+        ProductCategory productCategory = SearchParamParser.parseEnum(ProductCategory.class, category);
+        BidStatus bidStatus = SearchParamParser.parseEnum(BidStatus.class, status);
+        String searchKeyword = SearchParamParser.parseString(keyword);
+        String stype = SearchParamParser.parseString(searchType);
 
-        return bidRepository.findByUserWithFilters(
-                        user,
-                        condition.getCategory(),
-                        condition.getStatus(),
-                        condition.getSearchType(),
-                        condition.getKeyword()
-                ).stream()
+        return bidRepository.findByUserWithFiltersWithQueryDSL(user, productCategory, bidStatus, stype, searchKeyword).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }

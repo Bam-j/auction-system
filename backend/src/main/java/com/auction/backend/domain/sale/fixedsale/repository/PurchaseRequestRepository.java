@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest, Long> {
+public interface PurchaseRequestRepository extends JpaRepository<PurchaseRequest, Long>, PurchaseRequestRepositoryCustom {
     List<PurchaseRequest> findByUser(User user);
 
     @Query("SELECT pr FROM PurchaseRequest pr WHERE pr.fixedSale.user = :seller")

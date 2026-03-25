@@ -34,7 +34,7 @@ public class PurchaseRequestQueryService {
         String stype = SearchParamParser.parseString(searchType);
 
         return purchaseRequestRepository
-                .findByFilters(productCategory, requestStatus, stype, searchKeyword)
+                .findByFiltersWithQueryDSL(productCategory, requestStatus, stype, searchKeyword)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class PurchaseRequestQueryService {
         String stype = SearchParamParser.parseString(searchType);
 
         return purchaseRequestRepository
-                .findByUserWithFilters(user, productCategory, requestStatus, stype, searchKeyword)
+                .findByUserWithFiltersWithQueryDSL(user, productCategory, requestStatus, stype, searchKeyword)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class PurchaseRequestQueryService {
         String stype = SearchParamParser.parseString(searchType);
 
         return purchaseRequestRepository
-                .findBySellerWithFilters(seller, productCategory, requestStatus, stype, searchKeyword)
+                .findBySellerWithFiltersWithQueryDSL(seller, productCategory, requestStatus, stype, searchKeyword)
                 .stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());

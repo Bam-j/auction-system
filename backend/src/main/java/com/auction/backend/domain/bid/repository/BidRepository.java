@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BidRepository extends JpaRepository<Bid, Long> {
+public interface BidRepository extends JpaRepository<Bid, Long>, BidRepositoryCustom {
     List<Bid> findByUserOrderByCreatedAtDesc(User user);
 
     Optional<Bid> findTopByAuctionOrderByBidPriceDesc(Auction auction);

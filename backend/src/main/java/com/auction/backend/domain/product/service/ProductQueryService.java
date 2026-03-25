@@ -39,9 +39,7 @@ public class ProductQueryService {
         String searchKeyword = SearchParamParser.parseString(keyword);
         String stype = SearchParamParser.parseString(searchType);
 
-        return productRepository.findByFilters(productCategory, salesStatus, stype, searchKeyword).stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+        return productRepository.findByFiltersWithQueryDSL(productCategory, salesStatus, stype, searchKeyword);
     }
 
     //특정 유저의 등록 상품 조회
@@ -52,15 +50,12 @@ public class ProductQueryService {
         SalesStatus salesStatus = SearchParamParser.parseEnum(SalesStatus.class, status);
         String searchKeyword = SearchParamParser.parseString(keyword);
 
-        return productRepository.findByUserWithFilters(user, productCategory, salesStatus, searchKeyword).stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+        return productRepository.findByUserWithFiltersWithQueryDSL(user, productCategory, salesStatus, searchKeyword);
     }
 
     //상품 상세 정보 조회
     public ProductListResponse getProductDetail(Long productId) {
-        Product product = getProduct(productId);
-        return convertToResponse(product);
+        return productRepository.findProductDetailWithQueryDSL(productId);
     }
 
     //상품 획득
