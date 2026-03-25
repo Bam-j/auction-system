@@ -1,5 +1,6 @@
 package com.auction.backend.domain.product.service;
 
+import com.auction.backend.domain.bid.service.BidQueryService;
 import com.auction.backend.domain.product.dto.ProductListResponse;
 import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.product.entity.SalesStatus;
@@ -29,6 +30,7 @@ public class ProductQueryService {
     private final FixedSaleQueryService fixedSaleQueryService;
     private final AuctionQueryService auctionQueryService;
     private final UserQueryService userQueryService;
+    private final BidQueryService bidQueryService;
 
     //모든 상품 조회
     public List<ProductListResponse> getAllProducts(String category, String status, String searchType, String keyword) {
@@ -79,6 +81,8 @@ public class ProductQueryService {
         String instantPrice = null;
         Long auctionId = null;
         Long fixedSaleId = null;
+        String highestBidderNickname = null;
+        Long highestBidderId = null;
 
         var fixedSaleOpt = fixedSaleQueryService.getFixedSaleByProduct(product);
         if (fixedSaleOpt.isPresent()) {
@@ -101,11 +105,19 @@ public class ProductQueryService {
                 instantPrice = auction.getInstantPurchasePrice() != null ? String.valueOf(auction.getInstantPurchasePrice()) : null;
                 auctionId = auction.getAuctionId();
 
-                // 즉시 구매 완료된 경우 가격을 즉시 구매가로 설정
+                //즉시 구매 완료된 경우 가격을 즉시 구매가로 설정
                 if (product.getSalesStatus() == SalesStatus.INSTANT_BUY && instantPrice != null) {
                     price = instantPrice;
                 } else {
                     price = String.valueOf(auction.getCurrentPrice());
+                }
+
+                //최고 입찰자 정보 추가
+                var highestBidOpt = bidQueryService.getHighestBid(auction);
+                if (highestBidOpt.isPresent()) {
+                    var highestBid = highestBidOpt.get();
+                    highestBidderNickname = highestBid.getUser().getNickname();
+                    highestBidderId = highestBid.getUser().getUserId();
                 }
             }
         }
@@ -130,6 +142,8 @@ public class ProductQueryService {
                 .currentPrice(currentPrice)
                 .bidIncrement(bidIncrement)
                 .instantPrice(instantPrice)
+                .highestBidderNickname(highestBidderNickname)
+                .highestBidderId(highestBidderId)
                 .build();
     }
 }

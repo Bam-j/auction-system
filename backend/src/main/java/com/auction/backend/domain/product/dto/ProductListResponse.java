@@ -31,4 +31,6 @@ public class ProductListResponse {
     private Integer currentPrice;
     private Integer bidIncrement;
     private String instantPrice;
+    private String highestBidderNickname;
+    private Long highestBidderId;
 }

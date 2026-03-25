@@ -49,17 +49,19 @@ public class BidCommandService {
 
             auction.updateCurrentPrice(request.getBidPrice());
 
-            // 알림 전송: 이전 최고 입찰자에게 패찰 알림
+            //이전 최고 입찰자에게 패찰 알림 및 현재 최고 입찰자 확인 (알림 발송)
             bidRepository.findTopByAuctionOrderByBidPriceDesc(auction)
                     .ifPresent(previousBid -> {
-                        if (!previousBid.getUser().getUserId().equals(userId)) {
-                            notificationCommandService.send(
-                                    previousBid.getUser(),
-                                    NotificationType.OUTBID,
-                                    String.format("[%s] 상품에 더 높은 입찰가가 등록되어 패찰되었습니다.", auction.getProduct().getProductName()),
-                                    auction.getProduct().getProductId()
-                            );
+                        if (previousBid.getUser().getUserId().equals(userId)) {
+                            throw new InvalidBidException("이미 현재 최고 입찰자입니다.");
                         }
+
+                        notificationCommandService.send(
+                                previousBid.getUser(),
+                                NotificationType.OUTBID,
+                                String.format("[%s] 상품에 더 높은 입찰가가 등록되어 패찰되었습니다.", auction.getProduct().getProductName()),
+                                auction.getProduct().getProductId()
+                        );
                     });
 
             Bid bid = Bid.createBid(user, auction, request.getBidPrice());

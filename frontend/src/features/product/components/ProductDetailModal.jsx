@@ -65,6 +65,7 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
   const isAuctionEnded = isAuction && product?.endedAt && new Date(product.endedAt) < new Date();
 
   const isOwner = user && product?.seller === user.nickname;
+  const isHighestBidder = user && product?.highestBidderId === user.id;
 
   const checkAuth = () => {
     if (!user) {
@@ -84,6 +85,11 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
 
     if (isOwner) {
       await warningAlert("알림", "자신의 상품에는 입찰할 수 없습니다.");
+      return;
+    }
+
+    if (isHighestBidder) {
+      await warningAlert("알림", "이미 현재 최고 입찰자입니다.");
       return;
     }
 
@@ -304,6 +310,13 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                             <PriceTag price={product.bidIncrement} unit={product.priceUnit}
                                       className="font-bold text-blue-600"/>
                           </div>
+                          <div className="flex justify-between col-span-2 border-t border-blue-100 pt-2">
+                            <span className="text-blue-gray-800 font-medium">현재 최고 입찰자:</span>
+                            <span className="font-bold text-blue-700">
+                              {product.highestBidderNickname || "없음"}
+                              {isHighestBidder && <span className="ml-1 text-xs text-blue-500">(나)</span>}
+                            </span>
+                          </div>
                           {product.instantPrice && (
                               <div className="flex justify-between col-span-2 border-t border-blue-100 pt-2">
                                 <span className="text-blue-gray-800 font-medium">즉시 구매가:</span>
@@ -355,14 +368,20 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
                       <div className="flex flex-col md:flex-row gap-3">
                         <Button
                             fullWidth
-                            variant="gradient" color="blue" className="h-14 text-lg flex-1 shadow-lg shadow-blue-200/50"
+                            variant="gradient" color={isHighestBidder ? "gray" : "blue"}
+                            className="h-14 text-lg flex-1 shadow-lg shadow-blue-200/50"
                             onClick={handleBid}
+                            disabled={isHighestBidder}
                         >
                           <div className="flex flex-col items-center leading-tight">
                             <span
-                                className="text-xs font-bold opacity-80 uppercase">입찰하기 (+{Number(product.bidIncrement).toLocaleString()} {product.priceUnit})</span>
-                            <span
-                                className="font-black">{(Number(product.currentPrice) + Number(product.bidIncrement)).toLocaleString()} {product.priceUnit}</span>
+                                className="text-xs font-bold opacity-80 uppercase">
+                              {isHighestBidder ? "현재 최고 입찰자입니다" : `입찰하기 (+${Number(product.bidIncrement).toLocaleString()} ${product.priceUnit})`}
+                            </span>
+                            {!isHighestBidder && (
+                                <span
+                                    className="font-black">{(Number(product.currentPrice) + Number(product.bidIncrement)).toLocaleString()} {product.priceUnit}</span>
+                            )}
                           </div>
                         </Button>
                         {product.instantPrice && (

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,6 +58,11 @@ public class BidQueryService {
                 ).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    //현재 최고 입찰자 조회
+    public Optional<Bid> getHighestBid(Auction auction) {
+        return bidRepository.findTopByAuctionOrderByBidPriceDesc(auction);
     }
 
     public BidResponse convertToResponse(Bid bid) {
