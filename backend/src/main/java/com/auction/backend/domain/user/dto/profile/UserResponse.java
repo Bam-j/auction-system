@@ -12,6 +12,8 @@ public class UserResponse {
     private String nickname;
     private String role;
     private String status;
+    private String email;
+    private boolean isVerified;
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
@@ -20,6 +22,8 @@ public class UserResponse {
                 .nickname(user.getNickname())
                 .role(user.getRole().name())
                 .status(user.getStatus().name())
+                .email(user.getEmail())
+                .isVerified(user.isVerified())
                 .build();
     }
 }

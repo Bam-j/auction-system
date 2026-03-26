@@ -35,6 +35,12 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserStatus status;
 
+    @Column(unique = true, length = 100)
+    private String email;
+
+    @Column(nullable = false)
+    private boolean isVerified = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private java.util.List<com.auction.backend.domain.product.entity.Product> products = new java.util.ArrayList<>();
 
@@ -97,5 +103,12 @@ public class User extends BaseTimeEntity {
         //탈퇴 유저의 닉네임 및 비밀번호 파기
         this.nickname = "(탈퇴한 사용자)";
         this.password = "DELETED_USER_PASSWORD_SCRAMBLED";
+        this.email = null;
+        this.isVerified = false;
+    }
+
+    public void verifyEmail(String email) {
+        this.email = email;
+        this.isVerified = true;
     }
 }
