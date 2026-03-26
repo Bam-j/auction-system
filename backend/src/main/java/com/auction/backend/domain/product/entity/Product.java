@@ -1,5 +1,7 @@
 package com.auction.backend.domain.product.entity;
 
+import com.auction.backend.domain.sale.auction.entity.Auction;
+import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.global.entity.BaseTimeEntity;
 import com.auction.backend.global.enums.ProductCategory;
@@ -8,6 +10,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,10 +47,10 @@ public class Product extends BaseTimeEntity {
     private ProductCategory category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.auction.entity.Auction> auctions = new java.util.ArrayList<>();
+    private List<Auction> auctions = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.FixedSale> fixedSales = new java.util.ArrayList<>();
+    private List<FixedSale> fixedSales = new ArrayList<>();
 
     @Builder
     public Product(User user, String productName, String description, String imageUrl, SalesStatus salesStatus, ProductCategory category) {

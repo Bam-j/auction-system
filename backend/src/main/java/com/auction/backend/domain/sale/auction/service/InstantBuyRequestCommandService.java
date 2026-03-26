@@ -1,6 +1,7 @@
 package com.auction.backend.domain.sale.auction.service;
 
 import com.auction.backend.domain.bid.entity.Bid;
+import com.auction.backend.domain.bid.repository.BidRepository;
 import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.SalesStatus;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +36,7 @@ public class InstantBuyRequestCommandService {
     private final AuctionQueryService auctionQueryService;
     private final UserQueryService userQueryService;
     private final NotificationCommandService notificationCommandService;
-    private final com.auction.backend.domain.bid.repository.BidRepository bidRepository;
+    private final BidRepository bidRepository;
     private final RedisLockService redisLockService;
 
     //즉시 구매 요청 생성
@@ -94,7 +96,7 @@ public class InstantBuyRequestCommandService {
 
         //즉시 구매되면 기존 입찰차들에게는 패찰 처리 및 알림
         List<Bid> bids = bidRepository.findByAuctionOrderByBidPriceDesc(request.getAuction());
-        Set<Long> notifiedUserIds = new java.util.HashSet<>();
+        Set<Long> notifiedUserIds = new HashSet<>();
         for (Bid bid : bids) {
             Long bidderId = bid.getUser().getUserId();
             if (!notifiedUserIds.contains(bidderId)) {

@@ -1,11 +1,21 @@
 package com.auction.backend.domain.user.entity;
 
+import com.auction.backend.domain.bid.entity.Bid;
+import com.auction.backend.domain.notification.entity.Notification;
+import com.auction.backend.domain.product.entity.Product;
+import com.auction.backend.domain.sale.auction.entity.Auction;
+import com.auction.backend.domain.sale.auction.entity.InstantBuyRequest;
+import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
+import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -42,25 +52,25 @@ public class User extends BaseTimeEntity {
     private boolean isVerified = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.product.entity.Product> products = new java.util.ArrayList<>();
+    private List<Product> products = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.notification.entity.Notification> notifications = new java.util.ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.bid.entity.Bid> bids = new java.util.ArrayList<>();
+    private List<Bid> bids = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.FixedSale> fixedSales = new java.util.ArrayList<>();
+    private List<FixedSale> fixedSales = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest> purchaseRequests = new java.util.ArrayList<>();
+    private List<PurchaseRequest> purchaseRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.auction.entity.Auction> auctions = new java.util.ArrayList<>();
+    private List<Auction> auctions = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.sale.auction.entity.InstantBuyRequest> instantBuyRequests = new java.util.ArrayList<>();
+    private List<InstantBuyRequest> instantBuyRequests = new ArrayList<>();
 
     @Builder
     public User(String username, String password, String nickname, UserRole role, UserStatus status) {

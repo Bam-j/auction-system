@@ -1,5 +1,6 @@
 package com.auction.backend.domain.sale.auction.entity;
 
+import com.auction.backend.domain.bid.entity.Bid;
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.user.entity.User;
@@ -11,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -51,10 +54,10 @@ public class Auction extends BaseTimeEntity {
     private PriceUnit priceUnit;
 
     @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<com.auction.backend.domain.bid.entity.Bid> bids = new java.util.ArrayList<>();
+    private List<Bid> bids = new ArrayList<>();
 
     @OneToMany(mappedBy = "auction", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private java.util.List<InstantBuyRequest> instantBuyRequests = new java.util.ArrayList<>();
+    private List<InstantBuyRequest> instantBuyRequests = new ArrayList<>();
 
     @Builder
     public Auction(
