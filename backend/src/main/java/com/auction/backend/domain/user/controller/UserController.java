@@ -1,5 +1,6 @@
 package com.auction.backend.domain.user.controller;
 
+import com.auction.backend.domain.user.dto.email.EmailRequest;
 import com.auction.backend.domain.user.dto.profile.DeleteAccountRequest;
 import com.auction.backend.domain.user.dto.profile.UpdateNicknameRequest;
 import com.auction.backend.domain.user.dto.profile.UpdatePasswordRequest;
@@ -60,6 +61,24 @@ public class UserController {
 
         Long userId = Long.valueOf(userDetails.getUsername());
         userCommandService.updatePassword(userId, request.getNewPassword());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이메일 인증 완료 처리", description = "인증 번호 확인 성공 후 실제 유저의 인증 상태를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "이메일 인증 상태 업데이트 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
+    @PatchMapping("/me/verify-email")
+    public ResponseEntity<Void> verifyEmail(
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Valid EmailRequest request) {
+
+        Long userId = Long.valueOf(userDetails.getUsername());
+        userCommandService.verifyEmail(userId, request.getEmail());
 
         return ResponseEntity.ok().build();
     }

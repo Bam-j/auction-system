@@ -9,6 +9,7 @@ export const VALIDATION_PATTERNS = {
   username: /^[a-zA-Z0-9]{7,}$/,
   nickname: /^[a-zA-Z0-9_]{3,16}$/,
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#.+^=])[A-Za-z\d@$!%*?&\-_#.+^=]{8,}$/,
+  email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
 };
 
 export const VALIDATION_MESSAGES = {
@@ -16,6 +17,7 @@ export const VALIDATION_MESSAGES = {
   nickname: "3자 이상 16자 이하, 영문과 숫자, 언더바(_)만 사용 가능합니다.",
   password: "8자 이상, 대/소문자/숫자/특수문자를 모두 포함해야 합니다.",
   confirmPassword: "비밀번호가 일치하지 않습니다.",
+  email: "유효한 이메일 형식이 아닙니다.",
 };
 
 export const validateField = (name, value, allData = {}) => {
@@ -37,6 +39,11 @@ export const validateField = (name, value, allData = {}) => {
     case "password":
       if (!VALIDATION_PATTERNS.password.test(value)) {
         errorMessage = VALIDATION_MESSAGES.password;
+      }
+      break;
+    case "email":
+      if (!VALIDATION_PATTERNS.email.test(value)) {
+        errorMessage = VALIDATION_MESSAGES.email;
       }
       break;
     case "confirmPassword":

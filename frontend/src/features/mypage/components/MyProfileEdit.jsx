@@ -13,7 +13,7 @@ import {validateField} from "@/utils/validation.js";
 
 const MyProfileEdit = () => {
   const navigate = useNavigate();
-  const {user, logout, updateNickname} = useAuthStore();
+  const {user, logout, updateNickname, updateEmailVerification} = useAuthStore();
   const userId = user?.id || user?.username;
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -29,6 +29,11 @@ const MyProfileEdit = () => {
   const [isNicknameChecked, setIsNicknameChecked] = useState(true);
   const [errors, setErrors] = useState({});
 
+  const [email, setEmail] = useState(user?.email || "");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const handleNicknameChange = (e) => {
     const val = e.target.value;
     setNickname(val);
@@ -39,6 +44,61 @@ const MyProfileEdit = () => {
       setIsNicknameChecked(true);
     } else {
       setIsNicknameChecked(false);
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    const val = e.target.value;
+    setEmail(val);
+    const errorMsg = validateField("email", val);
+    setErrors((prev) => ({...prev, email: errorMsg}));
+  };
+
+  const handleSendCode = async () => {
+    if (!email || errors.email) {
+      warningAlert("입력 확인", "유효한 이메일을 입력해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post("/email/verification", {email});
+      setIsCodeSent(true);
+      successAlert("발송 완료", "인증 코드가 이메일로 발송되었습니다.");
+    } catch (error) {
+      console.error("인증 코드 발송 실패:", error);
+      const msg = error.response?.data?.message || "이미 가입된 이메일이거나 발송에 실패했습니다.";
+      errorAlert("발송 실패", msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      warningAlert("입력 확인", "인증 코드를 입력해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.post("/email/verification/check", {email, code: verificationCode});
+      if (response.data) {
+        // 인증 성공 시 실제 유저 DB 상태 업데이트
+        await api.patch("/users/me/verify-email", {email});
+        updateEmailVerification(email);
+        successAlert("인증 성공", "이메일 인증이 완료되었습니다.");
+        setIsCodeSent(false);
+        setVerificationCode("");
+      } else {
+        errorAlert("인증 실패", "인증 코드가 일치하지 않거나 만료되었습니다.");
+      }
+    } catch (error) {
+      console.error("인증 처리 오류:", error);
+      const msg = error.response?.data?.message || "인증 처리 중 오류가 발생했습니다.";
+      errorAlert("오류", msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -263,6 +323,78 @@ const MyProfileEdit = () => {
                   비밀번호 변경하기
                 </Button>
               </div>
+            </div>
+
+            <hr className="border-gray-200"/>
+
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <Typography variant="h6" color="blue-gray">이메일 인증</Typography>
+                {user?.isVerified && (
+                    <Typography variant="small" color="green" className="font-bold flex items-center gap-1">
+                      ✅ 인증 완료됨
+                    </Typography>
+                )}
+              </div>
+
+              <div>
+                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">이메일 주소</Typography>
+                <div className="flex gap-2">
+                  <Input
+                      size="lg"
+                      placeholder="example@email.com"
+                      value={email}
+                      onChange={handleEmailChange}
+                      error={!!errors.email}
+                      disabled={user?.isVerified || loading}
+                      crossOrigin={undefined}
+                  />
+                  {!user?.isVerified && (
+                      <Button
+                          type="button"
+                          variant="outlined"
+                          size="sm"
+                          color="blue"
+                          className="shrink-0"
+                          onClick={handleSendCode}
+                          disabled={!email || !!errors.email || loading}
+                      >
+                        {isCodeSent ? "재발송" : "인증 요청"}
+                      </Button>
+                  )}
+                </div>
+                {errors.email &&
+                    <Typography variant="small" color="red" className="mt-1 text-xs ml-1 flex items-center gap-1">
+                      ⚠️ {errors.email}
+                    </Typography>
+                }
+              </div>
+
+              {isCodeSent && !user?.isVerified && (
+                  <div className="animate-fade-in">
+                    <Typography variant="small" color="blue-gray" className="mb-2 font-medium">인증 코드 (6자리)</Typography>
+                    <div className="flex gap-2">
+                      <Input
+                          size="lg"
+                          placeholder="000000"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                          disabled={loading}
+                          crossOrigin={undefined}
+                      />
+                      <Button
+                          variant="gradient"
+                          color="blue"
+                          size="sm"
+                          className="shrink-0"
+                          onClick={handleVerifyCode}
+                          disabled={!verificationCode || loading}
+                      >
+                        {loading ? "확인 중..." : "인증 확인"}
+                      </Button>
+                    </div>
+                  </div>
+              )}
             </div>
 
             <hr className="border-gray-200"/>

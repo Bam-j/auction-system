@@ -12,6 +12,9 @@ const useAuthStore = create(
           updateNickname: (newNickname) => set((state) => ({
             user: state.user ? {...state.user, nickname: newNickname} : null
           })),
+          updateEmailVerification: (email) => set((state) => ({
+            user: state.user ? {...state.user, email: email, isVerified: true} : null
+          })),
         }),
         {
           name: 'auth-storage',

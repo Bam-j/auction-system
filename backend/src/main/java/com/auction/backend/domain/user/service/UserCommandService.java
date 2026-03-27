@@ -47,6 +47,12 @@ public class UserCommandService {
         user.updatePassword(encodedPassword);
     }
 
+    //이메일 인증 완료 처리
+    public void verifyEmail(Long userId, String email) {
+        User user = userQueryService.getUser(userId);
+        user.verifyEmail(email);
+    }
+
     //회원 탈퇴
     //탈퇴 하더라도 글/거래 기록은 남겨야 하므로 Soft Delete로 구현
     public void deleteAccount(Long userId, String rawPassword) {
