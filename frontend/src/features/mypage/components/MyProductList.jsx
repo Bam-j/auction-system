@@ -29,6 +29,7 @@ const MyProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchMyProducts = async (params = {}) => {
     setIsLoading(true);
@@ -50,6 +51,58 @@ const MyProductList = () => {
   useEffect(() => {
     fetchMyProducts(searchParams);
   }, [location.state, searchParams]);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedProducts = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return products;
+    }
+
+    return [...products].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "상품명":
+          aValue = a.title;
+          bValue = b.title;
+          break;
+        case "등록일":
+          aValue = new Date(a.createdAt);
+          bValue = new Date(b.createdAt);
+          break;
+        case "판매가":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "재고":
+          aValue = a.stock || 0;
+          bValue = b.stock || 0;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedProducts = getSortedProducts();
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -109,6 +162,8 @@ const MyProductList = () => {
               <CommonTable
                   title="내 등록 상품 목록"
                   headers={TABLE_HEAD}
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                       products.length > 0 && (
                           <Pagination
@@ -119,7 +174,7 @@ const MyProductList = () => {
                       )
                   }
               >
-                {products.map((product) => (
+                {sortedProducts.map((product) => (
                     <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-left text-gray-600">{product.id}</td>
                       <td className="p-4 text-left font-bold text-blue-gray-900">{product.title}</td>

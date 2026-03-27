@@ -23,6 +23,7 @@ const AdminPurchaseHistory = () => {
   const [purchases, setPurchases] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchPurchases = async (params = {}) => {
     setIsLoading(true);
@@ -39,6 +40,66 @@ const AdminPurchaseHistory = () => {
   useEffect(() => {
     fetchPurchases(searchParams);
   }, [searchParams]);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedPurchases = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return purchases;
+    }
+
+    return [...purchases].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "판매자":
+          aValue = a.sellerName;
+          bValue = b.sellerName;
+          break;
+        case "상품명":
+          aValue = a.productName;
+          bValue = b.productName;
+          break;
+        case "구매자":
+          aValue = a.buyerName;
+          bValue = b.buyerName;
+          break;
+        case "구매일":
+          aValue = new Date(a.requestDate);
+          bValue = new Date(b.requestDate);
+          break;
+        case "구매금액":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "구매량":
+          aValue = a.quantity;
+          bValue = b.quantity;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedPurchases = getSortedPurchases();
 
   const purchaseFilters = [
     CATEGORY_FILTER_CONFIG,
@@ -71,6 +132,8 @@ const AdminPurchaseHistory = () => {
             <CommonTable
                 title="전체 구매 요청 기록"
                 headers={TABLE_HEAD}
+                onSort={handleSort}
+                currentSort={sortConfig}
                 pagination={
                     purchases.length > 0 && (
                         <Pagination
@@ -81,7 +144,7 @@ const AdminPurchaseHistory = () => {
                     )
                 }
             >
-              {purchases.map((p) => (
+              {sortedPurchases.map((p) => (
                   <tr key={p.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                     <td className="p-4 text-gray-600">{p.id}</td>
                     <td className="p-4 font-medium text-gray-700">{p.sellerName}</td>

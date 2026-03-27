@@ -27,6 +27,7 @@ const AdminInstantBuyHistory = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [openDetail, setOpenDetail] = useState(false);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchAllInstantBuyHistory = async (params = {}) => {
     setIsLoading(true);
@@ -43,6 +44,62 @@ const AdminInstantBuyHistory = () => {
   useEffect(() => {
     fetchAllInstantBuyHistory(searchParams);
   }, []);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedRequests = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return requests;
+    }
+
+    return [...requests].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "상품명":
+          aValue = a.productName;
+          bValue = b.productName;
+          break;
+        case "요청자":
+          aValue = a.requesterNickname;
+          bValue = b.requesterNickname;
+          break;
+        case "판매자":
+          aValue = a.sellerNickname;
+          bValue = b.sellerNickname;
+          break;
+        case "요청일":
+          aValue = new Date(a.requestDate);
+          bValue = new Date(b.requestDate);
+          break;
+        case "요청 금액":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedRequests = getSortedRequests();
 
   const instantBuyFilters = [
     CATEGORY_FILTER_CONFIG,
@@ -81,6 +138,8 @@ const AdminInstantBuyHistory = () => {
               <CommonTable
                   title="전체 즉시 구매 기록"
                   headers={TABLE_HEAD}
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                     <Pagination
                         active={page}
@@ -89,7 +148,7 @@ const AdminInstantBuyHistory = () => {
                     />
                   }
               >
-                {requests.map((item) => (
+                {sortedRequests.map((item) => (
                     <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600 font-medium">{item.id}</td>
                       <td className="p-4 font-bold text-blue-gray-900">{item.productName}</td>

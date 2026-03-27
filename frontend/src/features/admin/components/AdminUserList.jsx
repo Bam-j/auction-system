@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 
+//절대 경로 모듈
 import CommonTable from "@/components/ui/CommonTable";
 import Pagination from "@/components/ui/Pagination";
 import StatusBadge from "@/components/ui/StatusBadge";
@@ -23,6 +24,7 @@ const AdminUserList = () => {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchUsers = async (params = {}) => {
     setIsLoading(true);
@@ -39,6 +41,54 @@ const AdminUserList = () => {
   useEffect(() => {
     fetchUsers(searchParams);
   }, []);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedUsers = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return users;
+    }
+
+    return [...users].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "아이디":
+          aValue = a.username;
+          bValue = b.username;
+          break;
+        case "닉네임":
+          aValue = a.nickname;
+          bValue = b.nickname;
+          break;
+        case "권한":
+          aValue = a.role;
+          bValue = b.role;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedUsers = getSortedUsers();
 
   const userFilters = [
     USER_STATUS_FILTER_CONFIG
@@ -97,6 +147,8 @@ const AdminUserList = () => {
             <CommonTable
                 title="전체 회원 관리"
                 headers={TABLE_HEAD}
+                onSort={handleSort}
+                currentSort={sortConfig}
                 pagination={
                     users.length > 0 && (
                         <Pagination
@@ -107,7 +159,7 @@ const AdminUserList = () => {
                     )
                 }
             >
-              {users.map((user) => (
+              {sortedUsers.map((user) => (
                   <tr key={user.username} className="border-b border-blue-gray-50 hover:bg-gray-50">
                     <td className="p-4 text-gray-600">{user.id}</td>
                     <td className="p-4 font-medium text-gray-700">{user.username}</td>

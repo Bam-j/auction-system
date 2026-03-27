@@ -27,6 +27,7 @@ const AdminProductList = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchProducts = async (params = {}) => {
     setIsLoading(true);
@@ -43,6 +44,62 @@ const AdminProductList = () => {
   useEffect(() => {
     fetchProducts(searchParams);
   }, []);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedProducts = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return products;
+    }
+
+    return [...products].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "등록자":
+          aValue = a.seller;
+          bValue = b.seller;
+          break;
+        case "상품명":
+          aValue = a.title;
+          bValue = b.title;
+          break;
+        case "등록일":
+          aValue = new Date(a.createdAt);
+          bValue = new Date(b.createdAt);
+          break;
+        case "판매가":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "재고":
+          aValue = a.stock || 0;
+          bValue = b.stock || 0;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedProducts = getSortedProducts();
 
   const productFilters = [
     CATEGORY_FILTER_CONFIG,
@@ -80,7 +137,8 @@ const AdminProductList = () => {
               <CommonTable
                   title="전체 상품 관리"
                   headers={["ID", "등록자", "상품명", "등록일", "판매가", "재고", "상태", "상품 상세", "관리"]}
-
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                       products.length > 0 && (
                           <Pagination
@@ -91,7 +149,7 @@ const AdminProductList = () => {
                       )
                   }
               >
-                {products.map((product) => (
+                {sortedProducts.map((product) => (
                     <tr key={product.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-left text-gray-600">{product.id}</td>
                       <td className="p-4 text-left font-bold text-blue-600">{product.seller}</td>

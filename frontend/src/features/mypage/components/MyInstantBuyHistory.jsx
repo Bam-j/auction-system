@@ -30,6 +30,7 @@ const MyInstantBuyHistory = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [openDetail, setOpenDetail] = useState(false);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchInstantBuyHistory = async (params = {}) => {
     setIsLoading(true);
@@ -46,6 +47,58 @@ const MyInstantBuyHistory = () => {
   useEffect(() => {
     fetchInstantBuyHistory(searchParams);
   }, [searchParams]);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedRequests = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return requests;
+    }
+
+    return [...requests].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "상품명":
+          aValue = a.productName;
+          bValue = b.productName;
+          break;
+        case "요청자":
+          aValue = a.requesterNickname;
+          bValue = b.requesterNickname;
+          break;
+        case "요청일":
+          aValue = new Date(a.requestDate);
+          bValue = new Date(b.requestDate);
+          break;
+        case "요청 금액":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedRequests = getSortedRequests();
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -128,6 +181,8 @@ const MyInstantBuyHistory = () => {
               <CommonTable
                   title="즉시 구매 요청 기록"
                   headers={TABLE_HEAD}
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                     <Pagination
                         active={page}
@@ -136,7 +191,7 @@ const MyInstantBuyHistory = () => {
                     />
                   }
               >
-                {requests.map((item) => {
+                {sortedRequests.map((item) => {
                   const isRequester = item.requesterNickname === user?.nickname;
                   return (
                       <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">

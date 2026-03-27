@@ -17,7 +17,6 @@ import {
   mapFilterParams
 } from "@/constants/filterOptions.js";
 
-
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 
 const MyBidHistory = () => {
@@ -28,6 +27,7 @@ const MyBidHistory = () => {
   const [bids, setBids] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchMyBids = async (params = {}) => {
     setIsLoading(true);
@@ -50,6 +50,54 @@ const MyBidHistory = () => {
   useEffect(() => {
     fetchMyBids(searchParams);
   }, [location.state, searchParams]); // location.state 변경 시에도 체크
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedBids = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return bids;
+    }
+
+    return [...bids].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "상품명":
+          aValue = a.productName;
+          bValue = b.productName;
+          break;
+        case "입찰일":
+          aValue = new Date(a.bidDate);
+          bValue = new Date(b.bidDate);
+          break;
+        case "입찰금액":
+          aValue = a.bidPrice;
+          bValue = b.bidPrice;
+          break;
+        case "결과":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedBids = getSortedBids();
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -98,6 +146,8 @@ const MyBidHistory = () => {
               <CommonTable
                   title="내 입찰 기록"
                   headers={TABLE_HEAD}
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                       bids.length > 0 && (
                           <Pagination
@@ -108,7 +158,7 @@ const MyBidHistory = () => {
                       )
                   }
               >
-                {bids.map((item) => (
+                {sortedBids.map((item) => (
                     <tr key={item.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600">{item.id}</td>
                       <td className="p-4 font-bold text-blue-gray-900">{item.productName}</td>

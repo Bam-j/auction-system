@@ -15,9 +15,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import CommonFilterBar from "@/components/ui/CommonFilterBar";
 import ProductManagementModal from "@/features/product/components/ProductManagementModal";
 import {
-  getIncomingPurchaseRequests,
-  approvePurchaseRequest,
-  rejectPurchaseRequest
+  getIncomingPurchaseRequests, approvePurchaseRequest, rejectPurchaseRequest
 } from "@/features/product/api/productApi";
 import {
   CATEGORY_FILTER_CONFIG,
@@ -36,6 +34,7 @@ const MySalesRequests = () => {
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams, setSearchParams] = useState({});
+  const [sortConfig, setSortConfig] = useState({key: null, direction: null});
 
   const fetchIncomingRequests = async (params = {}) => {
     setIsLoading(true);
@@ -57,6 +56,58 @@ const MySalesRequests = () => {
   useEffect(() => {
     fetchIncomingRequests(searchParams);
   }, [location.state, searchParams]);
+
+  const handleSort = (key, direction) => {
+    setSortConfig({key, direction});
+  };
+
+  const getSortedRequests = () => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return requests;
+    }
+
+    return [...requests].sort((a, b) => {
+      let aValue, bValue;
+      switch (sortConfig.key) {
+        case "ID":
+          aValue = a.id;
+          bValue = b.id;
+          break;
+        case "상품명":
+          aValue = a.productName;
+          bValue = b.productName;
+          break;
+        case "수량":
+          aValue = a.quantity;
+          bValue = b.quantity;
+          break;
+        case "가격":
+          aValue = a.price;
+          bValue = b.price;
+          break;
+        case "상태":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        case "요청 일시":
+          aValue = new Date(a.requestDate);
+          bValue = new Date(b.requestDate);
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const sortedRequests = getSortedRequests();
 
   const filterConfigs = [
     CATEGORY_FILTER_CONFIG,
@@ -125,6 +176,8 @@ const MySalesRequests = () => {
               <CommonTable
                   title="들어온 구매 요청"
                   headers={TABLE_HEAD}
+                  onSort={handleSort}
+                  currentSort={sortConfig}
                   pagination={
                       requests.length > 0 && (
                           <Pagination
@@ -135,7 +188,7 @@ const MySalesRequests = () => {
                       )
                   }
               >
-                {requests.map((req) => (
+                {sortedRequests.map((req) => (
                     <tr key={req.id} className="border-b border-blue-gray-50 hover:bg-gray-50">
                       <td className="p-4 text-gray-600">{req.id}</td>
                       <td className="p-4 font-bold text-blue-gray-900">{req.productName}</td>
