@@ -75,6 +75,12 @@ const ProductDetailModal = ({open, handleOpen, product: initialProduct}) => {
       });
       return false;
     }
+    
+    if (!user.isVerified) {
+      warningAlert("인증이 필요합니다.", "이메일 인증을 완료한 후 이용하실 수 있습니다.");
+      return false;
+    }
+    
     return true;
   };
 

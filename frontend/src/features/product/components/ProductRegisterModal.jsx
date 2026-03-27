@@ -6,7 +6,8 @@ import {PhotoIcon} from "@heroicons/react/24/outline";
 
 //절대 경로 모듈
 import CommonModal from "@/components/ui/CommonModal";
-import {successAlert, errorAlert} from "@/utils/swalUtils";
+import {successAlert, errorAlert, warningAlert} from "@/utils/swalUtils";
+import useAuthStore from "@/stores/useAuthStore";
 
 //product 도메인 내부 api, 자식 컴포넌트
 import {registerProduct} from "../api/productApi";
@@ -16,6 +17,7 @@ import AuctionProductForm from "./forms/AuctionProductForm";
 
 const ProductRegisterModal = () => {
   const navigate = useNavigate();
+  const {user} = useAuthStore();
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
@@ -25,6 +27,20 @@ const ProductRegisterModal = () => {
   });
 
   const handleClose = () => navigate(-1);
+
+  const checkVerification = () => {
+    if (!user) {
+      warningAlert("로그인을 해주세요").then(() => navigate("/login"));
+      return false;
+    }
+
+    if (!user.isVerified) {
+      warningAlert("인증이 필요합니다.", "이메일 인증을 완료한 계정만 상품을 등록할 수 있습니다.")
+          .then(() => navigate(-1));
+      return false;
+    }
+    return true;
+  };
 
   const handleChange = (e) => {
     const {name, value} = e.target;
@@ -102,6 +118,7 @@ const ProductRegisterModal = () => {
             <Button
                 className="h-24 text-lg normal-case bg-primary hover:bg-primary-dark text-white"
                 onClick={() => {
+                  if (!checkVerification()) return;
                   setFormData({...formData, type: "FIXED"});
                   setStep(2);
                 }}
@@ -117,6 +134,7 @@ const ProductRegisterModal = () => {
             <Button
                 className="h-24 text-lg normal-case bg-warning hover:bg-warning-dark text-white"
                 onClick={() => {
+                  if (!checkVerification()) return;
                   setFormData({...formData, type: "AUCTION"});
                   setStep(2);
                 }}

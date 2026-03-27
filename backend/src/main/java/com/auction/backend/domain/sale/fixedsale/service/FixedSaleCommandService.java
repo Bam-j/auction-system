@@ -7,6 +7,7 @@ import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
+import com.auction.backend.global.exception.UserUnverifiedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,11 @@ public class FixedSaleCommandService {
     public Long registerFixedSale(Long userId, FixedSaleRegisterRequest request, String imageUrl) {
         log.info("Registering fixed sale for user: {}, product: {}, price: {}, stock: {}, category: {}",
                 userId, request.getProductName(), request.getPrice(), request.getStock(), request.getCategory());
-
         User user = userQueryService.getUser(userId);
+
+        if (!user.isVerified()) {
+            throw new UserUnverifiedException("이메일 인증이 완료되지 않은 계정은 상품을 등록할 수 없습니다.");
+        }
 
         Product product = productCommandService.createProduct(
                 user,

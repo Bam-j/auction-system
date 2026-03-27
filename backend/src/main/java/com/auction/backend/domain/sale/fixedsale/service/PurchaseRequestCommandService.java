@@ -14,6 +14,7 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.exception.SelfPurchaseException;
 import com.auction.backend.global.exception.UnauthorizedAccessException;
+import com.auction.backend.global.exception.UserUnverifiedException;
 import com.auction.backend.global.service.RedisLockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,10 @@ public class PurchaseRequestCommandService {
                 userId, request.getFixedSaleId(), request.getQuantity());
 
         User user = userQueryService.getUser(userId);
+
+        if (!user.isVerified()) {
+            throw new UserUnverifiedException("이메일 인증이 완료되지 않은 계정은 구매를 요청할 수 없습니다.");
+        }
 
         FixedSale fixedSale = fixedSaleQueryService.getFixedSale(request.getFixedSaleId());
 

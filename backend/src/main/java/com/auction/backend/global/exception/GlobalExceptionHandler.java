@@ -80,7 +80,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             DisabledException.class,
             LockedException.class,
-            UnauthorizedAccessException.class
+            UnauthorizedAccessException.class,
+            UserUnverifiedException.class
     })
     public ResponseEntity<ErrorResponse> handleForbiddenExceptions(Exception ex) {
         return ErrorResponse.toResponseEntity(
