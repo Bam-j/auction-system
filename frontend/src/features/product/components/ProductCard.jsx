@@ -4,7 +4,7 @@ import {
 } from "@material-tailwind/react";
 
 //절대 경로 모듈
-import {getFullImageUrl} from "@/utils/imageUtils.js";
+import {getFullImageUrl} from "@/utils/imageUtils";
 
 //에셋
 import defaultImage from "@/assets/images/general/grass_block.jpeg";

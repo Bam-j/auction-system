@@ -2,10 +2,10 @@ import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 
 import {Card, CardBody, CardFooter, Typography, Input, Button} from "@material-tailwind/react";
-import {successAlert, errorAlert, warningAlert} from "@/utils/swalUtils.js";
+import {successAlert, errorAlert, warningAlert} from "@/utils/swalUtils";
 
 //절대 경로 모듈
-import {validateField} from "@/utils/validation.js";
+import {validateField} from "@/utils/validation";
 
 //auth 도메인 내부 api
 import {signup, checkUsername, checkNickname} from "../api/authApi";

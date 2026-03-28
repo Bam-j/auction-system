@@ -5,7 +5,7 @@ import {Typography, Button, IconButton, Tooltip} from "@material-tailwind/react"
 import {EyeIcon} from "@heroicons/react/24/outline";
 import {
   successAlert, errorAlert, confirmDanger
-} from "@/utils/swalUtils.js";
+} from "@/utils/swalUtils";
 
 //절대 경로 모듈
 import CommonTable from "@/components/ui/CommonTable";

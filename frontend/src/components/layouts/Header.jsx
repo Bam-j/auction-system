@@ -4,10 +4,10 @@ import {Navbar, Typography, Button} from "@material-tailwind/react";
 import {PlusIcon} from "@heroicons/react/24/outline";
 
 //절대 경로 모듈
-import useAuthStore from "@/stores/useAuthStore.js";
-import {logoutUser} from "@/features/auth/api/authApi.js";
+import useAuthStore from "@/stores/useAuthStore";
+import {logoutUser} from "@/features/auth/api/authApi";
 import NotificationDropdown from "@/features/notification/components/NotificationDropdown.jsx";
-import {toast} from "@/utils/swalUtils.js";
+import {toast} from "@/utils/swalUtils";
 
 const Header = () => {
   const navigate = useNavigate();

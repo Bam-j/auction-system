@@ -8,8 +8,8 @@ import CommonModal from "@/components/ui/CommonModal";
 import StatusBadge from "@/components/ui/StatusBadge";
 import PriceTag from "@/components/ui/PriceTag";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import {translateCategory} from "@/utils/categoryTranslations.js";
-import {getFullImageUrl} from "@/utils/imageUtils.js";
+import {translateCategory} from "@/utils/categoryTranslations";
+import {getFullImageUrl} from "@/utils/imageUtils";
 
 //product 도메인 내부 api
 import {getProductDetail} from "../api/productApi";

@@ -10,9 +10,9 @@ import StatusBadge from "@/components/ui/StatusBadge.jsx";
 import PriceTag from "@/components/ui/PriceTag";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import useAuthStore from "@/stores/useAuthStore";
-import {translateCategory} from "@/utils/categoryTranslations.js";
-import {successAlert, errorAlert, warningAlert, confirmAction} from "@/utils/swalUtils.js";
-import {getFullImageUrl} from "@/utils/imageUtils.js";
+import {translateCategory} from "@/utils/categoryTranslations";
+import {successAlert, errorAlert, warningAlert, confirmAction} from "@/utils/swalUtils";
+import {getFullImageUrl} from "@/utils/imageUtils";
 
 //product 도메인 내부 api
 import {purchaseFixedSale, getProductDetail, bidAuction, purchaseInstantBuy} from "../api/productApi";

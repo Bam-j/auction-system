@@ -5,7 +5,7 @@ import {
   Card, CardBody, CardFooter,
   Typography, Input, Button,
 } from "@material-tailwind/react";
-import {errorAlert, warningAlert} from "@/utils/swalUtils.js";
+import {errorAlert, warningAlert} from "@/utils/swalUtils";
 
 //절대 경로 모듈
 import CommonModal from "@/components/ui/CommonModal";

@@ -1,6 +1,6 @@
 import {Input, Select, Option} from "@material-tailwind/react";
 
-import {translateCategory} from "@/utils/categoryTranslations.js";
+import {translateCategory} from "@/utils/categoryTranslations";
 
 const CATEGORIES = [
   "WEAPON", "ARMOR", "TOOL", "COSMETIC", "TITLE",

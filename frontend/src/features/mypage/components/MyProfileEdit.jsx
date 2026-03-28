@@ -9,7 +9,7 @@ import api from "@/api/axiosInstance.js";
 import CommonModal from "@/components/ui/CommonModal";
 import {checkNickname} from "@/features/auth/api/authApi";
 import useAuthStore from "@/stores/useAuthStore";
-import {validateField} from "@/utils/validation.js";
+import {validateField} from "@/utils/validation";
 
 const MyProfileEdit = () => {
   const navigate = useNavigate();
