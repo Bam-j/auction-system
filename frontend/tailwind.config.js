@@ -11,8 +11,8 @@ export default withMT({
       colors: {
         primary: {
           DEFAULT: "#3F99F5",
-          light: "#46b9fe",
-          dark: "#2566a7",
+          light: "#46B9FE",
+          dark: "#2566A7",
         },
         success: {
           DEFAULT: "#10B981",
@@ -34,7 +34,7 @@ export default withMT({
           sub: "#888888",
           muted: "#BDBDBD",
           blue: "#3F99F5",
-          dark_blue: "#2566a7",
+          dark_blue: "#2566A7",
           white: "#F9F9F9",
           alert: "#F43F5E",
           warning: "#F59E0B",

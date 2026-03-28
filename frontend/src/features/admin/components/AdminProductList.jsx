@@ -15,7 +15,7 @@ import ProductManagementModal from "@/features/product/components/ProductManagem
 import {
   CATEGORY_FILTER_CONFIG, STATUS_FILTER_CONFIG, PRODUCT_ADMIN_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 //auth 도메인 내부 api
 import {getAllProducts} from "../api/adminApi";

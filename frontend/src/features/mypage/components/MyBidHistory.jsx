@@ -15,7 +15,7 @@ import {getMyBids} from "@/features/product/api/productApi";
 import {
   CATEGORY_FILTER_CONFIG, BID_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 const TABLE_HEAD = ["ID", "상품명", "입찰일", "입찰금액", "결과", "상세"];
 

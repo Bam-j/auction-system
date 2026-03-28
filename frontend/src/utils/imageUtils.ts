@@ -1,15 +1,15 @@
 export const getFullImageUrl = (imageUrl: string | null | undefined): string | null => {
-    if (!imageUrl || imageUrl === 'null' || imageUrl === '') return null;
+  if (!imageUrl || imageUrl === 'null' || imageUrl === '') return null;
 
-    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-        return imageUrl;
-    }
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
 
-    const backendBaseUrl = 'http://localhost:8080';
+  const backendBaseUrl = 'http://localhost:8080';
 
-    if (imageUrl.startsWith('/')) {
-        return `${backendBaseUrl}${imageUrl}`;
-    }
+  if (imageUrl.startsWith('/')) {
+    return `${backendBaseUrl}${imageUrl}`;
+  }
 
-    return `${backendBaseUrl}/${imageUrl}`;
+  return `${backendBaseUrl}/${imageUrl}`;
 };

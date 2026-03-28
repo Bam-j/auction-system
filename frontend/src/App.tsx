@@ -3,10 +3,10 @@ import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import TitleUpdater from './components/shared/TitleUpdater';
 
 //기본 페이지
-import Layout from './components/layouts/Layout.jsx';
+import Layout from './components/layouts/Layout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import SignupPage from './pages/SignUpPage';
 
 //마이 페이지
 import MyPage from './pages/MyPage';
@@ -28,7 +28,7 @@ import AdminUserList from './features/admin/components/AdminUserList';
 //상품 등록
 import ProductRegisterPage from './pages/ProductRegisterPage';
 
-function App() {
+const App = () => {
   return (
       <BrowserRouter>
         <TitleUpdater/>
@@ -36,7 +36,10 @@ function App() {
         <Routes>
           {/* 전체 레이아웃 */}
           <Route element={<Layout/>}>
+            {/* 홈페이지 */}
             <Route path="/" element={<HomePage/>}/>
+
+            {/* 로그인 및 회원 가입 */}
             <Route path="/login" element={<LoginPage/>}/>
             <Route path="/signup" element={<SignupPage/>}/>
 

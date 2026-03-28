@@ -18,7 +18,7 @@ import useAuthStore from "@/stores/useAuthStore";
 import {
   CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 const TABLE_HEAD = ["ID", "상품명", "요청자", "요청일", "요청 금액", "상태", "수락", "상세"];
 

@@ -11,7 +11,7 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import {
   CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, BUYER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 //auth 도메인 내부 api
 import {getAllPurchaseRequests} from "../api/adminApi";

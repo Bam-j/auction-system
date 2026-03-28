@@ -15,7 +15,7 @@ import ProductDetailModal from "@/features/product/components/ProductDetailModal
 import {
   CATEGORY_FILTER_CONFIG, BID_STATUS_FILTER_CONFIG, BIDDER_SELLER_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 //admin 도메인 내부 api
 import {getAllBids} from "../api/adminApi";

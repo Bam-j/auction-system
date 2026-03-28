@@ -22,7 +22,7 @@ import {
   PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
   MY_SALES_SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 const TABLE_HEAD = ["ID", "상품명", "수량", "가격", "상태", "요청 일시", "상세", "관리"];
 

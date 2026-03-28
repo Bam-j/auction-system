@@ -12,7 +12,7 @@ import {successAlert, errorAlert, confirmAction} from "@/utils/swalUtils";
 import {
   USER_STATUS_FILTER_CONFIG,
   mapFilterParams
-} from "@/constants/filterOptions.js";
+} from "@/constants/filterOptions";
 
 //auth 도메인 내부 api
 import {getAllUsers, blockUser, unblockUser} from "../api/adminApi";
