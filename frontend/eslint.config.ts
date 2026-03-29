@@ -24,6 +24,8 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', {varsIgnorePattern: '^[A-Z_]'}],
+      'quotes': ['error', 'single'],
+      'jsx-quotes': ['error', 'prefer-single'],
     },
   },
 ]);
