@@ -2,7 +2,7 @@ import ProductRegisterModal from '@/features/product/components/ProductRegisterM
 
 const ProductRegisterPage = () => {
   return (
-      <div className="min-h-screen bg-gray-100 p-4">
+      <div className='min-h-screen bg-gray-100 p-4'>
         <ProductRegisterModal/>
       </div>
   );
