@@ -1,18 +1,25 @@
-import {useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {
   Menu, MenuHandler, MenuList, MenuItem,
   Typography, IconButton, Badge, Button
-} from "@material-tailwind/react";
-import {BellIcon} from "@heroicons/react/24/outline";
+} from '@material-tailwind/react';
+import {BellIcon} from '@heroicons/react/24/outline';
 
-//notification 도메인 내부 api
-import {fetchNotifications, markAsRead, markAllAsRead, subscribeToNotifications} from "../api/notificationApi";
+import {Notification} from '@/types/notification';
+
+// notification 도메인 내부 api
+import {
+  fetchNotifications,
+  markAsRead,
+  markAllAsRead,
+  subscribeToNotifications,
+} from '../api/notificationApi';
 
 const NotificationDropdown = () => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     // 초기 알림 로드
@@ -21,7 +28,7 @@ const NotificationDropdown = () => {
         const data = await fetchNotifications();
         setNotifications(data);
       } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+        console.error('Failed to fetch notifications:', error);
       }
     };
 
@@ -30,12 +37,13 @@ const NotificationDropdown = () => {
     // SSE 구독
     const eventSource = subscribeToNotifications();
     if (eventSource) {
-      eventSource.addEventListener("notification", (event) => {
+      eventSource.addEventListener('notification', (event: MessageEvent) => {
         try {
-          const newNotification = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+          const newNotification: Notification =
+              typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
           setNotifications((prev) => [newNotification, ...prev]);
         } catch (err) {
-          console.error("Failed to parse notification data:", err);
+          console.error('Failed to parse notification data:', err);
         }
       });
 
@@ -45,59 +53,59 @@ const NotificationDropdown = () => {
     }
   }, []);
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const handleReadAll = async () => {
     try {
       await markAllAsRead();
-      setNotifications(prev => prev.map(n => ({...n, isRead: true})));
+      setNotifications((prev) => prev.map((n) => ({...n, isRead: true})));
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      console.error('Failed to mark all as read:', error);
     }
   };
 
-  const handleNotificationClick = async (notification) => {
+  const handleNotificationClick = async (notification: Notification) => {
     // 읽음 처리
     try {
       if (!notification.isRead) {
         await markAsRead(notification.id);
-        setNotifications(prev =>
-            prev.map(n => n.id === notification.id ? {...n, isRead: true} : n)
+        setNotifications((prev) =>
+            prev.map((n) => (n.id === notification.id ? {...n, isRead: true} : n))
         );
       }
     } catch (error) {
-      console.error("Failed to mark as read:", error);
+      console.error('Failed to mark as read:', error);
     }
 
     // 이동 및 상품 ID 전달
     // 알림 타입에 따라 적절한 페이지(마이 페이지 탭)로 이동
-    let path = "/mypage/products";
+    let path = '/mypage/products';
     switch (notification.type) {
-      case "PURCHASE_REQUEST_RECEIVED":
-        path = "/mypage/requests";
+      case 'PURCHASE_REQUEST_RECEIVED':
+        path = '/mypage/requests';
         break;
-      case "PURCHASE_REQUEST_APPROVED":
-      case "PURCHASE_REQUEST_REJECTED":
-        path = "/mypage/purchases";
+      case 'PURCHASE_REQUEST_APPROVED':
+      case 'PURCHASE_REQUEST_REJECTED':
+        path = '/mypage/purchases';
         break;
-      case "INSTANT_BUY_REQUEST_RECEIVED":
-      case "INSTANT_BUY_REQUEST_APPROVED":
-      case "INSTANT_BUY_REQUEST_REJECTED":
-        path = "/mypage/instant-buys";
+      case 'INSTANT_BUY_REQUEST_RECEIVED':
+      case 'INSTANT_BUY_REQUEST_APPROVED':
+      case 'INSTANT_BUY_REQUEST_REJECTED':
+        path = '/mypage/instant-buys';
         break;
-      case "OUTBID":
-      case "BID_WON":
-        path = "/mypage/bids";
+      case 'OUTBID':
+      case 'BID_WON':
+        path = '/mypage/bids';
         break;
-      case "AUCTION_EXPIRED":
-        path = "/mypage/products";
+      case 'AUCTION_EXPIRED':
+        path = '/mypage/products';
         break;
       default:
-        path = "/mypage/products";
+        path = '/mypage/products';
     }
 
     navigate(path, {
-      state: {openProductId: notification.targetId}
+      state: {openProductId: notification.targetId},
     });
   };
 
@@ -107,13 +115,13 @@ const NotificationDropdown = () => {
       </IconButton>
   );
 
-  const formatTime = (dateString) => {
+  const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diff = Math.floor((now - date) / 1000); // seconds
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // seconds
 
     if (diff < 60) {
-      return "방금 전";
+      return '방금 전';
     }
     if (diff < 3600) {
       return `${Math.floor(diff / 60)}분 전`;
@@ -144,8 +152,10 @@ const NotificationDropdown = () => {
                 알림
               </Typography>
               {unreadCount > 0 && (
-                  <Typography variant="small"
-                              className="text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full">
+                  <Typography
+                      variant="small"
+                      className="text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full"
+                  >
                     {unreadCount}개의 새로운 알림
                   </Typography>
               )}
@@ -165,14 +175,18 @@ const NotificationDropdown = () => {
                     <MenuItem
                         key={notification.id}
                         className={`flex flex-col gap-1 p-4 mx-2 my-1 rounded-lg transition-colors ${
-                            !notification.isRead ? "bg-blue-50/40 hover:bg-blue-50/60" : "hover:bg-gray-50"
+                            !notification.isRead
+                                ? 'bg-blue-50/40 hover:bg-blue-50/60'
+                                : 'hover:bg-gray-50'
                         }`}
                         onClick={() => handleNotificationClick(notification)}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <Typography
                             variant="small"
-                            className={`font-medium leading-tight ${!notification.isRead ? "text-primary" : "text-font-main"}`}
+                            className={`font-medium leading-tight ${
+                                !notification.isRead ? 'text-primary' : 'text-font-main'
+                            }`}
                         >
                           {notification.message}
                         </Typography>

@@ -22,7 +22,7 @@ import defaultImage from '@/assets/images/general/grass_block.jpeg';
 
 const HomePage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<(Partial<Product> & { id: number }) | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useState<SearchParams>({});

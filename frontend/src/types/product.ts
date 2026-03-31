@@ -1,5 +1,5 @@
 export type ProductType = 'FIXED' | 'AUCTION';
-export type ProductStatus = 'ACTIVE' | 'SOLD_OUT' | 'INSTANT_BUY' | 'CLOSED' | string;
+export type ProductStatus = 'ACTIVE' | 'SELLING' | 'FIXED_SALES' | 'SOLD_OUT' | 'INSTANT_BUY' | 'BIDDING' | 'AUCTION' | 'CLOSED' | string;
 
 export interface Product {
   id: number;
@@ -19,6 +19,14 @@ export interface Product {
   instantPurchasePrice?: number;
   createdAt: string;
   updatedAt: string;
+  // Detail fields
+  fixedSaleId?: number;
+  auctionId?: number;
+  currentPrice?: number;
+  bidIncrement?: number;
+  instantPrice?: number;
+  highestBidderNickname?: string | null;
+  highestBidderId?: number | null;
 }
 
 export interface SearchParams {
