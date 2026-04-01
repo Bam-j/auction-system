@@ -1,7 +1,4 @@
-import {
-  Card, CardHeader, CardBody, CardFooter,
-  Typography, Chip,
-} from '@material-tailwind/react';
+import {Card, CardHeader, CardBody, CardFooter, Typography, Chip} from '@material-tailwind/react';
 
 import {Product} from '@/types/product';
 import {getFullImageUrl} from '@/utils/imageUtils';
