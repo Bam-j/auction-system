@@ -19,6 +19,7 @@ import MySalesRequests from './features/mypage/components/MySalesRequests';
 
 //관리자 페이지
 import AdminPage from './pages/AdminPage';
+import AdminDashboard from './features/admin/components/AdminDashboard';
 import AdminProductList from './features/admin/components/AdminProductList';
 import AdminPurchaseHistory from './features/admin/components/AdminPurchaseHistory';
 import AdminInstantBuyHistory from './features/admin/components/AdminInstantBuyHistory';
@@ -56,7 +57,8 @@ const App = () => {
 
             {/* 관리자 페이지 라우팅 */}
             <Route path="/admin" element={<AdminPage/>}>
-              <Route index element={<Navigate to="users" replace/>}/>
+              <Route index element={<Navigate to="dashboard" replace/>}/>
+              <Route path="dashboard" element={<AdminDashboard/>}/>
               <Route path="products" element={<AdminProductList/>}/>
               <Route path="instant-buys" element={<AdminInstantBuyHistory/>}/>
               <Route path="purchases" element={<AdminPurchaseHistory/>}/>

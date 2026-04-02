@@ -49,4 +49,9 @@ declare module '@material-tailwind/react' {
   interface PopoverProps extends GenericProps {}
   interface PopoverHandlerProps extends GenericProps {}
   interface PopoverContentProps extends GenericProps {}
+  interface TabsProps extends GenericProps {}
+  interface TabsHeaderProps extends GenericProps {}
+  interface TabsBodyProps extends GenericProps {}
+  interface TabProps extends GenericProps {}
+  interface TabPanelProps extends GenericProps {}
 }
