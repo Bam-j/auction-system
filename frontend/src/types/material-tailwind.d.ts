@@ -21,6 +21,7 @@ declare module '@material-tailwind/react' {
   interface ButtonProps extends GenericProps {
     as?: any;
   }
+  interface ButtonGroupProps extends GenericProps {}
   interface CardProps extends GenericProps {}
   interface CardHeaderProps extends GenericProps {}
   interface CardBodyProps extends GenericProps {}

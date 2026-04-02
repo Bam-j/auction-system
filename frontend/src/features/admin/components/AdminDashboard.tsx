@@ -1,0 +1,78 @@
+import {useState} from 'react';
+
+import {Card, CardBody, Tabs, TabsHeader, Tab, Typography} from '@material-tailwind/react';
+import {
+  UsersIcon, CubeIcon, CurrencyDollarIcon,
+  ShoppingBagIcon, PresentationChartBarIcon,
+} from '@heroicons/react/24/outline';
+import UserStatsView from '@/features/admin/components/dashboard/UserStatsView';
+
+type TabValue = 'users' | 'products' | 'auctions' | 'fixed-sales';
+
+const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState<TabValue>('users');
+
+  const tabs: { label: string; value: TabValue; icon: any }[] = [
+    {label: '회원', value: 'users', icon: UsersIcon},
+    {label: '상품', value: 'products', icon: CubeIcon},
+    {label: '경매', value: 'auctions', icon: CurrencyDollarIcon},
+    {label: '일반 판매', value: 'fixed-sales', icon: ShoppingBagIcon},
+  ];
+
+  return (
+      <div className='space-y-6'>
+        <div className='flex items-center gap-3 mb-2'>
+          <PresentationChartBarIcon className='h-8 w-8 text-blue-500'/>
+          <Typography variant='h4' color='blue-gray'>
+            활동 통계 대시보드
+          </Typography>
+        </div>
+
+        <Card className='shadow-sm border border-gray-200'>
+          <Tabs value={activeTab}
+                onChange={(value: string | undefined) => setActiveTab((value as TabValue) || 'users')}>
+            <TabsHeader
+                className='bg-transparent p-0 border-b border-gray-100 rounded-none'
+                indicatorProps={{
+                  className: 'bg-transparent border-b-2 border-blue-500 shadow-none rounded-none',
+                }}
+            >
+              {tabs.map(({label, value, icon: Icon}) => (
+                  <Tab
+                      key={value}
+                      value={value}
+                      className={`py-4 transition-colors ${
+                          activeTab === value ? 'text-blue-500 font-bold' : 'text-gray-500'
+                      }`}
+                  >
+                    <div className='flex items-center gap-2'>
+                      <Icon className='h-5 w-5'/>
+                      {label}
+                    </div>
+                  </Tab>
+              ))}
+            </TabsHeader>
+            <CardBody className='p-6'>
+              {activeTab === 'users' && <UserStatsView />}
+
+              {activeTab !== 'users' && (
+                  <div
+                      className='min-h-[400px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50'>
+                    <div className='text-center'>
+                      <Typography variant='h5' color='blue-gray' className='mb-2'>
+                        {tabs.find((t) => t.value === activeTab)?.label} 통계 뷰
+                      </Typography>
+                      <Typography color='gray'>
+                        QueryDSL을 통한 데이터 분석 결과가 여기에 표시될 예정입니다.
+                      </Typography>
+                    </div>
+                  </div>
+              )}
+            </CardBody>
+          </Tabs>
+        </Card>
+      </div>
+  );
+};
+
+export default AdminDashboard;
