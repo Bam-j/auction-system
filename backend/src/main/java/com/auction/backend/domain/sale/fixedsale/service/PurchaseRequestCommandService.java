@@ -127,6 +127,6 @@ public class PurchaseRequestCommandService {
             throw new UnauthorizedAccessException("본인의 요청만 취소할 수 있습니다.");
         }
 
-        request.reject();
+        request.cancel();
     }
 }

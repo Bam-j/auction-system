@@ -67,4 +67,11 @@ public class PurchaseRequest extends BaseTimeEntity {
         }
         this.requestStatus = RequestStatus.REJECTED;
     }
+
+    public void cancel() {
+        if (this.requestStatus != RequestStatus.PENDING) {
+            throw new IllegalStateException("대기 중인 요청만 취소할 수 있습니다.");
+        }
+        this.requestStatus = RequestStatus.CANCELLED;
+    }
 }

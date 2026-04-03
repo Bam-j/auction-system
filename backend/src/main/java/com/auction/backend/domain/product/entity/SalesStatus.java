@@ -6,5 +6,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum SalesStatus {
-    FIXED_SALES, AUCTION, SOLD_OUT, INSTANT_BUY
+    FIXED_SALES, AUCTION, SOLD_OUT, INSTANT_BUY, CANCELLED
 }

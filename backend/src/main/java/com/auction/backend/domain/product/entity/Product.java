@@ -80,4 +80,8 @@ public class Product extends BaseTimeEntity {
     public void instantBuy() {
         this.salesStatus = SalesStatus.INSTANT_BUY;
     }
+
+    public void cancel() {
+        this.salesStatus = SalesStatus.CANCELLED;
+    }
 }

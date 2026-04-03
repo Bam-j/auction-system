@@ -1,5 +1,8 @@
 package com.auction.backend.domain.admin.controller;
 
+import com.auction.backend.domain.admin.dto.AuctionStatsResponse;
+import com.auction.backend.domain.admin.dto.FixedSaleStatsResponse;
+import com.auction.backend.domain.admin.dto.ProductStatsResponse;
 import com.auction.backend.domain.admin.dto.UserStatsResponse;
 import com.auction.backend.domain.admin.service.DashboardQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,5 +35,41 @@ public class DashboardController {
             @Parameter(description = "조회 기간 (일수)", example = "7")
             @RequestParam(defaultValue = "1") int days) {
         return ResponseEntity.ok(dashboardQueryService.getUserStats(days));
+    }
+
+    @Operation(summary = "상품 통계 조회", description = "오늘의 상품 등록/판매/취소 상태 요약 및 기간별 추이 데이터를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "통계 데이터 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
+    @GetMapping("/product-stats")
+    public ResponseEntity<ProductStatsResponse> getProductStats(
+            @Parameter(description = "조회 기간 (일수)", example = "7")
+            @RequestParam(defaultValue = "1") int days) {
+        return ResponseEntity.ok(dashboardQueryService.getProductStats(days));
+    }
+
+    @Operation(summary = "경매 통계 조회", description = "오늘의 경매/입찰/낙찰/실패 상태 요약 및 기간별 추이 데이터를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "통계 데이터 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
+    @GetMapping("/auction-stats")
+    public ResponseEntity<AuctionStatsResponse> getAuctionStats(
+            @Parameter(description = "조회 기간 (일수)", example = "7")
+            @RequestParam(defaultValue = "1") int days) {
+        return ResponseEntity.ok(dashboardQueryService.getAuctionStats(days));
+    }
+
+    @Operation(summary = "일반 판매 통계 조회", description = "오늘의 일반 판매 등록/판매/구매 요청 상태 요약 및 기간별 추이 데이터를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "통계 데이터 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자")
+    })
+    @GetMapping("/fixed-sale-stats")
+    public ResponseEntity<FixedSaleStatsResponse> getFixedSaleStats(
+            @Parameter(description = "조회 기간 (일수)", example = "7")
+            @RequestParam(defaultValue = "1") int days) {
+        return ResponseEntity.ok(dashboardQueryService.getFixedSaleStats(days));
     }
 }

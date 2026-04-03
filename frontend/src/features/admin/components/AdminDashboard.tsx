@@ -5,7 +5,12 @@ import {
   UsersIcon, CubeIcon, CurrencyDollarIcon,
   ShoppingBagIcon, PresentationChartBarIcon,
 } from '@heroicons/react/24/outline';
-import UserStatsView from '@/features/admin/components/dashboard/UserStatsView';
+
+//도메인 내부 모듈
+import UserStatsView from './dashboard/UserStatsView';
+import ProductStatsView from './dashboard/ProductStatsView';
+import AuctionStatsView from './dashboard/AuctionStatsView';
+import FixedSaleStatsView from './dashboard/FixedSaleStatsView';
 
 type TabValue = 'users' | 'products' | 'auctions' | 'fixed-sales';
 
@@ -29,8 +34,7 @@ const AdminDashboard = () => {
         </div>
 
         <Card className='shadow-sm border border-gray-200'>
-          <Tabs value={activeTab}
-                onChange={(value: string | undefined) => setActiveTab((value as TabValue) || 'users')}>
+          <Tabs value={activeTab}>
             <TabsHeader
                 className='bg-transparent p-0 border-b border-gray-100 rounded-none'
                 indicatorProps={{
@@ -41,6 +45,7 @@ const AdminDashboard = () => {
                   <Tab
                       key={value}
                       value={value}
+                      onClick={() => setActiveTab(value)}
                       className={`py-4 transition-colors ${
                           activeTab === value ? 'text-blue-500 font-bold' : 'text-gray-500'
                       }`}
@@ -53,9 +58,12 @@ const AdminDashboard = () => {
               ))}
             </TabsHeader>
             <CardBody className='p-6'>
-              {activeTab === 'users' && <UserStatsView />}
+              {activeTab === 'users' && <UserStatsView/>}
+              {activeTab === 'products' && <ProductStatsView/>}
+              {activeTab === 'auctions' && <AuctionStatsView/>}
+              {activeTab === 'fixed-sales' && <FixedSaleStatsView/>}
 
-              {activeTab !== 'users' && (
+              {(activeTab !== 'users' && activeTab !== 'products' && activeTab !== 'auctions' && activeTab !== 'fixed-sales') && (
                   <div
                       className='min-h-[400px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50'>
                     <div className='text-center'>

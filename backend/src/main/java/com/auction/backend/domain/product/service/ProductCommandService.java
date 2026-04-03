@@ -48,4 +48,15 @@ public class ProductCommandService {
 
         product.soldOut();
     }
+
+    //상품 등록 취소
+    public void cancelProduct(Long productId, Long userId) {
+        Product product = productQueryService.getProduct(productId);
+
+        if (!product.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedAccessException("상품 소유자만 등록을 취소할 수 있습니다.");
+        }
+
+        product.cancel();
+    }
 }

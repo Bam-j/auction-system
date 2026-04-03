@@ -10,8 +10,10 @@ import CommonModal from '@/components/ui/CommonModal';
 //auth 도메인 내부 api
 import {loginUser} from '../api/authApi';
 
+import {User} from '@/types/auth';
+
 interface LoginFormProps {
-  onLoginSuccess: (userInfo: { username: string; nickname: string; role: string }, accessToken: string) => void;
+  onLoginSuccess: (user: User, accessToken: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
@@ -32,13 +34,8 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
     try {
       const res = await loginUser({username, password});
       const {user, accessToken} = res.data;
-      const userInfo = {
-        username: username,
-        nickname: user.nickname,
-        role: user.role,
-      };
 
-      onLoginSuccess(userInfo, accessToken);
+      onLoginSuccess(user, accessToken);
 
     } catch (error: any) {
       console.error('로그인 실패:', error);
