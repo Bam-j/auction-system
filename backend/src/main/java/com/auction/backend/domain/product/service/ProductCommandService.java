@@ -6,6 +6,7 @@ import com.auction.backend.domain.product.repository.ProductRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.global.enums.ProductCategory;
 import com.auction.backend.global.exception.UnauthorizedAccessException;
+import com.auction.backend.global.utils.TextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ public class ProductCommandService {
 
     private final ProductQueryService productQueryService;
     private final ProductRepository productRepository;
+    private final TextFilter textFilter;
 
     //상품 등록
     public Product createProduct(
@@ -26,6 +28,9 @@ public class ProductCommandService {
             String imageUrl,
             ProductCategory category
     ) {
+        textFilter.validateProductText("상품명", productName);
+        textFilter.validateProductText("상품 설명", description);
+
         Product product = Product.builder()
                 .user(user)
                 .productName(productName)

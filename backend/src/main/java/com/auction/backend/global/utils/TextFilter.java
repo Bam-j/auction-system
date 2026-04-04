@@ -44,6 +44,7 @@ public class TextFilter {
         }
     }
 
+    //회원 정보(username과 닉네임) 텍스트 필터링
     public void validateUsernameOrNickname(String text) {
         if (text == null || text.isBlank()) return;
 
@@ -62,20 +63,27 @@ public class TextFilter {
         }
     }
 
-    public void validateProductText(String text) {
+    //상품 등록(상품명과 상품 설명) 텍스트 필터링
+    public void validateProductText(String label, String text) {
         if (text == null || text.isBlank()) return;
 
         String pureText = text.toLowerCase().replaceAll("[^a-z0-9가-힣]", "");
 
+        for (String reserved : reservedWords) {
+            if (pureText.contains(reserved)) {
+                throw new IllegalArgumentException(label + "에 시스템 예약어가 포함되어 있습니다.");
+            }
+        }
+
         for (String badWord : badWordsEn) {
             if (pureText.contains(badWord)) {
-                throw new IllegalArgumentException("상품명에 부적절한 영문이 포함되어 있습니다.");
+                throw new IllegalArgumentException(label + "에 부적절한 영문이 포함되어 있습니다.");
             }
         }
 
         for (String badWord : badWordsKo) {
             if (pureText.contains(badWord)) {
-                throw new IllegalArgumentException("상품명에 부적절한 한글이 포함되어 있습니다.");
+                throw new IllegalArgumentException(label + "에 부적절한 한글이 포함되어 있습니다.");
             }
         }
     }
