@@ -8,6 +8,9 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    global: 'window',
+  },
   resolve: {
     alias: {
       "react": path.resolve(__dirname, "./node_modules/react"),

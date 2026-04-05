@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import {persist} from 'zustand/middleware';
 
-import {User, AuthState} from '@/types/auth';
+import {AuthState} from '@/types/auth';
 
 const useAuthStore = create<AuthState>()(
     persist(
@@ -11,6 +11,8 @@ const useAuthStore = create<AuthState>()(
 
           login: (userData, token) => set({user: userData, token: token}),
           logout: () => set({user: null, token: null}),
+          setUser: (userData) => set({user: userData}),
+          setToken: (token) => set({token: token}),
           updateNickname: (newNickname) =>
               set((state) => ({
                 user: state.user ? {...state.user, nickname: newNickname} : null,

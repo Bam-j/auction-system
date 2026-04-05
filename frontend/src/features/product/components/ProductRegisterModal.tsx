@@ -1,4 +1,4 @@
-import {useState, ChangeEvent} from 'react';
+import {useState, ChangeEvent, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 
 import {Button, Typography, Textarea} from '@material-tailwind/react';
@@ -9,16 +9,32 @@ import CommonModal from '@/components/ui/CommonModal';
 import {successAlert, errorAlert, warningAlert} from '@/utils/swalUtils';
 import useAuthStore from '@/stores/useAuthStore';
 
-// product 도메인 내부 api, 자식 컴포넌트
+//도메인 내부 api, 자식 컴포넌트
 import {registerProduct, ProductRegisterData} from '../api/productApi';
+import {getMe} from '@/features/auth/api/authApi';
 import CommonProductForm from './forms/CommonProductForm';
 import FixedProductForm from './forms/FixedProductForm';
 import AuctionProductForm from './forms/AuctionProductForm';
 
 const ProductRegisterModal = () => {
   const navigate = useNavigate();
-  const {user} = useAuthStore();
+  const {user, setUser} = useAuthStore();
   const [step, setStep] = useState(1);
+
+  //컴포넌트 마운트 시 최신 유저 정보 확인
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await getMe();
+        if (response.data) {
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user status:', error);
+      }
+    };
+    fetchUser();
+  }, [setUser]);
 
   const [formData, setFormData] = useState<ProductRegisterData>({
     type: 'FIXED',
@@ -43,7 +59,9 @@ const ProductRegisterModal = () => {
       return false;
     }
 
-    if (!user.isVerified) {
+    const isVerified = user.isVerified || (user as any).verified;
+
+    if (!isVerified) {
       warningAlert('인증이 필요합니다.', '이메일 인증을 완료한 계정만 상품을 등록할 수 있습니다.').then(
           () => navigate(-1)
       );

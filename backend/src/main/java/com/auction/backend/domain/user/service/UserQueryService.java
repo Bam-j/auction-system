@@ -35,4 +35,9 @@ public class UserQueryService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
     }
+
+    //회원 정보 응답 획득
+    public UserResponse getUserResponse(Long userId) {
+        return UserResponse.from(getUser(userId));
+    }
 }

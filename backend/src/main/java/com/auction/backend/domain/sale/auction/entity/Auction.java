@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,5 +111,16 @@ public class Auction extends BaseTimeEntity {
             throw new IllegalStateException("경매가 이미 종료되었습니다.");
         }
         this.currentPrice = newPrice;
+    }
+
+    //마감 3분 이내 입찰이 들어온 경우 마감 시간을 3분 연장 (칼치기 방지 및 트래픽 분산)
+    public void extendEndTime() {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(now, this.endedAt);
+        long secondsRemaining = duration.getSeconds();
+
+        if (secondsRemaining > 0 && secondsRemaining <= 180) {
+            this.endedAt = this.endedAt.plusMinutes(3);
+        }
     }
 }

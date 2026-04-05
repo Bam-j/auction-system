@@ -1,7 +1,12 @@
 import {AxiosResponse} from 'axios';
 
 import api from '@/api/axiosInstance';
-import {LoginResponse} from '@/types/auth';
+import {LoginResponse, User} from '@/types/auth';
+
+// 현재 사용자 정보 조회
+export const getMe = (): Promise<AxiosResponse<User>> => {
+  return api.get('/users/me');
+};
 
 // 회원가입
 export const signup = (data: any): Promise<AxiosResponse<void>> => {

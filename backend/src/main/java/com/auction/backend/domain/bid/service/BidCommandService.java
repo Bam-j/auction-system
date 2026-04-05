@@ -29,6 +29,7 @@ public class BidCommandService {
     private final AuctionQueryService auctionQueryService;
     private final RedisLockService redisLockService;
     private final NotificationCommandService notificationCommandService;
+    private final org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
 
     //입찰 생성
     public Long createBid(Long userId, BidCreateRequest request) {
@@ -53,7 +54,18 @@ public class BidCommandService {
                 throw new InvalidBidException("입찰 가격이 현재가보다 낮거나 최소 입찰 단위를 충족하지 못했습니다.");
             }
 
+            // 현재가 업데이트 및 마감 시간 연장 체크
             auction.updateCurrentPrice(request.getBidPrice());
+            auction.extendEndTime();
+
+            messagingTemplate.convertAndSend("/topic/auction/" + auction.getAuctionId(), 
+                java.util.Map.of(
+                    "auctionId", auction.getAuctionId(),
+                    "endedAt", auction.getEndedAt().toString(),
+                    "currentPrice", auction.getCurrentPrice(),
+                    "highestBidderId", user.getUserId()
+                )
+            );
 
             //이전 최고 입찰자에게 패찰 알림 및 현재 최고 입찰자 확인 (알림 발송)
             bidRepository.findTopByAuctionOrderByBidPriceDesc(auction)

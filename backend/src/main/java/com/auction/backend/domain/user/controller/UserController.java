@@ -24,6 +24,22 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final com.auction.backend.domain.user.service.UserQueryService userQueryService;
+
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음")
+    })
+    @GetMapping("/me")
+    public ResponseEntity<com.auction.backend.domain.user.dto.profile.UserResponse> getMe(
+            @Parameter(hidden = true)
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        Long userId = Long.valueOf(userDetails.getUsername());
+        return ResponseEntity.ok(userQueryService.getUserResponse(userId));
+    }
 
     @Operation(summary = "닉네임 변경 요청", description = "닉네임 변경 요청. 변경 과정에서 중복 검사 수행")
     @ApiResponses(value = {

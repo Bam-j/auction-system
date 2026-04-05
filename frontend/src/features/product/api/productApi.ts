@@ -1,17 +1,20 @@
 import api from '@/api/axiosInstance';
 import {Product, SearchParams} from '@/types/product';
 
-// 상품 등록 데이터 타입
+//상품 등록 데이터 타입
 export interface ProductRegisterData {
+  //공통
   type: 'FIXED' | 'AUCTION';
   product_name: string;
   description: string;
   category: string;
   image?: File | null;
-  // FIXED SALES 전용
+
+  //FIXED SALES 전용
   price?: number;
   stock?: number;
-  // AUCTION 전용
+
+  //AUCTION 전용
   ended_at?: string;
   start_price?: number;
   min_bid_increment?: number;
@@ -19,7 +22,7 @@ export interface ProductRegisterData {
   price_unit?: string;
 }
 
-// 상품 등록 (일반/경매 공통)
+//상품 등록 (일반/경매 공통)
 export const registerProduct = (productData: ProductRegisterData) => {
   if (productData.type === 'FIXED') {
     const formData = new FormData();
@@ -78,7 +81,7 @@ export const purchaseInstantBuy = (instantBuyData: { productId: number }) => {
 };
 
 // 경매 입찰
-export const bidAuction = (bidData: { productId: number; bidAmount: number }) => {
+export const bidAuction = (bidData: { auctionId: number; bidPrice: number }) => {
   return api.post('/bids', bidData);
 };
 

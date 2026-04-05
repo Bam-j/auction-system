@@ -1,5 +1,7 @@
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback, useRef} from 'react';
 import {useNavigate} from 'react-router-dom';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
 
 //절대 경로 모듈
 import useAuthStore from '@/stores/useAuthStore';
@@ -25,6 +27,7 @@ export const useProductDetail = ({initialProduct, open, handleOpen}: UseProductD
   const [product, setProduct] = useState<Product | (Partial<Product> & { id: number }) | null>(initialProduct);
   const [purchaseAmount, setPurchaseAmount] = useState<number | string>(1);
   const [isLoading, setIsLoading] = useState(false);
+  const stompClientRef = useRef<Stomp.Client | null>(null);
 
   const fetchDetail = useCallback(async () => {
     if (!initialProduct?.id) return;
@@ -46,8 +49,44 @@ export const useProductDetail = ({initialProduct, open, handleOpen}: UseProductD
     if (open && initialProduct?.id) {
       setPurchaseAmount(1);
       fetchDetail();
+
+      //웹소켓 연결 설정
+      const socket = new SockJS(`${import.meta.env.VITE_API_BASE_URL || ''}/ws`);
+      const client = Stomp.over(socket);
+      stompClientRef.current = client;
+
+      client.debug = () => {};
+
+      client.connect({}, () => {
+        if (product?.auctionId || initialProduct?.auctionId) {
+          const auctionId = product?.auctionId || initialProduct?.auctionId;
+          client.subscribe(`/topic/auction/${auctionId}`, (message) => {
+            const data = JSON.parse(message.body);
+            // 실시간 데이터로 상태 업데이트 (마감 시간, 현재가)
+            setProduct(prev => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                endedAt: data.endedAt,
+                currentPrice: data.currentPrice,
+                highestBidderId: data.highestBidderId
+              };
+            });
+          });
+        }
+      }, (error) => {
+        console.error('WebSocket connection error:', error);
+      });
+
+      return () => {
+        if (stompClientRef.current) {
+          stompClientRef.current.disconnect(() => {
+            console.log('WebSocket disconnected');
+          });
+        }
+      };
     }
-  }, [open, initialProduct?.id, fetchDetail]);
+  }, [open, initialProduct?.id, fetchDetail, initialProduct?.auctionId]);
 
   const checkAuth = useCallback(() => {
     if (!user) {
@@ -96,8 +135,8 @@ export const useProductDetail = ({initialProduct, open, handleOpen}: UseProductD
 
     try {
       await bidAuction({
-        productId: product.id,
-        bidAmount: nextBidPrice
+        auctionId: product.auctionId,
+        bidPrice: nextBidPrice
       });
 
       await successAlert('입찰 완료', '입찰이 정상적으로 처리되었습니다.');

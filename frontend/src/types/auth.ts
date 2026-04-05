@@ -13,6 +13,8 @@ export interface AuthState {
   token: string | null;
   login: (userData: User, token: string) => void;
   logout: () => void;
+  setUser: (userData: User) => void;
+  setToken: (token: string) => void;
   updateNickname: (newNickname: string) => void;
   updateEmailVerification: (email: string) => void;
 }

@@ -13,6 +13,8 @@ public class UserResponse {
     private String role;
     private String status;
     private String email;
+    
+    @com.fasterxml.jackson.annotation.JsonProperty("isVerified")
     private boolean isVerified;
 
     public static UserResponse from(User user) {
