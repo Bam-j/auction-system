@@ -143,8 +143,16 @@ export const useProductDetail = ({initialProduct, open, handleOpen}: UseProductD
       handleOpen();
     } catch (error: any) {
       console.error('Bid failed:', error);
-      const errorMessage = error.response?.data?.message || '입찰 중 오류가 발생했습니다.';
-      await errorAlert('오류', errorMessage);
+      
+      let errorMessage = '입찰 중 오류가 발생했습니다.';
+      
+      if (error.response?.status === 429) {
+        errorMessage = '요청이 너무 잦습니다. 잠시 후 다시 시도해 주세요.';
+        await warningAlert('잠시만 기다려주세요', errorMessage);
+      } else {
+        errorMessage = error.response?.data?.message || errorMessage;
+        await errorAlert('오류', errorMessage);
+      }
     }
   };
 

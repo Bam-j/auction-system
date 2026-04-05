@@ -28,6 +28,7 @@ public class BidCommandService {
     private final UserQueryService userQueryService;
     private final AuctionQueryService auctionQueryService;
     private final RedisLockService redisLockService;
+    private final com.auction.backend.global.service.RedisRateLimitService redisRateLimitService;
     private final NotificationCommandService notificationCommandService;
     private final org.springframework.messaging.simp.SimpMessagingTemplate messagingTemplate;
 
@@ -35,6 +36,9 @@ public class BidCommandService {
     public Long createBid(Long userId, BidCreateRequest request) {
         log.info("Creating bid for user: {}, auction: {}, price: {}",
                 userId, request.getAuctionId(), request.getBidPrice());
+
+        //사용자별 요청 빈도 제한 (1초에 최대 2회)
+        redisRateLimitService.checkRateLimit("rate:bid:user:" + userId, 2, 1);
 
         return redisLockService.runWithLock("auction:" + request.getAuctionId(), () -> {
             User user = userQueryService.getUser(userId);
