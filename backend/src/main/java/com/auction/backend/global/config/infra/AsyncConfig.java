@@ -1,4 +1,4 @@
-package com.auction.backend.global.config;
+package com.auction.backend.global.config.infra;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

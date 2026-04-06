@@ -1,4 +1,4 @@
-package com.auction.backend.global.config;
+package com.auction.backend.global.config.web;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

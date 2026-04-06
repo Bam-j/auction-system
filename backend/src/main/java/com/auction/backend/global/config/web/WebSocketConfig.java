@@ -1,4 +1,4 @@
-package com.auction.backend.global.config;
+package com.auction.backend.global.config.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

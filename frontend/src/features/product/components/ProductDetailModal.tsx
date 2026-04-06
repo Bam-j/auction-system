@@ -7,10 +7,10 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import {Product} from '@/types/product';
 
 //도메인 내부 모듈
-import ProductImageGallery from './ProductImageGallery';
-import ProductInfoSection from './ProductInfoSection';
-import ProductDescription from './ProductDescription';
-import ProductActionButtons, {ProductViewMode} from './ProductActionButtons';
+import ProductImageGallery from './details/ProductImageGallery';
+import ProductInfoSection from './details/ProductInfoSection';
+import ProductDescription from './details/ProductDescription';
+import ProductActionButtons, {ProductViewMode} from './details/ProductActionButtons';
 import {useProductDetail} from '../hooks/useProductDetail';
 
 interface ProductDetailModalProps {

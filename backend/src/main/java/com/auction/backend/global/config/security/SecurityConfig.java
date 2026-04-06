@@ -1,4 +1,4 @@
-package com.auction.backend.global.config;
+package com.auction.backend.global.config.security;
 
 import com.auction.backend.global.jwt.JwtAuthenticationFilter;
 import com.auction.backend.global.jwt.JwtTokenProvider;

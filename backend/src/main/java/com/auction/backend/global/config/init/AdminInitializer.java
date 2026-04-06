@@ -1,4 +1,4 @@
-package com.auction.backend.global.config;
+package com.auction.backend.global.config.init;
 
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.entity.UserRole;
