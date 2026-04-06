@@ -1,4 +1,4 @@
-package com.auction.backend.global.exception;
+package com.auction.backend.global.exception.common;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

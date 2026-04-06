@@ -5,7 +5,7 @@ import com.auction.backend.domain.product.entity.SalesStatus;
 import com.auction.backend.domain.product.repository.ProductRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.global.enums.ProductCategory;
-import com.auction.backend.global.exception.UnauthorizedAccessException;
+import com.auction.backend.global.exception.auth.UnauthorizedAccessException;
 import com.auction.backend.global.utils.TextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

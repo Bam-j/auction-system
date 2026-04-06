@@ -4,13 +4,11 @@ import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestCreateReques
 import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
-import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.Product;
-import com.auction.backend.global.exception.SelfPurchaseException;
+import com.auction.backend.global.exception.domain.SelfPurchaseException;
 import com.auction.backend.domain.sale.fixedsale.exception.InsufficientStockException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

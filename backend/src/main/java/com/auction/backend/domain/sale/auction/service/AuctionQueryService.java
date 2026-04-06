@@ -2,7 +2,7 @@ package com.auction.backend.domain.sale.auction.service;
 
 import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

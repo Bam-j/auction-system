@@ -6,7 +6,7 @@ import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.repository.NotificationRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

@@ -4,7 +4,7 @@ import com.auction.backend.domain.user.dto.profile.UserResponse;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.entity.UserStatus;
 import com.auction.backend.domain.user.repository.UserRepository;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import com.auction.backend.global.utils.SearchParamParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

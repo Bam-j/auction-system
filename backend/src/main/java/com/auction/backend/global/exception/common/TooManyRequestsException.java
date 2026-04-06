@@ -1,4 +1,4 @@
-package com.auction.backend.global.exception;
+package com.auction.backend.global.exception.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

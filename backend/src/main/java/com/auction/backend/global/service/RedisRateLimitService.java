@@ -1,6 +1,6 @@
 package com.auction.backend.global.service;
 
-import com.auction.backend.global.exception.TooManyRequestsException;
+import com.auction.backend.global.exception.common.TooManyRequestsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;

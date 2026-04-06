@@ -10,7 +10,7 @@ import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
-import com.auction.backend.global.exception.UserUnverifiedException;
+import com.auction.backend.global.exception.auth.UserUnverifiedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

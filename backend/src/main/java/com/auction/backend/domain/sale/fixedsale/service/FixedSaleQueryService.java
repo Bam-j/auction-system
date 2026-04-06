@@ -2,7 +2,7 @@ package com.auction.backend.domain.sale.fixedsale.service;
 
 import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

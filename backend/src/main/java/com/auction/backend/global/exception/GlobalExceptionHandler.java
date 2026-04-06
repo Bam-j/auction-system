@@ -5,6 +5,13 @@ import com.auction.backend.domain.sale.auction.exception.InstantBuyNotAvailableE
 import com.auction.backend.domain.sale.fixedsale.exception.InsufficientStockException;
 import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.exception.SamePasswordException;
+import com.auction.backend.global.exception.auth.UnauthorizedAccessException;
+import com.auction.backend.global.exception.auth.UserUnverifiedException;
+import com.auction.backend.global.exception.base.ErrorResponse;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
+import com.auction.backend.global.exception.domain.InvalidSalesStatusException;
+import com.auction.backend.global.exception.domain.SelfPurchaseException;
+import com.auction.backend.global.exception.io.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

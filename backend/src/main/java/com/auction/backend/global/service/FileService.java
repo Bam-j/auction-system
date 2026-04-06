@@ -1,6 +1,6 @@
 package com.auction.backend.global.service;
 
-import com.auction.backend.global.exception.FileUploadException;
+import com.auction.backend.global.exception.io.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;

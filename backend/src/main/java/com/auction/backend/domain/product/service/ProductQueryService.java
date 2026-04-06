@@ -11,7 +11,7 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.global.enums.ProductCategory;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import com.auction.backend.global.utils.SearchParamParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

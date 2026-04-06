@@ -7,7 +7,7 @@ import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.enums.ProductCategory;
 import com.auction.backend.global.enums.RequestStatus;
-import com.auction.backend.global.exception.ResourceNotFoundException;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import com.auction.backend.global.utils.SearchParamParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

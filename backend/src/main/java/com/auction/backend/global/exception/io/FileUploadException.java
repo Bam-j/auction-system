@@ -1,4 +1,4 @@
-package com.auction.backend.global.exception;
+package com.auction.backend.global.exception.io;
 
 public class FileUploadException extends RuntimeException {
     public FileUploadException(String message) {

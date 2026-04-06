@@ -12,9 +12,9 @@ import com.auction.backend.domain.sale.fixedsale.exception.InsufficientStockExce
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
-import com.auction.backend.global.exception.SelfPurchaseException;
-import com.auction.backend.global.exception.UnauthorizedAccessException;
-import com.auction.backend.global.exception.UserUnverifiedException;
+import com.auction.backend.global.exception.domain.SelfPurchaseException;
+import com.auction.backend.global.exception.auth.UnauthorizedAccessException;
+import com.auction.backend.global.exception.auth.UserUnverifiedException;
 import com.auction.backend.global.service.RedisLockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
