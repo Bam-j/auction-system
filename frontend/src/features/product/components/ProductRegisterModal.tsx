@@ -7,6 +7,7 @@ import {PhotoIcon} from '@heroicons/react/24/outline';
 //절대 경로 모듈
 import CommonModal from '@/components/ui/CommonModal';
 import {successAlert, errorAlert, warningAlert} from '@/utils/swalUtils';
+import {compressAndConvertImage} from '@/utils/imageUtils';
 import useAuthStore from '@/stores/useAuthStore';
 
 //도메인 내부 api, 자식 컴포넌트
@@ -114,7 +115,18 @@ const ProductRegisterModal = () => {
     }
 
     try {
-      await registerProduct(formData);
+      //이미지 최적화
+      let finalData = {...formData};
+      if (formData.image) {
+        try {
+          const optimized = await compressAndConvertImage(formData.image);
+          finalData.image = optimized;
+        } catch (imgError) {
+          console.error('이미지 최적화 실패:', imgError);
+        }
+      }
+
+      await registerProduct(finalData);
 
       successAlert('상품 등록 완료!', '상품이 성공적으로 등록되었습니다.').then(() => {
         navigate('/');

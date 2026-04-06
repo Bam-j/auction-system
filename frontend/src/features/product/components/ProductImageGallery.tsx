@@ -13,6 +13,7 @@ const ProductImageGallery = ({imageUrl, title}: ProductImageGalleryProps) => {
         <img
             src={getFullImageUrl(imageUrl) || defaultImage}
             alt={title || '상품 이미지'}
+            loading='lazy'
             className='w-full h-64 md:h-full object-cover rounded-lg border border-gray-200 shadow-sm'
             onError={(e) => {
               (e.target as HTMLImageElement).src = defaultImage;

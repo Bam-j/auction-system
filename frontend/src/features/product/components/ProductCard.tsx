@@ -39,6 +39,7 @@ const ProductCard = ({product}: ProductCardProps) => {
           <img
               src={getFullImageUrl(product.imageUrl) || defaultImage}
               alt={product.title}
+              loading='lazy'
               className='w-full h-full object-cover transform hover:scale-110 transition-transform duration-300'
               onError={(e) => {
                 (e.target as HTMLImageElement).src = defaultImage;
