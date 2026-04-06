@@ -9,6 +9,7 @@ import com.auction.backend.domain.user.service.UserQueryService;
 import com.auction.backend.global.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -26,6 +27,7 @@ public class NotificationCommandService {
     private final NotificationQueryService notificationQueryService;
 
     //알림 생성 및 전송
+    @Async
     public void send(User receiver, NotificationType type, String message, Long targetId) {
         log.info("Creating notification for user: {}, type: {}, message: {}", receiver.getUserId(), type, message);
 

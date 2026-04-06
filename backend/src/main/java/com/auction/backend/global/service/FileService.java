@@ -3,6 +3,7 @@ package com.auction.backend.global.service;
 import com.auction.backend.global.exception.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -17,6 +19,11 @@ public class FileService {
 
     @Value("${file.upload-dir:./uploads}")
     private String uploadDir;
+
+    @Async("taskExecutor")
+    public CompletableFuture<String> uploadFileAsync(MultipartFile file) {
+        return CompletableFuture.completedFuture(uploadFile(file));
+    }
 
     public String uploadFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {

@@ -11,10 +11,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.core.task.AsyncTaskExecutor;
+
+import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doAnswer;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -30,6 +37,9 @@ class FixedSaleControllerTest {
     @MockitoBean
     private FileService fileService;
 
+    @MockitoBean(name = "taskExecutor")
+    private AsyncTaskExecutor taskExecutor;
+
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
@@ -40,10 +50,16 @@ class FixedSaleControllerTest {
         MockMultipartFile image = new MockMultipartFile(
                 "image", "test.jpg", "image/jpeg", "test image".getBytes());
 
-        given(fileService.uploadFile(any())).willReturn("/uploads/test.jpg");
+        given(fileService.uploadFileAsync(any())).willReturn(CompletableFuture.completedFuture("/uploads/test.jpg"));
         given(fixedSaleCommandService.registerFixedSale(anyLong(), any(), anyString())).willReturn(1L);
 
-        mockMvc.perform(multipart("/api/v1/fixed-sales")
+        doAnswer(invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
+            return null;
+        }).when(taskExecutor).execute(any(Runnable.class));
+
+        MvcResult result = mockMvc.perform(multipart("/api/v1/fixed-sales")
                         .file(image)
                         .param("productName", "테스트 상품")
                         .param("description", "테스트 설명")
@@ -51,7 +67,10 @@ class FixedSaleControllerTest {
                         .param("price", "1000")
                         .param("stock", "10")
                         .with(csrf()))
-                .andExpect(status().isOk());
+                .andReturn();
+
+        mockMvc.perform(asyncDispatch(result))
+                .andExpect(status().isCreated());
     }
 
     @Test

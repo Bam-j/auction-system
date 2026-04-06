@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,16 +20,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Fixed Sales", description = "일반 판매 상품 API")
 @RestController
 @RequestMapping("/api/v1/fixed-sales")
 @RequiredArgsConstructor
-@lombok.extern.slf4j.Slf4j
+@Slf4j
 public class FixedSaleController {
 
     private final FixedSaleCommandService fixedSaleCommandService;
     private final FileService fileService;
+
+    @Qualifier("taskExecutor")
+    private final AsyncTaskExecutor taskExecutor;
 
     @Operation(summary = "일반 판매 상품 등록", description = "일반 판매(구매 요청 - 승인/거부) 방식으로 판매할 상품 등록")
     @ApiResponses(value = {
@@ -35,7 +42,7 @@ public class FixedSaleController {
             @ApiResponse(responseCode = "404", description = "등록 요청자를 찾을 수 없음")
     })
     @PostMapping
-    public ResponseEntity<Map<String, Long>> registerFixedSale(
+    public CompletableFuture<ResponseEntity<Map<String, Long>>> registerFixedSale(
             @Parameter(hidden = true)
             @AuthenticationPrincipal User principal,
             @Parameter(description = "일반 판매 상품 정보. " +
@@ -46,11 +53,12 @@ public class FixedSaleController {
         log.info("Received register request: productName={}, price={}, stock={}, category={}, hasImage={}",
                 request.getProductName(), request.getPrice(), request.getStock(), request.getCategory(), request.getImage() != null);
 
-        String imageUrl = fileService.uploadFile(request.getImage());
-
         Long userId = Long.parseLong(principal.getUsername());
-        Long fixedSaleId = fixedSaleCommandService.registerFixedSale(userId, request, imageUrl);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fixedSaleId", fixedSaleId));
+        return fileService.uploadFileAsync(request.getImage())
+                .thenApplyAsync(imageUrl -> {
+                    Long fixedSaleId = fixedSaleCommandService.registerFixedSale(userId, request, imageUrl);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("fixedSaleId", fixedSaleId));
+                }, taskExecutor);
     }
 }

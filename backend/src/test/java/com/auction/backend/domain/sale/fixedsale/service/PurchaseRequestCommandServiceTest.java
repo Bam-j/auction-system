@@ -7,6 +7,11 @@ import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.repository.UserRepository;
+import com.auction.backend.domain.user.service.UserQueryService;
+import com.auction.backend.domain.notification.service.NotificationCommandService;
+import com.auction.backend.domain.product.entity.Product;
+import com.auction.backend.global.exception.SelfPurchaseException;
+import com.auction.backend.domain.sale.fixedsale.exception.InsufficientStockException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,24 +24,29 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class PurchaseRequestQueryServiceTest {
+class PurchaseRequestCommandServiceTest {
 
     @InjectMocks
-    private PurchaseRequestQueryService purchaseRequestQueryService;
+    private PurchaseRequestCommandService purchaseRequestCommandService;
 
     @Mock
     private PurchaseRequestRepository purchaseRequestRepository;
 
     @Mock
-    private FixedSaleRepository fixedSaleRepository;
+    private FixedSaleQueryService fixedSaleQueryService;
 
     @Mock
-    private UserRepository userRepository;
+    private UserQueryService userQueryService;
+
+    @Mock
+    private NotificationCommandService notificationCommandService;
 
     @Test
     @DisplayName("구매 요청 성공")
@@ -50,23 +60,30 @@ class PurchaseRequestQueryServiceTest {
         request.setQuantity(2);
 
         User buyer = mock(User.class);
+        given(buyer.isVerified()).willReturn(true);
         
         User seller = mock(User.class);
         given(seller.getUserId()).willReturn(2L);
 
+        Product product = mock(Product.class);
+        given(product.getProductName()).willReturn("테스트 상품");
+        given(product.getProductId()).willReturn(100L);
+
         FixedSale fixedSale = FixedSale.builder()
                 .user(seller)
+                .product(product)
                 .stock(10)
                 .build();
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(buyer));
-        given(fixedSaleRepository.findById(fixedSaleId)).willReturn(Optional.of(fixedSale));
+        given(userQueryService.getUser(userId)).willReturn(buyer);
+        given(fixedSaleQueryService.getFixedSale(fixedSaleId)).willReturn(fixedSale);
 
         // when
-        purchaseRequestQueryService.createPurchaseRequest(userId, request);
+        purchaseRequestCommandService.createPurchaseRequest(userId, request);
 
         // then
         verify(purchaseRequestRepository).save(any(PurchaseRequest.class));
+        verify(notificationCommandService).send(any(), any(), anyString(), anyLong());
     }
 
     @Test
@@ -82,19 +99,19 @@ class PurchaseRequestQueryServiceTest {
 
         User user = mock(User.class);
         given(user.getUserId()).willReturn(userId);
+        given(user.isVerified()).willReturn(true);
 
         FixedSale fixedSale = FixedSale.builder()
                 .user(user)
                 .stock(10)
                 .build();
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(fixedSaleRepository.findById(fixedSaleId)).willReturn(Optional.of(fixedSale));
+        given(userQueryService.getUser(userId)).willReturn(user);
+        given(fixedSaleQueryService.getFixedSale(fixedSaleId)).willReturn(fixedSale);
 
         // when & then
-        RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> purchaseRequestQueryService.createPurchaseRequest(userId, request));
-        assertThat(exception.getMessage()).isEqualTo("자신의 상품은 구매할 수 없습니다.");
+        assertThrows(SelfPurchaseException.class, 
+                () -> purchaseRequestCommandService.createPurchaseRequest(userId, request));
     }
 
     @Test
@@ -109,6 +126,7 @@ class PurchaseRequestQueryServiceTest {
         request.setQuantity(20);
 
         User buyer = mock(User.class);
+        given(buyer.isVerified()).willReturn(true);
         
         User seller = mock(User.class);
         given(seller.getUserId()).willReturn(2L);
@@ -118,12 +136,11 @@ class PurchaseRequestQueryServiceTest {
                 .stock(10)
                 .build();
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(buyer));
-        given(fixedSaleRepository.findById(fixedSaleId)).willReturn(Optional.of(fixedSale));
+        given(userQueryService.getUser(userId)).willReturn(buyer);
+        given(fixedSaleQueryService.getFixedSale(fixedSaleId)).willReturn(fixedSale);
 
         // when & then
-        RuntimeException exception = assertThrows(RuntimeException.class, 
-                () -> purchaseRequestQueryService.createPurchaseRequest(userId, request));
-        assertThat(exception.getMessage()).isEqualTo("재고가 부족합니다.");
+        assertThrows(InsufficientStockException.class, 
+                () -> purchaseRequestCommandService.createPurchaseRequest(userId, request));
     }
 }

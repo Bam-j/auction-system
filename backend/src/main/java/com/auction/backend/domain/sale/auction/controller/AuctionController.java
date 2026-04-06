@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Tag(name = "Auction", description = "경매 API")
 @Slf4j
@@ -29,6 +32,9 @@ public class AuctionController {
     private final AuctionCommandService auctionCommandService;
     private final FileService fileService;
 
+    @Qualifier("taskExecutor")
+    private final AsyncTaskExecutor taskExecutor;
+
     @Operation(summary = "경매 상품 등록", description = "경매 방식으로 판매 상품을 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "경매로 상품 등록 성공"),
@@ -37,7 +43,7 @@ public class AuctionController {
             @ApiResponse(responseCode = "500", description = "상품 이미지 등록 실패")
     })
     @PostMapping
-    public ResponseEntity<Map<String, Long>> registerAuction(
+    public CompletableFuture<ResponseEntity<Map<String, Long>>> registerAuction(
             @Parameter(hidden = true)
             @AuthenticationPrincipal User principal,
             @Parameter(description = "경매 상품 정보. " +
@@ -48,11 +54,12 @@ public class AuctionController {
 
         log.info("Auction POST request received for product: {}", request.getProductName());
 
-        String imageUrl = fileService.uploadFile(request.getImage());
-
         Long userId = Long.parseLong(principal.getUsername());
-        Long auctionId = auctionCommandService.registerAuction(userId, request, imageUrl);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("auctionId", auctionId));
+        return fileService.uploadFileAsync(request.getImage())
+                .thenApplyAsync(imageUrl -> {
+                    Long auctionId = auctionCommandService.registerAuction(userId, request, imageUrl);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("auctionId", auctionId));
+                }, taskExecutor);
     }
 }

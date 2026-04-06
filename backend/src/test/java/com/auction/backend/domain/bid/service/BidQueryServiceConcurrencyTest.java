@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BidQueryServiceConcurrencyTest {
 
     @Autowired
-    private BidQueryService bidQueryService;
+    private BidCommandService bidCommandService;
 
     @Autowired
     private UserRepository userRepository;
@@ -133,7 +133,7 @@ class BidQueryServiceConcurrencyTest {
             executorService.submit(() -> {
                 try {
                     latch.await();
-                    bidQueryService.createBid(bidder.getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
+                    bidCommandService.createBid(bidder.getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();
