@@ -16,10 +16,13 @@ import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import CommonFilterBar from '@/components/ui/CommonFilterBar';
 import ProductManagementModal from '@/features/product/components/ProductManagementModal';
-import {getMyProducts, endSale} from '@/features/product/api/productApi';
+import {endSale} from '@/features/product/api/productApi';
 import {CATEGORY_FILTER_CONFIG, STATUS_FILTER_CONFIG, mapFilterParams} from '@/constants/filterOptions';
 import {SortConfig} from '@/types/ui';
 import {Product} from '@/types/product';
+
+//도메인 내부 api
+import {getMyProducts} from '../api/mypageApi';
 
 const TABLE_HEAD = ['ID', '상품명', '등록일', '판매가', '재고', '상태', '상품 상세', '관리'];
 

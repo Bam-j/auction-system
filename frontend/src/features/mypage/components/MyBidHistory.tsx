@@ -11,7 +11,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import CommonFilterBar from '@/components/ui/CommonFilterBar';
 import ProductDetailModal from '@/features/product/components/ProductDetailModal';
-import {getMyBids} from '@/features/product/api/productApi';
+import {getMyBids} from '../api/mypageApi';
 import {
   CATEGORY_FILTER_CONFIG, BID_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
   mapFilterParams

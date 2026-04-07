@@ -14,9 +14,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import StatusBadge from '@/components/ui/StatusBadge';
 import CommonFilterBar from '@/components/ui/CommonFilterBar';
 import ProductManagementModal from '@/features/product/components/ProductManagementModal';
-import {
-  getIncomingPurchaseRequests, approvePurchaseRequest, rejectPurchaseRequest
-} from '@/features/product/api/productApi';
+import {approvePurchaseRequest, rejectPurchaseRequest} from '@/features/product/api/productApi';
 import {
   CATEGORY_FILTER_CONFIG,
   PURCHASE_REQUEST_STATUS_FILTER_CONFIG,
@@ -24,6 +22,9 @@ import {
   mapFilterParams
 } from '@/constants/filterOptions';
 import {SortConfig} from '@/types/ui';
+
+//도메인 내부 api
+import {getIncomingPurchaseRequests} from '../api/mypageApi';
 
 interface IncomingRequest {
   id: number;

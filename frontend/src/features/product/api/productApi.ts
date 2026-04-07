@@ -95,21 +95,6 @@ export const getProductDetail = (productId: number) => {
   return api.get<Product>(`/products/${productId}`);
 };
 
-// 내 등록 상품 조회
-export const getMyProducts = (params?: SearchParams) => {
-  return api.get('/products/me', {params});
-};
-
-// 내 구매 요청 내역 조회
-export const getMyPurchaseRequests = (params?: SearchParams) => {
-  return api.get('/purchase-requests/me', {params});
-};
-
-// 내 즉시 구매 요청 내역 조회 (보낸 것 + 받은 것)
-export const getMyInstantBuyRequests = (params?: SearchParams) => {
-  return api.get('/instant-buy-requests/me', {params});
-};
-
 // 모든 즉시 구매 요청 조회 (관리자용)
 export const getAllInstantBuyRequests = (params?: SearchParams) => {
   return api.get('/instant-buy-requests/admin', {params});
@@ -125,19 +110,9 @@ export const rejectInstantBuy = (requestId: number) => {
   return api.post(`/instant-buy-requests/${requestId}/reject`);
 };
 
-// 내 입찰 내역 조회
-export const getMyBids = (params?: SearchParams) => {
-  return api.get('/bids/me', {params});
-};
-
 // 내 상품 판매 종료
 export const endSale = (productId: number) => {
   return api.post(`/products/${productId}/end`);
-};
-
-// 내 상품에 대한 구매 요청 조회 (판매자용)
-export const getIncomingPurchaseRequests = (params?: SearchParams) => {
-  return api.get('/purchase-requests/seller', {params});
 };
 
 // 구매 요청 수락

@@ -3,14 +3,23 @@ import {useNavigate} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 
 import {Card, CardHeader, CardBody, Typography, Input, Button} from '@material-tailwind/react';
+import {successAlert, errorAlert, warningAlert, infoAlert} from '@/utils/swalUtils';
 
 //절대 경로 모듈
-import api from '@/api/axiosInstance';
 import CommonModal from '@/components/ui/CommonModal';
 import {checkNickname} from '@/features/auth/api/authApi';
 import useAuthStore from '@/stores/useAuthStore';
 import {VALIDATION_PATTERNS, VALIDATION_MESSAGES} from '@/utils/validation';
-import {successAlert, errorAlert, warningAlert, infoAlert} from '@/utils/swalUtils';
+
+//도메인 내부 api
+import {
+  updateMyNickname,
+  updateMyPassword,
+  sendEmailVerificationCode,
+  verifyEmailCode,
+  updateEmailVerificationStatus,
+  deleteMyAccount
+} from '../api/mypageApi';
 
 interface ProfileFormValues {
   nickname: string;
@@ -99,7 +108,7 @@ const MyProfileEdit: React.FC = () => {
     }
 
     try {
-      await api.patch(`/users/me/nickname`, {newNickname: data.nickname});
+      await updateMyNickname(data.nickname);
       updateNickname(data.nickname);
       successAlert('성공', '닉네임이 성공적으로 변경되었습니다.');
     } catch (error: any) {
@@ -110,7 +119,7 @@ const MyProfileEdit: React.FC = () => {
 
   const onPasswordUpdate = async (data: ProfileFormValues) => {
     try {
-      await api.patch(`/users/me/password`, {newPassword: data.password});
+      await updateMyPassword(data.password);
       successAlert('성공', '비밀번호가 성공적으로 변경되었습니다.');
       setValue('password', '');
       setValue('confirmPassword', '');
@@ -129,10 +138,11 @@ const MyProfileEdit: React.FC = () => {
 
     setLoading(true);
     try {
-      await api.post('/email/verification', {email});
+      await sendEmailVerificationCode(email);
       setIsCodeSent(true);
       successAlert('발송 완료', '인증 코드가 이메일로 발송되었습니다.');
     } catch (error: any) {
+      console.error('인증 코드 발송 실패:', error);
       const msg = error.response?.data?.message || '이미 가입된 이메일이거나 발송에 실패했습니다.';
       errorAlert('발송 실패', msg);
     } finally {
@@ -150,9 +160,9 @@ const MyProfileEdit: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await api.post('/email/verification/check', {email, code});
+      const response = await verifyEmailCode(email, code);
       if (response.data) {
-        await api.patch('/users/me/verify-email', {email});
+        await updateEmailVerificationStatus(email);
         updateEmailVerification(email);
         successAlert('인증 성공', '이메일 인증이 완료되었습니다.');
         setIsCodeSent(false);
@@ -170,9 +180,7 @@ const MyProfileEdit: React.FC = () => {
 
   const onDeleteAccount = async (data: ProfileFormValues) => {
     try {
-      await api.delete(`/users/me`, {
-        data: {password: data.deletePassword}
-      });
+      await deleteMyAccount(data.deletePassword);
 
       successAlert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.')
           .then(() => {
@@ -181,6 +189,7 @@ const MyProfileEdit: React.FC = () => {
             navigate('/');
           });
     } catch (error: any) {
+      console.error('탈퇴 실패:', error);
       const serverMessage = error.response?.data?.message || '비밀번호가 틀렸거나 탈퇴에 실패했습니다.';
       errorAlert('탈퇴 실패', serverMessage);
     }
@@ -296,7 +305,8 @@ const MyProfileEdit: React.FC = () => {
               </div>
 
               <div className='flex justify-end mt-2'>
-                <Button variant='gradient' color='blue' type='submit' disabled={!passwordValue || !!errors.password || !!errors.confirmPassword}>
+                <Button variant='gradient' color='blue' type='submit'
+                        disabled={!passwordValue || !!errors.password || !!errors.confirmPassword}>
                   비밀번호 변경하기
                 </Button>
               </div>

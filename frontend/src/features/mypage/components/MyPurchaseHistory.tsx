@@ -14,7 +14,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import CommonFilterBar from '@/components/ui/CommonFilterBar';
 import StatusBadge from '@/components/ui/StatusBadge';
-import {getMyPurchaseRequests, cancelPurchaseRequest} from '@/features/product/api/productApi';
+import {cancelPurchaseRequest} from '@/features/product/api/productApi';
 import ProductDetailModal from '@/features/product/components/ProductDetailModal';
 import {
   CATEGORY_FILTER_CONFIG, PURCHASE_REQUEST_STATUS_FILTER_CONFIG, SEARCH_TYPE_FILTER_CONFIG,
@@ -22,6 +22,9 @@ import {
 } from '@/constants/filterOptions';
 import {SortConfig} from '@/types/ui';
 import {Product} from '@/types/product';
+
+//도메인 내부 api
+import {getMyPurchaseRequests} from '../api/mypageApi';
 
 interface PurchaseRequest {
   id: number;
