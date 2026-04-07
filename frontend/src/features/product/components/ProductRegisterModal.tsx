@@ -1,18 +1,19 @@
 import {useState, ChangeEvent, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {useForm, FormProvider} from 'react-hook-form';
 
 import {Button, Typography, Textarea} from '@material-tailwind/react';
 import {PhotoIcon} from '@heroicons/react/24/outline';
 
 //절대 경로 모듈
 import CommonModal from '@/components/ui/CommonModal';
+import {getMe} from '@/features/auth/api/authApi';
 import {successAlert, errorAlert, warningAlert} from '@/utils/swalUtils';
 import {compressAndConvertImage} from '@/utils/imageUtils';
 import useAuthStore from '@/stores/useAuthStore';
 
 //도메인 내부 api, 자식 컴포넌트
 import {registerProduct, ProductRegisterData} from '../api/productApi';
-import {getMe} from '@/features/auth/api/authApi';
 import CommonProductForm from './forms/CommonProductForm';
 import FixedProductForm from './forms/FixedProductForm';
 import AuctionProductForm from './forms/AuctionProductForm';
@@ -21,6 +22,34 @@ const ProductRegisterModal = () => {
   const navigate = useNavigate();
   const {user, setUser} = useAuthStore();
   const [step, setStep] = useState(1);
+
+  const methods = useForm<ProductRegisterData>({
+    defaultValues: {
+      type: 'FIXED',
+      product_name: '',
+      description: '',
+      category: '',
+      image: null,
+      price: 0,
+      stock: 0,
+      ended_at: '',
+      start_price: 0,
+      min_bid_increment: 0,
+      instant_purchase_price: 0,
+      price_unit: 'EMERALD',
+    },
+  });
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: {errors},
+  } = methods;
+
+  const productType = watch('type');
+  const image = watch('image');
 
   //컴포넌트 마운트 시 최신 유저 정보 확인
   useEffect(() => {
@@ -36,21 +65,6 @@ const ProductRegisterModal = () => {
     };
     fetchUser();
   }, [setUser]);
-
-  const [formData, setFormData] = useState<ProductRegisterData>({
-    type: 'FIXED',
-    product_name: '',
-    description: '',
-    category: '',
-    image: null,
-    price: 0,
-    stock: 0,
-    ended_at: '',
-    start_price: 0,
-    min_bid_increment: 0,
-    instant_purchase_price: 0,
-    price_unit: 'EMERALD',
-  });
 
   const handleClose = () => navigate(-1);
 
@@ -71,55 +85,20 @@ const ProductRegisterModal = () => {
     return true;
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const {name, value} = e.target;
-    setFormData((prev) => ({...prev, [name]: value}));
-  };
-
-  const handleCategoryChange = (val: string | undefined) => setFormData((prev) => ({...prev, category: val || ''}));
-
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({...prev, image: file}));
+      setValue('image', file);
     }
   };
 
-  const handleSubmit = async () => {
-    if (formData.type === 'FIXED') {
-      if (Number(formData.stock) < 1) {
-        errorAlert('입력 오류', '재고 수량은 1개 이상이어야 합니다.');
-        return;
-      }
-    }
-
-    if (formData.type === 'AUCTION') {
-      const now = new Date();
-      const endedAt = new Date(formData.ended_at || '');
-      if (endedAt <= now) {
-        errorAlert('입력 오류', '경매 마감일은 현재 시간 이후여야 합니다.');
-        return;
-      }
-      if (Number(formData.start_price) < 0) {
-        errorAlert('입력 오류', '경매 시작가는 0 이상이어야 합니다.');
-        return;
-      }
-      if (Number(formData.min_bid_increment) < 1) {
-        errorAlert('입력 오류', '최소 입찰 단위는 1 이상이어야 합니다.');
-        return;
-      }
-      if (formData.instant_purchase_price && Number(formData.instant_purchase_price) < 0) {
-        errorAlert('입력 오류', '즉시 구매가는 0 이상이어야 합니다.');
-        return;
-      }
-    }
-
+  const onSubmit = async (data: ProductRegisterData) => {
     try {
       //이미지 최적화
-      let finalData = {...formData};
-      if (formData.image) {
+      let finalData = {...data};
+      if (data.image) {
         try {
-          const optimized = await compressAndConvertImage(formData.image);
+          const optimized = await compressAndConvertImage(data.image);
           finalData.image = optimized;
         } catch (imgError) {
           console.error('이미지 최적화 실패:', imgError);
@@ -154,7 +133,7 @@ const ProductRegisterModal = () => {
                 className='h-24 text-lg normal-case bg-primary hover:bg-primary-dark text-white'
                 onClick={() => {
                   if (!checkVerification()) return;
-                  setFormData({...formData, type: 'FIXED'});
+                  setValue('type', 'FIXED');
                   setStep(2);
                 }}
             >
@@ -170,7 +149,7 @@ const ProductRegisterModal = () => {
                 className='h-24 text-lg normal-case bg-warning hover:bg-warning-dark text-white'
                 onClick={() => {
                   if (!checkVerification()) return;
-                  setFormData({...formData, type: 'AUCTION'});
+                  setValue('type', 'AUCTION');
                   setStep(2);
                 }}
             >
@@ -190,7 +169,7 @@ const ProductRegisterModal = () => {
       <CommonModal
           open={true}
           handleOpen={handleClose}
-          title={formData.type === 'FIXED' ? '일반 판매 상품 정보 입력' : '경매 물품 정보 입력'}
+          title={productType === 'FIXED' ? '일반 판매 상품 정보 입력' : '경매 물품 정보 입력'}
           size='lg'
           footer={
             <div className='flex w-full items-center justify-between'>
@@ -201,70 +180,71 @@ const ProductRegisterModal = () => {
                 <Button variant='text' color='blue-gray' onClick={handleClose}>
                   취소
                 </Button>
-                <Button variant='gradient' color='green' onClick={handleSubmit}>
+                <Button variant='gradient' color='green' onClick={handleSubmit(onSubmit)}>
                   등록하기
                 </Button>
               </div>
             </div>
           }
       >
-        <div className='flex flex-col gap-6 p-4 max-h-[65vh] overflow-y-auto pr-4'>
-          {/* 이미지 업로드 섹션 */}
-          <div className='flex flex-col gap-3'>
-            <Typography variant='h6' color='blue-gray' className='flex items-center gap-2'>
-              <PhotoIcon className='h-5 w-5'/> 상품 대표 이미지
-            </Typography>
-            <div className='flex items-center gap-4 border border-blue-gray-200 rounded-lg p-3 bg-gray-50/50'>
-              <input
-                  type='file'
-                  accept='image/*'
-                  onChange={handleImageChange}
-                  className={`
-                    w-full
-                    text-sm text-gray-500
-                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
-                    file:bg-primary file:text-white hover:file:bg-primary-dark
-                    cursor-pointer
-                  `}
-              />
+        <FormProvider {...methods}>
+          <div className='flex flex-col gap-6 p-4 max-h-[65vh] overflow-y-auto pr-4'>
+            <div className='flex flex-col gap-3'>
+              <Typography variant='h6' color='blue-gray' className='flex items-center gap-2'>
+                <PhotoIcon className='h-5 w-5'/> 상품 대표 이미지
+              </Typography>
+              <div className='flex items-center gap-4 border border-blue-gray-200 rounded-lg p-3 bg-gray-50/50'>
+                <input
+                    type='file'
+                    accept='image/*'
+                    onChange={handleImageChange}
+                    className={`
+                      w-full
+                      text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
+                      file:bg-primary file:text-white hover:file:bg-primary-dark
+                      cursor-pointer
+                    `}
+                />
+              </div>
+              {image && (
+                  <Typography variant='small' color='green' className='ml-1'>
+                    선택된 파일: {image.name}
+                  </Typography>
+              )}
             </div>
-            {formData.image && (
-                <Typography variant='small' color='green' className='ml-1'>
-                  선택된 파일: {formData.image.name}
-                </Typography>
+
+            <hr className='border-gray-200'/>
+
+            <CommonProductForm />
+
+            {productType === 'FIXED' ? (
+                <FixedProductForm />
+            ) : (
+                <AuctionProductForm />
             )}
+
+            <hr className='border-gray-200'/>
+
+            <div className='flex flex-col gap-3'>
+              <Typography variant='h6' color='blue-gray'>
+                상품 상세 설명
+              </Typography>
+              <div>
+                <Textarea
+                    label='상품의 상태, 옵션 등을 자세히 적어주세요.'
+                    size='lg'
+                    className='min-h-[120px]'
+                    error={!!errors.description}
+                    {...register('description', {required: '상세 설명을 입력해주세요.'})}
+                />
+                {errors.description && (
+                    <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.description.message}</p>
+                )}
+              </div>
+            </div>
           </div>
-
-          <hr className='border-gray-200'/>
-
-          <CommonProductForm
-              formData={formData}
-              handleChange={handleChange}
-              handleCategoryChange={handleCategoryChange}
-          />
-
-          {formData.type === 'FIXED' ? (
-              <FixedProductForm formData={formData} handleChange={handleChange}/>
-          ) : (
-              <AuctionProductForm formData={formData} handleChange={handleChange}/>
-          )}
-
-          <hr className='border-gray-200'/>
-
-          <div className='flex flex-col gap-3'>
-            <Typography variant='h6' color='blue-gray'>
-              상품 상세 설명
-            </Typography>
-            <Textarea
-                label='상품의 상태, 옵션 등을 자세히 적어주세요.'
-                name='description'
-                value={formData.description}
-                onChange={handleChange}
-                size='lg'
-                className='min-h-[120px]'
-            />
-          </div>
-        </div>
+        </FormProvider>
       </CommonModal>
   );
 };

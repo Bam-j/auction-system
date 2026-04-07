@@ -19,6 +19,17 @@ export interface AuthState {
   updateEmailVerification: (email: string) => void;
 }
 
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface SignupRequest {
+  username: string;
+  nickname: string;
+  password: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
   tokenType: string;

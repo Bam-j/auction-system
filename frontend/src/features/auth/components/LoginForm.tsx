@@ -1,38 +1,41 @@
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
+import {useForm} from 'react-hook-form';
 
 import {Card, CardBody, CardFooter, Typography, Input, Button} from '@material-tailwind/react';
-import {errorAlert, warningAlert} from '@/utils/swalUtils';
+import {errorAlert} from '@/utils/swalUtils';
 
 //절대 경로 모듈
 import CommonModal from '@/components/ui/CommonModal';
+import {User, LoginRequest} from '@/types/auth';
 
 //auth 도메인 내부 api
 import {loginUser} from '../api/authApi';
 
-import {User} from '@/types/auth';
 
 interface LoginFormProps {
   onLoginSuccess: (user: User, accessToken: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<LoginRequest>({
+    defaultValues: {
+      username: '',
+      password: '',
+    },
+  });
+
   const [openContactModal, setOpenContactModal] = useState(false);
 
   const handleOpenContact = () => setOpenContactModal(!openContactModal);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!username || !password) {
-      warningAlert('입력 오류', '아이디와 비밀번호를 모두 입력해주세요.');
-      return;
-    }
-
+  const onSubmit = async (data: LoginRequest) => {
     try {
-      const res = await loginUser({username, password});
+      const res = await loginUser(data);
       const {user, accessToken} = res.data;
 
       onLoginSuccess(user, accessToken);
@@ -51,23 +54,37 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
             로그인
           </Typography>
 
-          <form onSubmit={handleLogin} className='mt-4 mb-2 w-80 max-w-screen-lg sm:w-96'>
+          <form onSubmit={handleSubmit(onSubmit)} className='mt-4 mb-2 w-80 max-w-screen-lg sm:w-96'>
             <CardBody className='flex flex-col gap-6'>
-              <Input
-                  size='lg'
-                  label='아이디'
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  crossOrigin={undefined}
-              />
-              <Input
-                  type='password'
-                  size='lg'
-                  label='비밀번호'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  crossOrigin={undefined}
-              />
+              <div>
+                <Input
+                    size='lg'
+                    label='아이디'
+                    error={!!errors.username}
+                    crossOrigin={undefined}
+                    {...register('username', {required: '아이디를 입력해주세요.'})}
+                />
+                {errors.username && (
+                    <Typography variant='small' color='red' className='mt-1 text-xs ml-1'>
+                      ⚠️ {errors.username.message}
+                    </Typography>
+                )}
+              </div>
+              <div>
+                <Input
+                    type='password'
+                    size='lg'
+                    label='비밀번호'
+                    error={!!errors.password}
+                    crossOrigin={undefined}
+                    {...register('password', {required: '비밀번호를 입력해주세요.'})}
+                />
+                {errors.password && (
+                    <Typography variant='small' color='red' className='mt-1 text-xs ml-1'>
+                      ⚠️ {errors.password.message}
+                    </Typography>
+                )}
+              </div>
             </CardBody>
 
             <CardFooter className='pt-0'>

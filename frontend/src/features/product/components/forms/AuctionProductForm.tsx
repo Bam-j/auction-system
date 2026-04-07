@@ -1,4 +1,4 @@
-import {ChangeEvent} from 'react';
+import {useFormContext} from 'react-hook-form';
 
 import {Input, Radio, Typography} from '@material-tailwind/react';
 
@@ -10,12 +10,12 @@ const PRICE_UNITS = [
   {value: 'EMERALD_COIN', label: '에메랄드 주화'},
 ];
 
-interface AuctionProductFormProps {
-  formData: ProductRegisterData;
-  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}
+const AuctionProductForm = () => {
+  const {
+    register,
+    formState: {errors},
+  } = useFormContext<ProductRegisterData>();
 
-const AuctionProductForm = ({formData, handleChange}: AuctionProductFormProps) => {
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   const minDateTime = now.toISOString().slice(0, 16);
@@ -23,47 +23,76 @@ const AuctionProductForm = ({formData, handleChange}: AuctionProductFormProps) =
   return (
       <div className='flex flex-col gap-6'>
         <div className='grid grid-cols-2 gap-6'>
-          <Input
-              type='datetime-local'
-              label='경매 마감일'
-              name='ended_at'
-              value={formData.ended_at || ''}
-              onChange={handleChange}
-              min={minDateTime}
-              containerProps={{className: 'min-w-[72px]'}}
-              crossOrigin=''
-          />
-          <Input
-              type='number'
-              label='경매 시작가'
-              name='start_price'
-              value={formData.start_price || ''}
-              onChange={handleChange}
-              min='0'
-              crossOrigin=''
-          />
+          <div>
+            <Input
+                type='datetime-local'
+                label='경매 마감일'
+                min={minDateTime}
+                error={!!errors.ended_at}
+                containerProps={{className: 'min-w-[72px]'}}
+                crossOrigin=''
+                {...register('ended_at', {
+                  required: '경매 마감일을 입력해주세요.',
+                  validate: (value) => {
+                    const selected = new Date(value || '');
+                    return selected > new Date() || '현재 시간 이후여야 합니다.';
+                  },
+                })}
+            />
+            {errors.ended_at && (
+                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.ended_at.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+                type='number'
+                label='경매 시작가'
+                min='0'
+                error={!!errors.start_price}
+                crossOrigin=''
+                {...register('start_price', {
+                  required: '시작가를 입력해주세요.',
+                  min: {value: 0, message: '0 이상이어야 합니다.'},
+                })}
+            />
+            {errors.start_price && (
+                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.start_price.message}</p>
+            )}
+          </div>
         </div>
 
         <div className='grid grid-cols-2 gap-6'>
-          <Input
-              type='number'
-              label='최소 입찰 단위'
-              name='min_bid_increment'
-              value={formData.min_bid_increment || ''}
-              onChange={handleChange}
-              min='1'
-              crossOrigin=''
-          />
-          <Input
-              type='number'
-              label='즉시 구매가 (선택)'
-              name='instant_purchase_price'
-              value={formData.instant_purchase_price || ''}
-              onChange={handleChange}
-              min='0'
-              crossOrigin=''
-          />
-
+          <div>
+            <Input
+                type='number'
+                label='최소 입찰 단위'
+                min='1'
+                error={!!errors.min_bid_increment}
+                crossOrigin=''
+                {...register('min_bid_increment', {
+                  required: '최소 입찰 단위를 입력해주세요.',
+                  min: {value: 1, message: '1 이상이어야 합니다.'},
+                })}
+            />
+            {errors.min_bid_increment && (
+                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.min_bid_increment.message}</p>
+            )}
+          </div>
+          <div>
+            <Input
+                type='number'
+                label='즉시 구매가 (선택)'
+                min='0'
+                error={!!errors.instant_purchase_price}
+                crossOrigin=''
+                {...register('instant_purchase_price', {
+                  min: {value: 0, message: '0 이상이어야 합니다.'},
+                })}
+            />
+            {errors.instant_purchase_price && (
+                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.instant_purchase_price.message}</p>
+            )}
+          </div>
         </div>
 
         <div className='border border-gray-300 rounded-lg p-4'>
@@ -74,15 +103,12 @@ const AuctionProductForm = ({formData, handleChange}: AuctionProductFormProps) =
             {PRICE_UNITS.map((unit) => (
                 <Radio
                     key={unit.value}
-                    name='price_unit'
                     label={unit.label}
                     value={unit.value}
-                    checked={formData.price_unit === unit.value}
-                    onChange={handleChange}
                     color='blue'
                     crossOrigin=''
+                    {...register('price_unit')}
                 />
-
             ))}
           </div>
         </div>

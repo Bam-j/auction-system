@@ -1,58 +1,54 @@
 import {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
+import {useForm} from 'react-hook-form';
 
 import {Card, CardBody, CardFooter, Typography, Input, Button} from '@material-tailwind/react';
 import {successAlert, errorAlert, warningAlert} from '@/utils/swalUtils';
 
 //절대 경로 모듈
-import {validateField} from '@/utils/validation';
+import {VALIDATION_PATTERNS, VALIDATION_MESSAGES} from '@/utils/validation';
+import {SignupRequest} from '@/types/auth';
 
 //auth 도메인 내부 api
 import {signup, checkUsername, checkNickname} from '../api/authApi';
 
+interface SignUpFormValues extends SignupRequest {
+  confirmPassword: string;
+}
+
 const SignupForm: React.FC = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    username: '',
-    nickname: '',
-    password: '',
-    confirmPassword: '',
+  const {
+    register,
+    handleSubmit,
+    watch,
+    getValues,
+    formState: {errors},
+  } = useForm<SignUpFormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      username: '',
+      nickname: '',
+      password: '',
+      confirmPassword: '',
+    },
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isUsernameChecked, setIsUsernameChecked] = useState(false);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = e.target;
-    const newData = {...formData, [name]: value};
-    setFormData(newData);
-
-    const errorMsg = validateField(name, value, newData);
-    setErrors((prev) => ({...prev, [name]: errorMsg}));
-
-    if (name === 'username') {
-      setIsUsernameChecked(false);
-    }
-    if (name === 'nickname') {
-      setIsNicknameChecked(false);
-    }
-
-    if (name === 'password' && newData.confirmPassword) {
-      const confirmMsg = validateField('confirmPassword', newData.confirmPassword, newData);
-      setErrors((prev) => ({...prev, confirmPassword: confirmMsg}));
-    }
-  };
+  const username = watch('username');
+  const nickname = watch('nickname');
 
   const handleCheckUsername = async () => {
-    if (errors.username || !formData.username) {
+    const currentUsername = getValues('username');
+    if (errors.username || !currentUsername) {
       warningAlert('알림', '유효한 아이디를 먼저 입력해주세요.');
       return;
     }
     try {
-      await checkUsername(formData.username);
-
+      await checkUsername(currentUsername);
       successAlert('확인 완료', '사용 가능한 아이디입니다.');
       setIsUsernameChecked(true);
     } catch (error: any) {
@@ -63,13 +59,13 @@ const SignupForm: React.FC = () => {
   };
 
   const handleCheckNickname = async () => {
-    if (errors.nickname || !formData.nickname) {
+    const currentNickname = getValues('nickname');
+    if (errors.nickname || !currentNickname) {
       warningAlert('알림', '유효한 닉네임을 먼저 입력해주세요.');
       return;
     }
     try {
-      await checkNickname(formData.nickname);
-
+      await checkNickname(currentNickname);
       successAlert('확인 완료', '사용 가능한 닉네임입니다.');
       setIsNicknameChecked(true);
     } catch (error: any) {
@@ -79,35 +75,17 @@ const SignupForm: React.FC = () => {
     }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: SignUpFormValues) => {
     if (!isUsernameChecked || !isNicknameChecked) {
       warningAlert('중복 확인 필요', '아이디와 닉네임 중복 확인을 완료해주세요.');
       return;
     }
 
-    const usernameError = validateField('username', formData.username);
-    const nicknameError = validateField('nickname', formData.nickname);
-    const passwordError = validateField('password', formData.password);
-    const confirmError = validateField('confirmPassword', formData.confirmPassword, formData);
-
-    if (usernameError || nicknameError || passwordError || confirmError ||
-        !formData.username || !formData.nickname || !formData.password) {
-      setErrors({
-        username: usernameError,
-        nickname: nicknameError,
-        password: passwordError,
-        confirmPassword: confirmError
-      });
-      return;
-    }
-
     try {
       const requestData = {
-        username: formData.username,
-        nickname: formData.nickname,
-        password: formData.password
+        username: data.username,
+        nickname: data.nickname,
+        password: data.password
       };
 
       await signup(requestData);
@@ -129,66 +107,137 @@ const SignupForm: React.FC = () => {
           회원가입
         </Typography>
 
-        <form onSubmit={handleSignup} className='mt-4 mb-2 w-80 max-w-screen-lg sm:w-96'>
+        <form onSubmit={handleSubmit(onSubmit)} className='mt-4 mb-2 w-80 max-w-screen-lg sm:w-96'>
           <CardBody className='flex flex-col gap-4'>
             <div>
               <div className='flex gap-2'>
-                <Input label='아이디' size='lg' name='username' value={formData.username} onChange={handleChange}
-                       error={!!errors.username} crossOrigin={undefined}/>
-                <Button variant='outlined' size='sm' color='blue' className='shrink-0'
-                        onClick={handleCheckUsername} disabled={!formData.username || !!errors.username}>
+                <Input
+                    label='아이디'
+                    size='lg'
+                    error={!!errors.username}
+                    crossOrigin={undefined}
+                    {...register('username', {
+                      required: '아이디를 입력해주세요.',
+                      pattern: {
+                        value: VALIDATION_PATTERNS.username,
+                        message: VALIDATION_MESSAGES.username,
+                      },
+                      onChange: () => setIsUsernameChecked(false),
+                    })}
+                />
+                <Button
+                    variant='outlined'
+                    size='sm'
+                    color='blue'
+                    className='shrink-0'
+                    onClick={handleCheckUsername}
+                    disabled={!username || !!errors.username}
+                >
                   중복 확인
                 </Button>
               </div>
               {errors.username ? (
-                  <Typography variant='small' color='red'
-                              className='mt-1 text-xs ml-1 flex items-center gap-1'>⚠️ {errors.username}</Typography>
+                  <Typography variant='small' color='red' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ⚠️ {errors.username.message}
+                  </Typography>
               ) : (
                   isUsernameChecked &&
-                  <Typography variant='small' color='green' className='mt-1 text-xs ml-1 flex items-center gap-1'>✅ 확인
-                                                                                                                  완료</Typography>
+                  <Typography variant='small' color='green' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ✅ 확인 완료
+                  </Typography>
               )}
             </div>
 
             <div>
               <div className='flex gap-2'>
-                <Input label='닉네임' size='lg' name='nickname' value={formData.nickname} onChange={handleChange}
-                       error={!!errors.nickname} crossOrigin={undefined}/>
-                <Button variant='outlined' size='sm' color='blue' className='shrink-0'
-                        onClick={handleCheckNickname} disabled={!formData.nickname || !!errors.nickname}>
+                <Input
+                    label='닉네임'
+                    size='lg'
+                    error={!!errors.nickname}
+                    crossOrigin={undefined}
+                    {...register('nickname', {
+                      required: '닉네임을 입력해주세요.',
+                      pattern: {
+                        value: VALIDATION_PATTERNS.nickname,
+                        message: VALIDATION_MESSAGES.nickname,
+                      },
+                      onChange: () => setIsNicknameChecked(false),
+                    })}
+                />
+                <Button
+                    variant='outlined'
+                    size='sm'
+                    color='blue'
+                    className='shrink-0'
+                    onClick={handleCheckNickname}
+                    disabled={!nickname || !!errors.nickname}
+                >
                   중복 확인
                 </Button>
               </div>
               {errors.nickname ? (
-                  <Typography variant='small' color='red'
-                              className='mt-1 text-xs ml-1 flex items-center gap-1'>⚠️ {errors.nickname}</Typography>
+                  <Typography variant='small' color='red' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ⚠️ {errors.nickname.message}
+                  </Typography>
               ) : (
                   isNicknameChecked &&
-                  <Typography variant='small' color='green' className='mt-1 text-xs ml-1 flex items-center gap-1'>✅ 확인
-                                                                                                                  완료</Typography>
+                  <Typography variant='small' color='green' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ✅ 확인 완료
+                  </Typography>
               )}
             </div>
 
             <div>
-              <Input label='비밀번호' size='lg' type='password' name='password' value={formData.password}
-                     onChange={handleChange} error={!!errors.password} crossOrigin={undefined}/>
-              {errors.password && <Typography variant='small' color='red'
-                                              className='mt-1 text-xs ml-1 flex items-center gap-1'>⚠️ {errors.password}</Typography>}
+              <Input
+                  label='비밀번호'
+                  size='lg'
+                  type='password'
+                  error={!!errors.password}
+                  crossOrigin={undefined}
+                  {...register('password', {
+                    required: '비밀번호를 입력해주세요.',
+                    pattern: {
+                      value: VALIDATION_PATTERNS.password,
+                      message: VALIDATION_MESSAGES.password,
+                    },
+                  })}
+              />
+              {errors.password && (
+                  <Typography variant='small' color='red' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ⚠️ {errors.password.message}
+                  </Typography>
+              )}
             </div>
+
             <div>
-              <Input label='비밀번호 확인' size='lg' type='password' name='confirmPassword' value={formData.confirmPassword}
-                     onChange={handleChange} error={!!errors.confirmPassword} crossOrigin={undefined}/>
-              {errors.confirmPassword && <Typography variant='small' color='red'
-                                                     className='mt-1 text-xs ml-1 flex items-center gap-1'>⚠️ {errors.confirmPassword}</Typography>}
+              <Input
+                  label='비밀번호 확인'
+                  size='lg'
+                  type='password'
+                  error={!!errors.confirmPassword}
+                  crossOrigin={undefined}
+                  {...register('confirmPassword', {
+                    required: '비밀번호 확인을 입력해주세요.',
+                    validate: (value) => value === watch('password') || VALIDATION_MESSAGES.confirmPassword,
+                  })}
+              />
+              {errors.confirmPassword && (
+                  <Typography variant='small' color='red' className='mt-1 text-xs ml-1 flex items-center gap-1'>
+                    ⚠️ {errors.confirmPassword.message}
+                  </Typography>
+              )}
             </div>
           </CardBody>
           <CardFooter className='pt-0'>
-            <Button variant='gradient' fullWidth type='submit' color='blue'>가입하기</Button>
+            <Button variant='gradient' fullWidth type='submit' color='blue'>
+              가입하기
+            </Button>
             <Typography variant='small' className='mt-6 flex justify-center text-blue-gray-500'>
               이미 계정이 있으신가요?
               <Link to='/login'>
-                <Typography as='span' variant='small' color='blue'
-                            className='ml-1 font-bold cursor-pointer hover:underline'>로그인</Typography>
+                <Typography as='span' variant='small' color='blue' className='ml-1 font-bold cursor-pointer hover:underline'>
+                  로그인
+                </Typography>
               </Link>
             </Typography>
           </CardFooter>
