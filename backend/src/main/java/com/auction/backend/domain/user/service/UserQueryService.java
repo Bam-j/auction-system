@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,11 @@ public class UserQueryService {
     public User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+    }
+
+    //회원 획득 (아이디)
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     //회원 정보 응답 획득

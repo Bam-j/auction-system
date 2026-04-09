@@ -1,9 +1,11 @@
 package com.auction.backend.domain.notification.service;
 
 import com.auction.backend.domain.notification.dto.NotificationResponse;
+import com.auction.backend.domain.notification.entity.Notification;
 import com.auction.backend.domain.notification.repository.NotificationRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
+import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,17 @@ public class NotificationQueryService {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     private static final Long DEFAULT_TIMEOUT = 0L;
+
+    //알림 단건 조회
+    public Notification getNotification(Long notificationId) {
+        return notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ResourceNotFoundException("해당 알림을 찾을 수 없습니다."));
+    }
+
+    //사용자별 알림 엔티티 목록 조회
+    public List<Notification> getNotificationsByUser(User user) {
+        return notificationRepository.findByReceiverOrderByCreatedAtDesc(user);
+    }
 
     //알림 구독을 위한 연결
     public SseEmitter subscribe(Long userId) {

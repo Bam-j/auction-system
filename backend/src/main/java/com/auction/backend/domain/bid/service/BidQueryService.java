@@ -61,6 +61,11 @@ public class BidQueryService {
         return bidRepository.findTopByAuctionOrderByBidPriceDesc(auction);
     }
 
+    //경매별 모든 입찰 조회 (최신순/금액순)
+    public List<Bid> getBidsByAuction(Auction auction) {
+        return bidRepository.findByAuctionOrderByBidPriceDesc(auction);
+    }
+
     public BidResponse convertToResponse(Bid bid) {
         BidStatus status = bid.getBidStatus();
         Auction auction = bid.getAuction();

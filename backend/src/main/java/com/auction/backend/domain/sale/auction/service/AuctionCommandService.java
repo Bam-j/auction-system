@@ -1,6 +1,7 @@
 package com.auction.backend.domain.sale.auction.service;
 
 import com.auction.backend.domain.bid.repository.BidRepository;
+import com.auction.backend.domain.bid.service.BidQueryService;
 import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.service.NotificationCommandService;
 import com.auction.backend.domain.product.entity.Product;
@@ -27,6 +28,7 @@ public class AuctionCommandService {
     private final ProductCommandService productCommandService;
     private final NotificationCommandService notificationCommandService;
     private final BidRepository bidRepository;
+    private final BidQueryService bidQueryService;
 
     //경매 상품 등록
     public Long registerAuction(Long userId, AuctionRegisterRequest request, String imageUrl) {
@@ -76,7 +78,7 @@ public class AuctionCommandService {
         );
 
         // 최고 입찰자(낙찰자)에게 낙찰 알림
-        bidRepository.findTopByAuctionOrderByBidPriceDesc(auction)
+        bidQueryService.getHighestBid(auction)
                 .ifPresent(winnerBid -> {
                     notificationCommandService.send(
                             winnerBid.getUser(),

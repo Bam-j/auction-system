@@ -27,6 +27,7 @@ public class BidCommandService {
     private final BidRepository bidRepository;
     private final UserQueryService userQueryService;
     private final AuctionQueryService auctionQueryService;
+    private final BidQueryService bidQueryService;
     private final RedisLockService redisLockService;
     private final com.auction.backend.global.service.RedisRateLimitService redisRateLimitService;
     private final NotificationCommandService notificationCommandService;
@@ -72,7 +73,7 @@ public class BidCommandService {
             );
 
             //이전 최고 입찰자에게 패찰 알림 및 현재 최고 입찰자 확인 (알림 발송)
-            bidRepository.findTopByAuctionOrderByBidPriceDesc(auction)
+            bidQueryService.getHighestBid(auction)
                     .ifPresent(previousBid -> {
                         if (previousBid.getUser().getUserId().equals(userId)) {
                             throw new InvalidBidException("이미 현재 최고 입찰자입니다.");

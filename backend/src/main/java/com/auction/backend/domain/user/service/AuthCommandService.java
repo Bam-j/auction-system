@@ -6,12 +6,8 @@ import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.domain.user.dto.auth.LoginRequest;
 import com.auction.backend.domain.user.dto.auth.LoginResponse;
-import com.auction.backend.domain.user.dto.auth.SignUpRequest;
 import com.auction.backend.domain.user.dto.profile.UserResponse;
-import com.auction.backend.domain.user.entity.User;
-import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.entity.UserStatus;
-import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.global.jwt.JwtTokenProvider;
 import com.auction.backend.global.utils.TextFilter;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +61,7 @@ public class AuthCommandService {
 
     //로그인
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userQueryService.getUserByUsername(request.getUsername())
                 .orElseThrow(() -> new BadCredentialsException("존재하지 않는 아이디입니다."));
 
         if (user.getStatus() == UserStatus.DELETED) {

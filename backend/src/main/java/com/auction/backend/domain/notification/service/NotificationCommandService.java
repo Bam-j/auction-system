@@ -6,7 +6,6 @@ import com.auction.backend.domain.notification.entity.NotificationType;
 import com.auction.backend.domain.notification.repository.NotificationRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
-import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -60,15 +59,14 @@ public class NotificationCommandService {
 
     //알림 개별 읽음 처리
     public void markAsRead(Long notificationId) {
-        Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 알림을 찾을 수 없습니다."));
+        Notification notification = notificationQueryService.getNotification(notificationId);
         notification.markAsRead();
     }
 
     //알림 모두 읽음 처리
     public void markAllAsRead(Long userId) {
         User user = userQueryService.getUser(userId);
-        List<Notification> notifications = notificationRepository.findByReceiverOrderByCreatedAtDesc(user);
+        List<Notification> notifications = notificationQueryService.getNotificationsByUser(user);
         notifications.forEach(Notification::markAsRead);
     }
 }
