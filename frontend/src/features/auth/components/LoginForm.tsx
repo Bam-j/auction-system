@@ -14,7 +14,7 @@ import {loginUser} from '../api/authApi';
 
 
 interface LoginFormProps {
-  onLoginSuccess: (user: User, accessToken: string) => void;
+  onLoginSuccess: (user: User, accessToken: string, refreshToken: string) => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
@@ -36,9 +36,9 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
   const onSubmit = async (data: LoginRequest) => {
     try {
       const res = await loginUser(data);
-      const {user, accessToken} = res.data;
+      const {user, accessToken, refreshToken} = res.data;
 
-      onLoginSuccess(user, accessToken);
+      onLoginSuccess(user, accessToken, refreshToken);
 
     } catch (error: any) {
       console.error('로그인 실패:', error);

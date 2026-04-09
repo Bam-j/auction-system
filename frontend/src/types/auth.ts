@@ -11,10 +11,12 @@ export interface User {
 export interface AuthState {
   user: User | null;
   token: string | null;
-  login: (userData: User, token: string) => void;
+  refreshToken: string | null;
+  login: (userData: User, token: string, refreshToken: string) => void;
   logout: () => void;
   setUser: (userData: User) => void;
   setToken: (token: string) => void;
+  setRefreshToken: (refreshToken: string) => void;
   updateNickname: (newNickname: string) => void;
   updateEmailVerification: (email: string) => void;
 }
@@ -32,6 +34,7 @@ export interface SignupRequest {
 
 export interface LoginResponse {
   accessToken: string;
+  refreshToken: string;
   tokenType: string;
   user: User;
 }

@@ -8,8 +8,8 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
-  const handleLoginSuccess = (userData: User, accessToken: string) => {
-    login(userData, accessToken);
+  const handleLoginSuccess = (userData: User, accessToken: string, refreshToken: string) => {
+    login(userData, accessToken, refreshToken);
     navigate('/');
   };
 
