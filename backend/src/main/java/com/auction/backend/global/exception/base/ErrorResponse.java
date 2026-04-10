@@ -3,6 +3,7 @@ package com.auction.backend.global.exception.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class ErrorResponse {
                 .status(errorCode.getStatus())
                 .body(ErrorResponse.builder()
                         .status(errorCode.getStatus())
-                        .error(errorCode.name())
+                        .error(HttpStatus.valueOf(errorCode.getStatus()).name())
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .errors(errors)
@@ -45,7 +46,8 @@ public class ErrorResponse {
                 .status(status)
                 .body(ErrorResponse.builder()
                         .status(status)
-                        .error(error)
+                        .error(HttpStatus.valueOf(status).name())
+                        .code(error)
                         .message(message)
                         .errors(errors)
                         .build()

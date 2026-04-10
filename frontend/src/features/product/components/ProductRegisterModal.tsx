@@ -114,11 +114,11 @@ const ProductRegisterModal = () => {
       console.error('등록 실패 상세:', error.response?.data);
 
       const serverMessage = error.response?.data?.message || '상품 등록 중 오류가 발생했습니다.';
-      const validationErrors = error.response?.data?.validationErrors;
+      const errors = error.response?.data?.errors;
 
       let errorText = serverMessage;
-      if (validationErrors) {
-        errorText = Object.values(validationErrors).join('\n');
+      if (errors) {
+        errorText = Object.values(errors).join('\n');
       }
 
       errorAlert('등록 실패', errorText);
