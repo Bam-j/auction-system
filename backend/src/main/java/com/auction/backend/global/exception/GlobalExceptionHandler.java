@@ -7,13 +7,13 @@ import com.auction.backend.domain.user.exception.DuplicateUserException;
 import com.auction.backend.domain.user.exception.SamePasswordException;
 import com.auction.backend.global.exception.auth.UnauthorizedAccessException;
 import com.auction.backend.global.exception.auth.UserUnverifiedException;
+import com.auction.backend.global.exception.base.ErrorCode;
 import com.auction.backend.global.exception.base.ErrorResponse;
 import com.auction.backend.global.exception.common.ResourceNotFoundException;
 import com.auction.backend.global.exception.domain.InvalidSalesStatusException;
 import com.auction.backend.global.exception.domain.SelfPurchaseException;
 import com.auction.backend.global.exception.io.FileUploadException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -49,14 +49,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .error(HttpStatus.BAD_REQUEST.name())
-                        .message("입력값이 올바르지 않습니다.")
-                        .validationErrors(errors)
-                        .build());
+        return ErrorResponse.toResponseEntity(ErrorCode.INVALID_INPUT_VALUE, errors);
     }
 
     // 400 BAD_REQUEST: 비즈니스 로직 위반 및 잘못된 인자
@@ -66,10 +59,15 @@ public class GlobalExceptionHandler {
             InstantBuyNotAvailableException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception ex) {
+        ErrorCode errorCode = ex instanceof InstantBuyNotAvailableException
+                ? ErrorCode.INSTANT_BUY_NOT_AVAILABLE
+                : ErrorCode.BAD_REQUEST;
+
         return ErrorResponse.toResponseEntity(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.name(),
-                ex.getMessage()
+                errorCode.getStatus(),
+                errorCode.name(),
+                ex.getMessage(),
+                null
         );
     }
 
@@ -77,9 +75,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleUnauthorizedExceptions(Exception ex) {
         return ErrorResponse.toResponseEntity(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.name(),
-                ex.getMessage()
+                ErrorCode.UNAUTHORIZED.getStatus(),
+                ErrorCode.UNAUTHORIZED.name(),
+                ex.getMessage(),
+                null
         );
     }
 
@@ -92,9 +91,10 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<ErrorResponse> handleForbiddenExceptions(Exception ex) {
         return ErrorResponse.toResponseEntity(
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.name(),
-                ex.getMessage()
+                ErrorCode.FORBIDDEN.getStatus(),
+                ErrorCode.FORBIDDEN.name(),
+                ex.getMessage(),
+                null
         );
     }
 
@@ -102,9 +102,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
         return ErrorResponse.toResponseEntity(
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.name(),
-                ex.getMessage()
+                ErrorCode.RESOURCE_NOT_FOUND.getStatus(),
+                ErrorCode.RESOURCE_NOT_FOUND.name(),
+                ex.getMessage(),
+                null
         );
     }
 
@@ -118,10 +119,20 @@ public class GlobalExceptionHandler {
             InvalidBidException.class
     })
     public ResponseEntity<ErrorResponse> handleConflictExceptions(Exception ex) {
+        ErrorCode errorCode = ErrorCode.CONFLICT;
+
+        if (ex instanceof DuplicateUserException) errorCode = ErrorCode.DUPLICATE_USER;
+        else if (ex instanceof SamePasswordException) errorCode = ErrorCode.SAME_PASSWORD;
+        else if (ex instanceof InsufficientStockException) errorCode = ErrorCode.INSUFFICIENT_STOCK;
+        else if (ex instanceof SelfPurchaseException) errorCode = ErrorCode.SELF_PURCHASE;
+        else if (ex instanceof InvalidSalesStatusException) errorCode = ErrorCode.INVALID_SALES_STATUS;
+        else if (ex instanceof InvalidBidException) errorCode = ErrorCode.INVALID_BID;
+
         return ErrorResponse.toResponseEntity(
-                HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.name(),
-                ex.getMessage()
+                errorCode.getStatus(),
+                errorCode.name(),
+                ex.getMessage(),
+                null
         );
     }
 
@@ -130,20 +141,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex) {
         log.error("File upload error: ", ex);
         return ErrorResponse.toResponseEntity(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                ex.getMessage()
+                ErrorCode.FILE_UPLOAD_ERROR.getStatus(),
+                ErrorCode.FILE_UPLOAD_ERROR.name(),
+                ex.getMessage(),
+                null
         );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         log.error("Unhandled Exception occurred: ", ex);
-
-        return ErrorResponse.toResponseEntity(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.name(),
-                "서버 내부 오류가 발생했습니다. 관리자에게 문의하세요."
-        );
+        return ErrorResponse.toResponseEntity(ErrorCode.INTERNAL_SERVER_ERROR);
     }
 }
