@@ -42,20 +42,17 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Create .env file for CI
-      run: |
-        echo "DB_URL=jdbc:mysql://localhost:3306/auction?serverTimezone=Asia/Seoul&characterEncoding=UTF-8" > .env
-        echo "DB_USERNAME=root" >> .env
-        echo "DB_PASSWORD=root" >> .env
-        echo "REDIS_HOST=localhost" >> .env
-        echo "REDIS_PORT=6379" >> .env
-        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-        echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> .env
-        echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
-      working-directory: ./backend
-
     - name: Build and Test with Gradle
-      run: ./gradlew build
+      run: ./gradlew build -Dspring.profiles.active=test
+      env:
+        DB_URL: jdbc:mysql://localhost:3306/auction?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        DB_USERNAME: root
+        DB_PASSWORD: root
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+        MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
       working-directory: ./backend
 
   # 프런트엔드 빌드 및 테스트
