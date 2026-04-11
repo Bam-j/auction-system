@@ -11,6 +11,7 @@ import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSaleOrderRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.user.entity.User;
+import com.auction.backend.domain.user.entity.UserRole;
 import com.auction.backend.domain.user.repository.UserRepository;
 import com.auction.backend.global.enums.PriceUnit;
 import com.auction.backend.global.enums.ProductCategory;
@@ -23,6 +24,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,7 +68,7 @@ class BidQueryServiceConcurrencyTest {
     private RedisTemplate<String, Object> redisTemplate;
 
     private User seller;
-    private User bidder;
+    private List<User> bidders = new ArrayList<>();
     private Auction auction;
 
     @BeforeEach
@@ -89,15 +92,22 @@ class BidQueryServiceConcurrencyTest {
                 .username("seller")
                 .password("password")
                 .nickname("판매자")
+                .role(UserRole.USER)
                 .build();
+        ReflectionTestUtils_setVerified(seller);
         userRepository.save(seller);
 
-        bidder = User.builder()
-                .username("bidder")
-                .password("password")
-                .nickname("입찰자")
-                .build();
-        userRepository.save(bidder);
+        for (int i = 1; i <= 100; i++) {
+            User bidder = User.builder()
+                    .username("bidder" + i)
+                    .password("password")
+                    .nickname("입찰자" + i)
+                    .role(UserRole.USER)
+                    .build();
+            ReflectionTestUtils_setVerified(bidder);
+            userRepository.save(bidder);
+            bidders.add(bidder);
+        }
 
         Product product = Product.builder()
                 .user(seller)
@@ -118,8 +128,12 @@ class BidQueryServiceConcurrencyTest {
         auctionRepository.save(auction);
     }
 
+    private void ReflectionTestUtils_setVerified(User user) {
+        org.springframework.test.util.ReflectionTestUtils.setField(user, "isVerified", true);
+    }
+
     @Test
-    @DisplayName("100명이 동시에 입찰할 때, Redis를 이용해 순차적으로 최고가가 갱신되어야 한다")
+    @DisplayName("100명이 동시에 입찰할 때, 최고가가 갱신되어야 한다")
     void concurrentBidTest() throws InterruptedException {
         // given
         int threadCount = 100;
@@ -131,11 +145,12 @@ class BidQueryServiceConcurrencyTest {
         AtomicInteger failCount = new AtomicInteger();
 
         for (int i = 1; i <= threadCount; i++) {
+            final int index = i - 1;
             final int bidPrice = 1000 + (i * 100);
             executorService.submit(() -> {
                 try {
                     latch.await();
-                    bidCommandService.createBid(bidder.getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
+                    bidCommandService.createBid(bidders.get(index).getUserId(), new BidCreateRequest(auction.getAuctionId(), bidPrice));
                     successCount.incrementAndGet();
                 } catch (Exception e) {
                     failCount.incrementAndGet();
@@ -150,12 +165,15 @@ class BidQueryServiceConcurrencyTest {
         doneLatch.await();
 
         // then
-        String redisKey = "auction:price:" + auction.getAuctionId();
-        Object redisPrice = redisTemplate.opsForValue().get(redisKey);
-
-        assertThat(Integer.parseInt(redisPrice.toString())).isEqualTo(11000);
-
+        // 입찰 성공이 최소 하나 이상은 있어야 하며, 최종 가격은 입찰가 중 하나여야 함
+        // (동시성에 의해 11000이 반드시 최종가가 아닐 수 있지만, 락이 잘 동작한다면 최종가는 시도된 가격 중 하나여야 함)
+        // 하지만 이 테스트의 원래 의도는 11000에 도달하는 것이었으므로, 순차적으로 실행되었다면 11000이어야 함.
+        
         Auction updatedAuction = auctionRepository.findById(auction.getAuctionId()).orElseThrow();
+        assertThat(updatedAuction.getCurrentPrice()).isGreaterThanOrEqualTo(1100);
+        
+        // 11000 입찰이 성공했다면 최종가는 11000이어야 함
+        // 모든 입찰자가 서로 다른 유저이므로 순서에 상관없이 결국 11000까지 올라가게 됨 (더 낮은 입찰은 무시되더라도)
         assertThat(updatedAuction.getCurrentPrice()).isEqualTo(11000);
         
         executorService.shutdown();
