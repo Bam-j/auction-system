@@ -1,10 +1,13 @@
 package com.auction.backend.domain.sale.fixedsale.service;
 
+import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.sale.fixedsale.dto.PurchaseRequestResponse;
+import com.auction.backend.domain.sale.fixedsale.entity.FixedSale;
 import com.auction.backend.domain.sale.fixedsale.entity.PurchaseRequest;
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
 import com.auction.backend.domain.user.entity.User;
 import com.auction.backend.domain.user.service.UserQueryService;
+import com.auction.backend.global.enums.RequestStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,8 +38,17 @@ class PurchaseRequestQueryServiceTest {
     @DisplayName("모든 구매 요청 조회 성공")
     void getAllPurchaseRequests_Success() {
         // given
-        PurchaseRequestResponse response = PurchaseRequestResponse.builder().productName("Product").build();
-        given(purchaseRequestRepository.findByFiltersWithQueryDSL(any(), any(), any(), any())).willReturn(List.of(response));
+        User buyer = User.builder().nickname("buyer").build();
+        User seller = User.builder().nickname("seller").build();
+        Product product = Product.builder().productName("Product").build();
+        FixedSale fixedSale = FixedSale.builder().product(product).user(seller).build();
+        PurchaseRequest request = PurchaseRequest.builder()
+                .user(buyer)
+                .fixedSale(fixedSale)
+                .requestStatus(RequestStatus.PENDING)
+                .build();
+
+        given(purchaseRequestRepository.findByFiltersWithQueryDSL(any(), any(), any(), any())).willReturn(List.of(request));
 
         // when
         List<PurchaseRequestResponse> result = purchaseRequestQueryService.getAllPurchaseRequests(null, null, null, null);
@@ -48,17 +60,25 @@ class PurchaseRequestQueryServiceTest {
 
     @Test
     @DisplayName("사용자별 구매 요청 조회 성공")
-    void getMyPurchaseRequests_Success() {
+    void getUserPurchaseRequests_Success() {
         // given
         Long userId = 1L;
-        User user = User.builder().build();
-        PurchaseRequestResponse response = PurchaseRequestResponse.builder().productName("My Product").build();
+        User buyer = User.builder().nickname("buyer").build();
+        User seller = User.builder().nickname("seller").build();
+        Product product = Product.builder().productName("My Product").build();
+        FixedSale fixedSale = FixedSale.builder().product(product).user(seller).build();
+        PurchaseRequest request = PurchaseRequest.builder()
+                .user(buyer)
+                .fixedSale(fixedSale)
+                .requestStatus(RequestStatus.PENDING)
+                .build();
         
-        given(userQueryService.getUser(userId)).willReturn(user);
-        given(purchaseRequestRepository.findByUserWithFiltersWithQueryDSL(any(), any(), any(), any())).willReturn(List.of(response));
+        given(userQueryService.getUser(userId)).willReturn(buyer);
+        // Repository method has 5 parameters: User, ProductCategory, RequestStatus, String(searchType), String(keyword)
+        given(purchaseRequestRepository.findByUserWithFiltersWithQueryDSL(any(), any(), any(), any(), any())).willReturn(List.of(request));
 
         // when
-        List<PurchaseRequestResponse> result = purchaseRequestQueryService.getMyPurchaseRequests(userId, null, null, null);
+        List<PurchaseRequestResponse> result = purchaseRequestQueryService.getUserPurchaseRequests(userId, null, null, null, null);
 
         // then
         assertThat(result).hasSize(1);
