@@ -4,9 +4,9 @@ import com.auction.backend.domain.bid.dto.BidCreateRequest;
 import com.auction.backend.domain.bid.repository.BidRepository;
 import com.auction.backend.domain.product.entity.Product;
 import com.auction.backend.domain.product.repository.ProductRepository;
-import com.auction.backend.domain.sale.auction.repository.InstantBuyRequestRepository;
 import com.auction.backend.domain.sale.auction.entity.Auction;
 import com.auction.backend.domain.sale.auction.repository.AuctionRepository;
+import com.auction.backend.domain.sale.auction.repository.InstantBuyRequestRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.FixedSaleRepository;
 import com.auction.backend.domain.fixedsalesorder.repository.FixedSaleOrderRepository;
 import com.auction.backend.domain.sale.fixedsale.repository.PurchaseRequestRepository;
@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@DisplayName("Bid 도메인 동시성 테스트")
 class BidQueryServiceConcurrencyTest {
 
     @Autowired
@@ -69,7 +70,7 @@ class BidQueryServiceConcurrencyTest {
 
     @BeforeEach
     void setUp() {
-        //테이블 간 연관 관계 신경써서 삭제
+        // given: 초기 데이터 세팅
         fixedSaleOrderRepository.deleteAll();
         purchaseRequestRepository.deleteAll();
         instantBuyRequestRepository.deleteAll();
@@ -83,6 +84,7 @@ class BidQueryServiceConcurrencyTest {
 
         Assertions.assertNotNull(redisTemplate.getConnectionFactory());
         redisTemplate.getConnectionFactory().getConnection().flushAll();
+        
         seller = User.builder()
                 .username("seller")
                 .password("password")
@@ -96,7 +98,6 @@ class BidQueryServiceConcurrencyTest {
                 .nickname("입찰자")
                 .build();
         userRepository.save(bidder);
-
 
         Product product = Product.builder()
                 .user(seller)
@@ -120,6 +121,7 @@ class BidQueryServiceConcurrencyTest {
     @Test
     @DisplayName("100명이 동시에 입찰할 때, Redis를 이용해 순차적으로 최고가가 갱신되어야 한다")
     void concurrentBidTest() throws InterruptedException {
+        // given
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(1);
@@ -143,20 +145,19 @@ class BidQueryServiceConcurrencyTest {
             });
         }
 
+        // when
         latch.countDown();
         doneLatch.await();
 
-        System.out.println("최종 입찰 성공 횟수: " + successCount.get());
-        System.out.println("최종 입찰 실패 횟수: " + failCount.get());
-
+        // then
         String redisKey = "auction:price:" + auction.getAuctionId();
         Object redisPrice = redisTemplate.opsForValue().get(redisKey);
-
-        System.out.println("Redis 최종 가격: " + redisPrice);
 
         assertThat(Integer.parseInt(redisPrice.toString())).isEqualTo(11000);
 
         Auction updatedAuction = auctionRepository.findById(auction.getAuctionId()).orElseThrow();
         assertThat(updatedAuction.getCurrentPrice()).isEqualTo(11000);
+        
+        executorService.shutdown();
     }
 }

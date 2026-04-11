@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("PurchaseRequest 도메인 서비스 테스트")
 class PurchaseRequestCommandServiceTest {
 
     @InjectMocks
