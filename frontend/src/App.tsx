@@ -38,36 +38,36 @@ const App = () => {
           {/* 전체 레이아웃 */}
           <Route element={<Layout/>}>
             {/* 홈페이지 */}
-            <Route path="/" element={<HomePage/>}/>
+            <Route path='/' element={<HomePage/>}/>
 
             {/* 로그인 및 회원 가입 */}
-            <Route path="/login" element={<LoginPage/>}/>
-            <Route path="/signup" element={<SignupPage/>}/>
+            <Route path='/login' element={<LoginPage/>}/>
+            <Route path='/signup' element={<SignupPage/>}/>
 
             {/* 마이 페이지 라우팅  */}
-            <Route path="/mypage" element={<MyPage/>}>
-              <Route index element={<Navigate to="products" replace/>}/>
-              <Route path="products" element={<MyProductList/>}/>
-              <Route path="requests" element={<MySalesRequests/>}/>
-              <Route path="instant-buys" element={<MyInstantBuyHistory/>}/>
-              <Route path="purchases" element={<MyPurchaseHistory/>}/>
-              <Route path="bids" element={<MyBidHistory/>}/>
-              <Route path="profile" element={<MyProfileEdit/>}/>
+            <Route path='/mypage' element={<MyPage/>}>
+              <Route index element={<Navigate to='products' replace/>}/>
+              <Route path='products' element={<MyProductList/>}/>
+              <Route path='requests' element={<MySalesRequests/>}/>
+              <Route path='instant-buys' element={<MyInstantBuyHistory/>}/>
+              <Route path='purchases' element={<MyPurchaseHistory/>}/>
+              <Route path='bids' element={<MyBidHistory/>}/>
+              <Route path='profile' element={<MyProfileEdit/>}/>
             </Route>
 
             {/* 관리자 페이지 라우팅 */}
-            <Route path="/admin" element={<AdminPage/>}>
-              <Route index element={<Navigate to="dashboard" replace/>}/>
-              <Route path="dashboard" element={<AdminDashboard/>}/>
-              <Route path="products" element={<AdminProductList/>}/>
-              <Route path="instant-buys" element={<AdminInstantBuyHistory/>}/>
-              <Route path="purchases" element={<AdminPurchaseHistory/>}/>
-              <Route path="bids" element={<AdminBidHistory/>}/>
-              <Route path="users" element={<AdminUserList/>}/>
+            <Route path='/admin' element={<AdminPage/>}>
+              <Route index element={<Navigate to='dashboard' replace/>}/>
+              <Route path='dashboard' element={<AdminDashboard/>}/>
+              <Route path='products' element={<AdminProductList/>}/>
+              <Route path='instant-buys' element={<AdminInstantBuyHistory/>}/>
+              <Route path='purchases' element={<AdminPurchaseHistory/>}/>
+              <Route path='bids' element={<AdminBidHistory/>}/>
+              <Route path='users' element={<AdminUserList/>}/>
             </Route>
 
             {/* 상품 등록 라우팅 */}
-            <Route path="/products/register" element={<ProductRegisterPage/>}/>
+            <Route path='/products/register' element={<ProductRegisterPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

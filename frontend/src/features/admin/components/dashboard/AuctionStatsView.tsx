@@ -85,20 +85,20 @@ const AuctionStatsView = () => {
 
         <Card className='shadow-sm border border-gray-200'>
           <CardBody className='h-[400px] p-4'>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <ComposedChart
                   data={stats.dailyStats}
                   margin={{top: 10, right: 10, bottom: 10, left: 10}}
               >
-                <CartesianGrid stroke="#f5f5f5" vertical={false}/>
-                <XAxis dataKey="date" scale="point" padding={{left: 10, right: 10}}/>
+                <CartesianGrid stroke='#f5f5f5' vertical={false}/>
+                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}}/>
                 <YAxis/>
                 <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}/>
-                <Legend verticalAlign="top" height={36}/>
-                <Bar dataKey="registeredAuctions" name="등록 경매" barSize={20} fill="#3b82f6" radius={[4, 4, 0, 0]}/>
-                <Bar dataKey="registeredBids" name="등록 입찰" barSize={20} fill="#6366f1" radius={[4, 4, 0, 0]}/>
-                <Line type="monotone" dataKey="wonAuctions" name="낙찰 완료" stroke="#10b981" strokeWidth={2} dot={{r: 4}}/>
-                <Line type="monotone" dataKey="failedAuctions" name="경매 실패" stroke="#ef4444" strokeWidth={2} dot={{r: 4}}/>
+                <Legend verticalAlign='top' height={36}/>
+                <Bar dataKey='registeredAuctions' name='등록 경매' barSize={20} fill='#3b82f6' radius={[4, 4, 0, 0]}/>
+                <Bar dataKey='registeredBids' name='등록 입찰' barSize={20} fill='#6366f1' radius={[4, 4, 0, 0]}/>
+                <Line type='monotone' dataKey='wonAuctions' name='낙찰 완료' stroke='#10b981' strokeWidth={2} dot={{r: 4}}/>
+                <Line type='monotone' dataKey='failedAuctions' name='경매 실패' stroke='#ef4444' strokeWidth={2} dot={{r: 4}}/>
               </ComposedChart>
             </ResponsiveContainer>
           </CardBody>
@@ -109,19 +109,19 @@ const AuctionStatsView = () => {
         </Typography>
         <Card className='shadow-sm border border-gray-200'>
           <CardBody className='h-[350px] p-4'>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <ComposedChart
                   data={stats.dailyStats}
                   margin={{top: 10, right: 10, bottom: 10, left: 10}}
               >
-                <CartesianGrid stroke="#f5f5f5" vertical={false}/>
-                <XAxis dataKey="date" scale="point" padding={{left: 10, right: 10}}/>
+                <CartesianGrid stroke='#f5f5f5' vertical={false}/>
+                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}}/>
                 <YAxis/>
                 <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}/>
-                <Legend verticalAlign="top" height={36}/>
-                <Bar dataKey="sentInstantBuyRequests" name="구매 요청" barSize={30} fill="#f97316" radius={[4, 4, 0, 0]}/>
-                <Line type="monotone" dataKey="instantBoughtAuctions" name="즉시 구매" stroke="#f59e0b" strokeWidth={2} dot={{r: 4}}/>
-                <Line type="monotone" dataKey="rejectedInstantBuyRequests" name="요청 거절" stroke="#78350f" strokeWidth={2} dot={{r: 4}}/>
+                <Legend verticalAlign='top' height={36}/>
+                <Bar dataKey='sentInstantBuyRequests' name='구매 요청' barSize={30} fill='#f97316' radius={[4, 4, 0, 0]}/>
+                <Line type='monotone' dataKey='instantBoughtAuctions' name='즉시 구매' stroke='#f59e0b' strokeWidth={2} dot={{r: 4}}/>
+                <Line type='monotone' dataKey='rejectedInstantBuyRequests' name='요청 거절' stroke='#78350f' strokeWidth={2} dot={{r: 4}}/>
               </ComposedChart>
             </ResponsiveContainer>
           </CardBody>

@@ -95,7 +95,7 @@ const ProductRegisterModal = () => {
   const onSubmit = async (data: ProductRegisterData) => {
     try {
       //이미지 최적화
-      let finalData = {...data};
+      const finalData = {...data};
       if (data.image) {
         try {
           const optimized = await compressAndConvertImage(data.image);

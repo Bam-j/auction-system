@@ -78,7 +78,7 @@ const ProductStatsView = () => {
 
         <Card className='shadow-sm border border-gray-200'>
           <CardBody className='h-[450px] p-4'>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <ComposedChart
                   data={stats.dailyStats}
                   margin={{
@@ -88,17 +88,17 @@ const ProductStatsView = () => {
                     left: 20,
                   }}
               >
-                <CartesianGrid stroke="#f5f5f5" vertical={false}/>
-                <XAxis dataKey="date" scale="point" padding={{left: 10, right: 10}}/>
+                <CartesianGrid stroke='#f5f5f5' vertical={false}/>
+                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}}/>
                 <YAxis/>
                 <Tooltip
                     contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
                 />
-                <Legend verticalAlign="top" height={36}/>
-                <Bar dataKey="registered" name="등록 상품" barSize={30} fill="#3b82f6" radius={[4, 4, 0, 0]}/>
-                <Line type="monotone" dataKey="sold" name="판매 상품" stroke="#10b981" strokeWidth={2}
+                <Legend verticalAlign='top' height={36}/>
+                <Bar dataKey='registered' name='등록 상품' barSize={30} fill='#3b82f6' radius={[4, 4, 0, 0]}/>
+                <Line type='monotone' dataKey='sold' name='판매 상품' stroke='#10b981' strokeWidth={2}
                       dot={{r: 4}}/>
-                <Line type="monotone" dataKey="cancelled" name="등록 취소" stroke="#ef4444" strokeWidth={2}
+                <Line type='monotone' dataKey='cancelled' name='등록 취소' stroke='#ef4444' strokeWidth={2}
                       dot={{r: 4}}/>
               </ComposedChart>
             </ResponsiveContainer>

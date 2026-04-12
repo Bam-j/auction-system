@@ -110,8 +110,8 @@ const NotificationDropdown = () => {
   };
 
   const BellButton = (
-      <IconButton variant="text" color="blue-gray" className="rounded-full">
-        <BellIcon className="h-6 w-6"/>
+      <IconButton variant='text' color='blue-gray' className='rounded-full'>
+        <BellIcon className='h-6 w-6'/>
       </IconButton>
   );
 
@@ -133,11 +133,11 @@ const NotificationDropdown = () => {
   };
 
   return (
-      <Menu placement="bottom-end">
+      <Menu placement='bottom-end'>
         <MenuHandler>
-          <div className="cursor-pointer">
+          <div className='cursor-pointer'>
             {unreadCount > 0 ? (
-                <Badge content={unreadCount} color="red" withBorder>
+                <Badge content={unreadCount} color='red' withBorder>
                   {BellButton}
                 </Badge>
             ) : (
@@ -145,16 +145,16 @@ const NotificationDropdown = () => {
             )}
           </div>
         </MenuHandler>
-        <MenuList className="max-h-[400px] w-[320px] p-0 flex flex-col overflow-hidden border-none shadow-xl">
-          <div className="p-4 border-b border-blue-gray-50 bg-white">
-            <div className="flex items-center justify-between">
-              <Typography variant="h6" color="blue-gray" className="font-bold">
+        <MenuList className='max-h-[400px] w-[320px] p-0 flex flex-col overflow-hidden border-none shadow-xl'>
+          <div className='p-4 border-b border-blue-gray-50 bg-white'>
+            <div className='flex items-center justify-between'>
+              <Typography variant='h6' color='blue-gray' className='font-bold'>
                 알림
               </Typography>
               {unreadCount > 0 && (
                   <Typography
-                      variant="small"
-                      className="text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full"
+                      variant='small'
+                      className='text-[10px] text-primary font-bold bg-blue-50 px-2 py-0.5 rounded-full'
                   >
                     {unreadCount}개의 새로운 알림
                   </Typography>
@@ -162,11 +162,11 @@ const NotificationDropdown = () => {
             </div>
           </div>
 
-          <div className="overflow-y-auto max-h-[300px] py-1">
+          <div className='overflow-y-auto max-h-[300px] py-1'>
             {notifications.length === 0 ? (
-                <div className="py-12 text-center flex flex-col items-center gap-2">
-                  <BellIcon className="h-8 w-8 text-blue-gray-100"/>
-                  <Typography variant="small" color="blue-gray" className="opacity-50">
+                <div className='py-12 text-center flex flex-col items-center gap-2'>
+                  <BellIcon className='h-8 w-8 text-blue-gray-100'/>
+                  <Typography variant='small' color='blue-gray' className='opacity-50'>
                     새로운 알림이 없습니다.
                   </Typography>
                 </div>
@@ -181,9 +181,9 @@ const NotificationDropdown = () => {
                         }`}
                         onClick={() => handleNotificationClick(notification)}
                     >
-                      <div className="flex items-start justify-between gap-2">
+                      <div className='flex items-start justify-between gap-2'>
                         <Typography
-                            variant="small"
+                            variant='small'
                             className={`font-medium leading-tight ${
                                 !notification.isRead ? 'text-primary' : 'text-font-main'
                             }`}
@@ -191,10 +191,10 @@ const NotificationDropdown = () => {
                           {notification.message}
                         </Typography>
                         {!notification.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-primary mt-1 flex-shrink-0"/>
+                            <span className='w-2 h-2 rounded-full bg-primary mt-1 flex-shrink-0'/>
                         )}
                       </div>
-                      <Typography variant="small" className="text-[11px] text-font-muted">
+                      <Typography variant='small' className='text-[11px] text-font-muted'>
                         {formatTime(notification.createdAt)}
                       </Typography>
                     </MenuItem>
@@ -203,12 +203,12 @@ const NotificationDropdown = () => {
           </div>
 
           {unreadCount > 0 && (
-              <div className="p-2 border-t border-blue-gray-50 bg-gray-50/30 flex justify-center">
+              <div className='p-2 border-t border-blue-gray-50 bg-gray-50/30 flex justify-center'>
                 <Button
-                    variant="text"
-                    size="sm"
+                    variant='text'
+                    size='sm'
                     fullWidth
-                    className="text-primary hover:bg-blue-50 font-bold py-2"
+                    className='text-primary hover:bg-blue-50 font-bold py-2'
                     onClick={handleReadAll}
                 >
                   모두 읽음 표시

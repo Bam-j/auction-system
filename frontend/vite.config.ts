@@ -13,10 +13,10 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "react": path.resolve(__dirname, "./node_modules/react"),
-      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+      'react': path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
       '@': path.resolve(__dirname, './src'),
-      "@material-tailwind/react": path.resolve(__dirname, "./node_modules/@material-tailwind/react"),
+      '@material-tailwind/react': path.resolve(__dirname, './node_modules/@material-tailwind/react'),
     },
   },
 });

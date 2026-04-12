@@ -82,21 +82,21 @@ const FixedSaleStatsView = () => {
 
         <Card className='shadow-sm border border-gray-200'>
           <CardBody className='h-[450px] p-4'>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <ComposedChart
                   data={stats.dailyStats}
                   margin={{top: 10, right: 10, bottom: 10, left: 10}}
               >
-                <CartesianGrid stroke="#f5f5f5" vertical={false}/>
-                <XAxis dataKey="date" scale="point" padding={{left: 10, right: 10}}/>
+                <CartesianGrid stroke='#f5f5f5' vertical={false}/>
+                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}}/>
                 <YAxis/>
                 <Tooltip contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}/>
-                <Legend verticalAlign="top" height={36}/>
-                <Bar dataKey="registeredFixedSales" name="등록 상품" barSize={20} fill="#3b82f6" radius={[4, 4, 0, 0]}/>
-                <Bar dataKey="soldFixedSalesCount" name="판매 수량" barSize={20} fill="#10b981" radius={[4, 4, 0, 0]}/>
-                <Line type="monotone" dataKey="sentPurchaseRequests" name="구매 요청" stroke="#f97316" strokeWidth={2} dot={{r: 4}}/>
-                <Line type="monotone" dataKey="acceptedPurchaseRequests" name="요청 수락" stroke="#14b8a6" strokeWidth={2} dot={{r: 4}}/>
-                <Line type="monotone" dataKey="cancelledPurchaseRequests" name="요청 취소" stroke="#ef4444" strokeWidth={2} dot={{r: 4}}/>
+                <Legend verticalAlign='top' height={36}/>
+                <Bar dataKey='registeredFixedSales' name='등록 상품' barSize={20} fill='#3b82f6' radius={[4, 4, 0, 0]}/>
+                <Bar dataKey='soldFixedSalesCount' name='판매 수량' barSize={20} fill='#10b981' radius={[4, 4, 0, 0]}/>
+                <Line type='monotone' dataKey='sentPurchaseRequests' name='구매 요청' stroke='#f97316' strokeWidth={2} dot={{r: 4}}/>
+                <Line type='monotone' dataKey='acceptedPurchaseRequests' name='요청 수락' stroke='#14b8a6' strokeWidth={2} dot={{r: 4}}/>
+                <Line type='monotone' dataKey='cancelledPurchaseRequests' name='요청 취소' stroke='#ef4444' strokeWidth={2} dot={{r: 4}}/>
               </ComposedChart>
             </ResponsiveContainer>
           </CardBody>

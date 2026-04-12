@@ -46,6 +46,9 @@ pids
 .env.test.local
 .env.production.local
 
+## Data ##
+dump.rdb
+
 ### Tools md ###
 GEMINI.md
 CLAUDE.md

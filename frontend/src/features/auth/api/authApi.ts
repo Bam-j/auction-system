@@ -25,14 +25,14 @@ export const logoutUser = (): Promise<AxiosResponse<void>> => {
 
 // 아이디 중복 확인
 export const checkUsername = (username: string): Promise<AxiosResponse<void>> => {
-  return api.get(`/auth/check/username`, {
+  return api.get('/auth/check/username', {
     params: {username}
   });
 };
 
 // 닉네임 중복 확인
 export const checkNickname = (nickname: string): Promise<AxiosResponse<void>> => {
-  return api.get(`/auth/check/nickname`, {
+  return api.get('/auth/check/nickname', {
     params: {nickname}
   });
 };

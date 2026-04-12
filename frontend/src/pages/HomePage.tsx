@@ -86,8 +86,8 @@ const HomePage = () => {
 
                 return (
                     <Card key={product.id} onClick={() => handleCardClick(product)}
-                          className={`w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer`}>
-                      <CardHeader floated={false} color='blue-gray' className={`relative h-42 m-0 rounded-b-none`}>
+                          className={'w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer'}>
+                      <CardHeader floated={false} color='blue-gray' className={'relative h-42 m-0 rounded-b-none'}>
                         <img
                             src={getFullImageUrl(product.imageUrl) || defaultImage}
                             alt={product.title}
