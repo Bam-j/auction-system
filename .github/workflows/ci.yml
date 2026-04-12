@@ -43,8 +43,9 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build and Test with Gradle
-      run: ./gradlew build -Dspring.profiles.active=test
+      run: ./gradlew build
       env:
+        SPRING_PROFILES_ACTIVE: test
         DB_URL: jdbc:mysql://localhost:3306/auction?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
         DB_USERNAME: root
         DB_PASSWORD: root
