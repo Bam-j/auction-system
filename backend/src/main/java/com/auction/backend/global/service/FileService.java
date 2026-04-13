@@ -1,58 +1,24 @@
 package com.auction.backend.global.service;
 
-import com.auction.backend.global.exception.io.FileUploadException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@Slf4j
-@Service
-public class FileService {
+/**
+ * 파일 업로드 처리를 위한 공통 인터페이스
+ */
+public interface FileService {
+    /**
+     * 비동기 파일 업로드
+     */
+    CompletableFuture<String> uploadFileAsync(MultipartFile file);
 
-    @Value("${file.upload-dir:./uploads}")
-    private String uploadDir;
-
-    @Async("taskExecutor")
-    public CompletableFuture<String> uploadFileAsync(MultipartFile file) {
-        return CompletableFuture.completedFuture(uploadFile(file));
-    }
-
-    public String uploadFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return null;
-        }
-
-        try {
-            File directory = new File(uploadDir).getAbsoluteFile();
-            if (!directory.exists()) {
-                boolean created = directory.mkdirs();
-                log.info("Upload directory created at {}: {}", directory.getPath(), created);
-            }
-
-            String originalFilename = file.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String savedFilename = UUID.randomUUID().toString() + extension;
-            Path filePath = directory.toPath().resolve(savedFilename);
-
-            log.info("Saving file to: {}", filePath.toAbsolutePath());
-            file.transferTo(filePath.toFile());
-
-            // 웹에서 접근 가능한 경로 반환
-            return "/uploads/" + savedFilename;
-        } catch (IOException e) {
-            log.error("파일 업로드 실패 (경로: " + uploadDir + ")", e);
-            throw new FileUploadException("파일 업로드 중 오류가 발생했습니다.", e);
-        }
-    }
+    /**
+     * 동기 파일 업로드
+     */
+    String uploadFile(MultipartFile file);
+    
+    /**
+     * 파일 삭제 (선택 사항)
+     */
+    void deleteFile(String fileUrl);
 }

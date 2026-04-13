@@ -26,5 +26,21 @@ spring:
         default_batch_fetch_size: 100
     open-in-view: false
 
+spring.cloud.aws:
+  s3:
+    bucket: ${AWS_BUCKET_NAME:auction-bucket}
+    region: ${AWS_REGION:ap-northeast-2}
+  credentials:
+    access-key: ${AWS_ACCESS_KEY:none}
+    secret-key: ${AWS_SECRET_KEY:none}
+  region:
+    static: ${AWS_REGION:ap-northeast-2}
+  stack:
+    auto: false
+
+file:
+  storage-type: ${STORAGE_TYPE:local}
+  upload-dir: ${UPLOAD_DIR:./uploads}
+
 server:
   port: 8080

@@ -29,10 +29,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.upload-dir:./uploads}")
     private String uploadDir;
 
+    @Value("${file.storage-type:local}")
+    private String storageType;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path path = Paths.get(uploadDir).toAbsolutePath().normalize();
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + path.toString() + "/");
+        if ("local".equalsIgnoreCase(storageType)) {
+            Path path = Paths.get(uploadDir).toAbsolutePath().normalize();
+            registry.addResourceHandler("/uploads/**")
+                    .addResourceLocations("file:" + path.toString() + "/");
+        }
     }
 }
