@@ -1,0 +1,66 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: auction-db
+    environment:
+      MYSQL_DATABASE: auction
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - auction-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: auction-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - auction-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: auction-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/auction?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-root}
+      REDIS_HOST: redis
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      UPLOAD_DIR: /app/uploads
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_REGION: ${AWS_REGION}
+      AWS_BUCKET_NAME: ${AWS_BUCKET_NAME}
+    volumes:
+      - ./backend/uploads:/app/uploads
+    depends_on:
+      - db
+      - redis
+    networks:
+      - auction-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: auction-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - auction-network
+
+networks:
+  auction-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
