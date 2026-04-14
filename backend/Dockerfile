@@ -1,7 +1,7 @@
 # 1. 빌드 스테이지
 FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
-
+œœ
 # Gradle 래퍼와 설정 파일 복사
 COPY gradlew .
 COPY gradle gradle
@@ -22,7 +22,7 @@ WORKDIR /app
 
 # 빌드 스테이지에서 생성된 jar 파일 복사
 COPY --from=build /app/build/libs/*.jar app.jar
-
+œœ
 # 파일 업로드를 위한 디렉토리 생성
 RUN mkdir -p /app/uploads
 

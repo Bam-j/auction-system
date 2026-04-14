@@ -13,8 +13,6 @@
   - **어드민 대시보드**: 사용자, 상품, 거래 내역 통계 및 관리 기능
   - **마이페이지**: 개인별 입찰 내역, 구매/판매 내역 관리 및 프로필 수정
 
->
-
 ---
 
 ## 2. Skill
@@ -25,6 +23,7 @@
 - **MySQL**: 신뢰성 높은 관계형 데이터베이스로 사용자 및 거래 데이터를 안정적으로 저장합니다.
 - **Redis**: 고성능 인메모리 데이터 저장소로, 실시간성 데이터 처리 및 캐싱을 위해 활용됩니다.
 - **Spring Security & JWT (jjwt)**: Stateless한 인증 방식을 통해 보안을 강화하고 서버 확장성을 확보했습니다.
+- **AWS S3**: 유연한 확장성을 위해 업로드된 상품 이미지를 AWS S3에 저장하고 관리합니다. (Local 저장소와 선택 가능)
 - **SpringDoc OpenAPI (Swagger)**: 프론트엔드와의 협업을 위해 API 문서를 자동화하여 제공합니다.
 
 ### Frontend
@@ -33,6 +32,10 @@
 - **Zustand**: Redux 대비 가볍고 직관적인 상태 관리 라이브러리로 전역 상태(사용자 인증 정보 등)를 효율적으로 관리합니다.
 - **Tailwind CSS & Material Tailwind**: Utility-first 스타일링과 UI 컴포넌트 라이브러리를 결합하여 빠르고 일관된 디자인 시스템을 구축했습니다.
 - **Axios**: 서버와의 비동기 통신을 위해 인터셉터 기반의 HTTP 클라이언트를 구성했습니다.
+
+### Infrastructure & CI/CD
+- **Docker & Docker Compose**: MySQL, Redis, 백엔드, 프론트엔드 전체 스택을 컨테이너화하여 일관된 개발 및 배포 환경을 제공합니다.
+- **GitHub Actions**: 코드 변경 시마다 백엔드 테스트, 프론트엔드 린트 및 빌드 과정을 자동화하여 코드 품질을 유지합니다.
 
 ---
 
@@ -73,17 +76,28 @@
 ### 환경 설정
 - **Java**: JDK 17 이상
 - **Node.js**: v20 이상
-- **MySQL & Redis**: 로컬 또는 외부 서버 설치 및 실행 필요
+- **Docker & Docker Compose** (선택 사항: 전체 스택 실행 시 권장)
 
-### Backend 설치 및 실행
-1. `backend/.env.template` 파일을 `.env`로 복사하고 환경 변수(DB 계정 등)를 설정합니다.
+### Docker Compose를 이용한 실행
+전체 스택(DB, Redis, Backend, Frontend)을 한 번에 실행할 수 있습니다.
+1. 루트 디렉토리의 `.env` 파일에 필요한 환경 변수를 설정합니다. (DB 비밀번호, AWS 키 등)
+2. 터미널에서 다음 명령어를 실행합니다.
+   ```bash
+   docker-compose up --build
+   ```
+3. `http://localhost`를 통해 접속 가능합니다. (프론트엔드: 80포트, 백엔드: 8080포트)
+
+### 개별 수동 실행
+
+#### Backend 설치 및 실행
+1. `backend/.env.template` 파일을 `.env`로 복사하고 환경 변수를 설정합니다.
 2. 터미널에서 다음 명령어를 실행합니다.
    ```bash
    cd backend
    ./gradlew bootRun
    ```
 
-### Frontend 설치 및 실행
+#### Frontend 설치 및 실행
 1. `frontend/.env.template` 파일을 `.env`로 복사하고 API 서버 주소를 설정합니다.
 2. 터미널에서 다음 명령어를 실행합니다.
    ```bash
@@ -91,5 +105,4 @@
    npm install
    npm run dev
    ```
-
 3. 브라우저에서 `http://localhost:5173` 접속을 통해 시스템을 확인할 수 있습니다.
