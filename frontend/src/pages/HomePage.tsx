@@ -86,7 +86,7 @@ const HomePage = () => {
 
                 return (
                     <Card key={product.id} onClick={() => handleCardClick(product)}
-                          className={'w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer'}>
+                          className={'w-full shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-surface border border-border'}>
                       <CardHeader floated={false} color='blue-gray' className={'relative h-42 m-0 rounded-b-none'}>
                         <img
                             src={getFullImageUrl(product.imageUrl) || defaultImage}
@@ -107,37 +107,37 @@ const HomePage = () => {
                           <Typography variant='small' className='font-bold text-font-main'>
                             {product.type === 'AUCTION' ? '경매' : '일반 판매'}
                           </Typography>
-                          <Typography variant='small' className='font-normal text-font-dark_blue'>
+                          <Typography variant='small' className='font-normal text-font-sub'>
                             판매자: <strong> {product.seller} </strong>
                           </Typography>
                         </div>
-                        <Typography variant='h6' color='blue-gray' className='mb-1 truncate'>
+                        <Typography variant='h6' className='mb-1 truncate text-font-main'>
                           {product.title}
                         </Typography>
 
                         <div className='min-h-[70px] flex flex-col justify-between'>
                           <div className='flex flex-col'>
-                            <Typography variant='small' className='text-[10px] text-gray-500 font-bold mb-0.5'>
+                            <Typography variant='small' className='text-[10px] text-font-sub font-bold mb-0.5 uppercase'>
                               {product.type === 'AUCTION'
                                   ? (isInstantBuy ? '판매 방식' : (isAuctionEnded || currentStatus === 'SOLD_OUT' ? '낙찰가' : '현재 최고가'))
                                   : '판매 가격'
                               }
                             </Typography>
                             {isInstantBuy ? (
-                                <Typography className='text-lg font-bold text-orange-700'>
+                                <Typography className='text-lg font-bold text-orange-700 dark:text-orange-400'>
                                   즉시 구매
                                 </Typography>
                             ) : (
                                 <PriceTag
                                     price={product.price}
                                     unit={product.priceUnit}
-                                    className='text-lg text-font-dark_blue'
+                                    className='text-lg text-primary'
                                 />
                             )}
                           </div>
 
                           {product.type === 'AUCTION' && product.endedAt ? (
-                              <Typography variant='small' className='text-[10px] text-red-500 font-medium'>
+                              <Typography variant='small' className='text-[10px] text-danger font-medium'>
                                 마감: {new Date(product.endedAt).toLocaleString('ko-KR', {
                                 year: 'numeric',
                                 month: 'numeric',
@@ -147,7 +147,7 @@ const HomePage = () => {
                               })}
                               </Typography>
                           ) : (
-                              <Typography variant='small' className='text-[11px] text-blue-gray-500 font-medium'>
+                              <Typography variant='small' className='text-[11px] text-font-muted font-medium'>
                                 남은 수량: {product.stock != null ? `${product.stock}개` : '정보없음'}
                               </Typography>
                           )}

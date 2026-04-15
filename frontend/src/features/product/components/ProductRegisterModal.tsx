@@ -130,7 +130,7 @@ const ProductRegisterModal = () => {
         <CommonModal open={true} handleOpen={handleClose} title='상품 등록 유형 선택' size='sm'>
           <div className='flex flex-col gap-4 py-4 px-6'>
             <Button
-                className='h-24 text-lg normal-case bg-primary hover:bg-primary-dark text-white'
+                className='h-24 text-lg normal-case bg-primary hover:bg-primary/90 text-white'
                 onClick={() => {
                   if (!checkVerification()) return;
                   setValue('type', 'FIXED');
@@ -139,14 +139,14 @@ const ProductRegisterModal = () => {
             >
               <div className='flex flex-col items-center'>
                 <span>일반 판매 등록</span>
-                <Typography variant='small' className='mt-1 opacity-70 font-normal text-font-white'>
+                <Typography variant='small' className='mt-1 opacity-70 font-normal text-white'>
                   정해진 가격에 즉시 판매합니다.
                 </Typography>
               </div>
             </Button>
 
             <Button
-                className='h-24 text-lg normal-case bg-warning hover:bg-warning-dark text-white'
+                className='h-24 text-lg normal-case bg-warning hover:bg-warning/90 text-white'
                 onClick={() => {
                   if (!checkVerification()) return;
                   setValue('type', 'AUCTION');
@@ -155,7 +155,7 @@ const ProductRegisterModal = () => {
             >
               <div className='flex flex-col items-center'>
                 <span>경매 물품 등록</span>
-                <Typography variant='small' className='mt-1 opacity-70 font-normal text-font-white'>
+                <Typography variant='small' className='mt-1 opacity-70 font-normal text-white'>
                   입찰을 통해 가장 높은 가격에 판매합니다.
                 </Typography>
               </div>
@@ -177,7 +177,7 @@ const ProductRegisterModal = () => {
                 이전 단계
               </Button>
               <div className='flex gap-2'>
-                <Button variant='text' color='blue-gray' onClick={handleClose}>
+                <Button variant='text' className='text-font-sub' onClick={handleClose}>
                   취소
                 </Button>
                 <Button variant='gradient' color='green' onClick={handleSubmit(onSubmit)}>
@@ -188,21 +188,21 @@ const ProductRegisterModal = () => {
           }
       >
         <FormProvider {...methods}>
-          <div className='flex flex-col gap-6 p-4 max-h-[65vh] overflow-y-auto pr-4'>
+          <div className='flex flex-col gap-6 p-4 max-h-[65vh] overflow-y-auto pr-4 scrollbar-thin scrollbar-thumb-border'>
             <div className='flex flex-col gap-3'>
-              <Typography variant='h6' color='blue-gray' className='flex items-center gap-2'>
+              <Typography variant='h6' className='flex items-center gap-2 text-font-main'>
                 <PhotoIcon className='h-5 w-5'/> 상품 대표 이미지
               </Typography>
-              <div className='flex items-center gap-4 border border-blue-gray-200 rounded-lg p-3 bg-gray-50/50'>
+              <div className='flex items-center gap-4 border border-border rounded-lg p-3 bg-background/50 transition-colors'>
                 <input
                     type='file'
                     accept='image/*'
                     onChange={handleImageChange}
                     className={`
                       w-full
-                      text-sm text-gray-500
+                      text-sm text-font-sub
                       file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold
-                      file:bg-primary file:text-white hover:file:bg-primary-dark
+                      file:bg-primary file:text-white hover:file:bg-primary/90
                       cursor-pointer
                     `}
                 />
@@ -214,7 +214,7 @@ const ProductRegisterModal = () => {
               )}
             </div>
 
-            <hr className='border-gray-200'/>
+            <hr className='border-border'/>
 
             <CommonProductForm />
 
@@ -224,22 +224,25 @@ const ProductRegisterModal = () => {
                 <AuctionProductForm />
             )}
 
-            <hr className='border-gray-200'/>
+            <hr className='border-border'/>
 
             <div className='flex flex-col gap-3'>
-              <Typography variant='h6' color='blue-gray'>
+              <Typography variant='h6' className='text-font-main'>
                 상품 상세 설명
               </Typography>
               <div>
                 <Textarea
                     label='상품의 상태, 옵션 등을 자세히 적어주세요.'
                     size='lg'
-                    className='min-h-[120px]'
+                    className='min-h-[120px] dark:text-font-main'
+                    labelProps={{
+                      className: 'dark:text-font-sub',
+                    }}
                     error={!!errors.description}
                     {...register('description', {required: '상세 설명을 입력해주세요.'})}
                 />
                 {errors.description && (
-                    <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.description.message}</p>
+                    <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.description.message}</p>
                 )}
               </div>
             </div>

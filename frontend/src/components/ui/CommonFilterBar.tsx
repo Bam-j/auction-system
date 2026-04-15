@@ -38,7 +38,7 @@ const CommonFilterBar: FC<CommonFilterBarProps> = ({
 
   return (
       <div
-          className='bg-white p-4 rounded-lg shadow-sm border border-gray-200 w-full flex flex-col xl:flex-row gap-4 items-center justify-between'
+          className='bg-surface p-4 rounded-lg shadow-sm border border-border w-full flex flex-col xl:flex-row gap-4 items-center justify-between transition-colors duration-300'
       >
         {filterConfigs.length > 0 && (
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:flex items-center gap-3 w-full xl:w-auto'>
@@ -48,9 +48,16 @@ const CommonFilterBar: FC<CommonFilterBarProps> = ({
                         label={config.label}
                         value={selectedFilters[config.id] || ''}
                         onChange={(val) => handleFilterChange(config.id, val)}
+                        className='text-font-main dark:text-font-main'
+                        labelProps={{
+                          className: 'dark:text-font-sub',
+                        }}
+                        menuProps={{
+                          className: 'dark:bg-surface dark:border-border dark:text-font-main',
+                        }}
                     >
                       {config.options.map((opt) => (
-                          <Option key={opt.value} value={opt.value}>
+                          <Option key={opt.value} value={opt.value} className='dark:hover:bg-primary/20'>
                             {opt.label}
                           </Option>
                       ))}
@@ -71,13 +78,17 @@ const CommonFilterBar: FC<CommonFilterBarProps> = ({
                 onChange={(e) => setKeyword(e.target.value)}
                 icon={<MagnifyingGlassIcon className='h-5 w-5'/>}
                 crossOrigin={undefined}
+                className='text-font-main dark:text-font-main'
+                labelProps={{
+                  className: 'dark:text-font-sub',
+                }}
             />
           </div>
           <Button type='submit' variant='gradient' color='blue'
                   className='h-10 shrink-0 flex items-center justify-center px-5'>
             조회
           </Button>
-          <Button variant='outlined' color='blue-gray' className='h-10 shrink-0 flex items-center justify-center px-4'
+          <Button variant='outlined' color='blue-gray' className='h-10 shrink-0 flex items-center justify-center px-4 dark:border-border dark:text-font-main'
                   onClick={handleReset}>
             <ArrowPathIcon className='h-5 w-5'/>
           </Button>

@@ -29,7 +29,7 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
     variant: (active === index ? 'filled' : 'text') as variant,
     color: (active === index ? 'blue' : 'blue-gray') as color,
     onClick: () => onChange(index),
-    className: 'rounded-full transition-colors font-bold',
+    className: `rounded-full transition-colors font-bold ${active === index ? '' : 'dark:text-font-main dark:hover:bg-primary/10'}`,
   });
 
   const renderPageNumbers = () => {
@@ -50,7 +50,7 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
             {pages.map((idx) => (
                 <IconButton key={idx} {...getItemProps(idx)} size='sm'>{idx}</IconButton>
             ))}
-            <span className='text-gray-500'>...</span>
+            <span className='text-font-sub'>...</span>
             <IconButton {...getItemProps(total)} size='sm'>{total}</IconButton>
           </>
       );
@@ -59,7 +59,7 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
       return (
           <>
             <IconButton {...getItemProps(1)} size='sm'>1</IconButton>
-            <span className='text-gray-500'>...</span>
+            <span className='text-font-sub'>...</span>
             {pages.map((idx) => (
                 <IconButton key={idx} {...getItemProps(idx)} size='sm'>{idx}</IconButton>
             ))}
@@ -69,13 +69,13 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
       return (
           <>
             <IconButton {...getItemProps(1)} size='sm'>1</IconButton>
-            <span className='text-gray-500'>...</span>
+            <span className='text-font-sub'>...</span>
 
             <IconButton {...getItemProps(active - 1)} size='sm'>{active - 1}</IconButton>
             <IconButton {...getItemProps(active)} size='sm'>{active}</IconButton>
             <IconButton {...getItemProps(active + 1)} size='sm'>{active + 1}</IconButton>
 
-            <span className='text-gray-500'>...</span>
+            <span className='text-font-sub'>...</span>
             <IconButton {...getItemProps(total)} size='sm'>{total}</IconButton>
           </>
       );
@@ -86,7 +86,7 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
       <div className='flex items-center gap-2'>
         <IconButton
             variant='text'
-            className='rounded-full'
+            className='rounded-full dark:text-font-main dark:hover:bg-primary/10'
             onClick={prev}
             disabled={active === 1}
             size='sm'
@@ -100,7 +100,7 @@ const Pagination: FC<PaginationProps> = ({active, total, onChange}) => {
 
         <IconButton
             variant='text'
-            className='rounded-full'
+            className='rounded-full dark:text-font-main dark:hover:bg-primary/10'
             onClick={next}
             disabled={active === total}
             size='sm'

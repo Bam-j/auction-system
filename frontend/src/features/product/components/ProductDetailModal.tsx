@@ -91,7 +91,7 @@ const ProductDetailModal = ({
                   />
                 </div>
 
-                <hr className='border-gray-200'/>
+                <hr className='border-border'/>
 
                 <ProductDescription description={product.description}/>
 

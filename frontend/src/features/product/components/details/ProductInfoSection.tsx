@@ -26,9 +26,9 @@ const InfoRow = ({icon, label, value, className = ''}: {
   className?: string
 }) => (
     <div className={`flex items-center gap-2 ${className}`}>
-      <span className='text-gray-500'>{icon}</span>
-      <Typography className='font-bold flex items-center gap-1'>
-        <span className='opacity-70 font-normal'>{label}:</span> {value}
+      <span className='text-font-sub'>{icon}</span>
+      <Typography className='font-bold flex items-center gap-1 text-font-main'>
+        <span className='text-font-sub font-normal'>{label}:</span> {value}
       </Typography>
     </div>
 );
@@ -41,7 +41,7 @@ const AuctionPriceRow = ({label, price, unit, valueClassName = ''}: {
   valueClassName?: string
 }) => (
     <div className='flex justify-between items-center'>
-      <span className='text-blue-gray-800 font-medium'>{label}:</span>
+      <span className='text-font-main font-medium'>{label}:</span>
       <PriceTag price={price} unit={unit} className={valueClassName}/>
     </div>
 );
@@ -69,15 +69,14 @@ const ProductInfoSection = ({
               size='sm'
               value={translateCategory(product.category || '') || '기타'}
               icon={<CubeIcon className='h-4 w-4'/>}
-              className='rounded-full'
+              className='rounded-full dark:bg-blue-gray-800 dark:text-font-main'
           />
         </div>
 
-        <div className='bg-blue-50/50 p-4 rounded-xl border border-blue-100/50 shadow-sm'>
+        <div className='bg-primary/5 p-4 rounded-xl border border-primary/10 shadow-sm transition-colors duration-300'>
           <Typography
               variant='small'
-              color='blue'
-              className='font-bold mb-1 uppercase tracking-wider opacity-80'
+              className='font-bold mb-1 uppercase tracking-wider text-primary'
           >
             {product.status === 'INSTANT_BUY'
                 ? '판매 방식'
@@ -85,22 +84,22 @@ const ProductInfoSection = ({
           </Typography>
           <div className='flex items-baseline gap-2'>
             {product.status === 'INSTANT_BUY' ? (
-                <Typography className='text-4xl text-orange-700 font-black drop-shadow-sm'>
+                <Typography className='text-4xl text-orange-700 dark:text-orange-400 font-black drop-shadow-sm'>
                   즉시 구매
                 </Typography>
             ) : (
                 <PriceTag
                     price={product.price || 0}
                     unit={product.priceUnit}
-                    className='text-4xl text-blue-700 font-black drop-shadow-sm'
+                    className='text-4xl text-primary font-black drop-shadow-sm'
                 />
             )}
           </div>
         </div>
 
-        <hr className='border-gray-200 my-1'/>
+        <hr className='border-border my-1'/>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-blue-gray-900'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-y-3'>
           <InfoRow
               icon={<UserCircleIcon className='h-5 w-5'/>}
               label='판매자'
@@ -116,7 +115,7 @@ const ProductInfoSection = ({
                   icon={<CubeIcon className='h-5 w-5'/>}
                   label='남은 재고'
                   value={
-                    <span className='text-blue-600'>
+                    <span className='text-primary'>
                 {product.stock != null ? `${product.stock} 개` : '정보 없음'}
               </span>
                   }
@@ -126,28 +125,28 @@ const ProductInfoSection = ({
         </div>
 
         {isAuction && (
-            <div className='bg-blue-50 p-4 rounded-lg text-sm flex flex-col gap-2'>
+            <div className='bg-surface border border-border p-4 rounded-lg text-sm flex flex-col gap-2 transition-colors duration-300'>
               <AuctionPriceRow label='시작가' price={product.startPrice || 0} unit={product.priceUnit}
-                               valueClassName='font-medium text-gray-900'/>
+                               valueClassName='font-medium text-font-main'/>
               <AuctionPriceRow label='입찰 단위' price={product.bidIncrement || 0} unit={product.priceUnit}
-                               valueClassName='font-bold text-blue-600'/>
+                               valueClassName='font-bold text-primary'/>
 
-              <div className='flex justify-between items-center border-t border-blue-100 pt-2'>
-                <span className='text-blue-gray-800 font-medium'>현재 최고 입찰자:</span>
-                <span className='font-bold text-blue-700'>
+              <div className='flex justify-between items-center border-t border-border pt-2'>
+                <span className='text-font-main font-medium'>현재 최고 입찰자:</span>
+                <span className='font-bold text-primary'>
               {product.highestBidderNickname || '없음'}
-                  {isHighestBidder && <span className='ml-1 text-xs text-blue-500'>(나)</span>}
+                  {isHighestBidder && <span className='ml-1 text-xs text-primary/70'>(나)</span>}
             </span>
               </div>
 
               {product.instantPrice !== undefined && (
                   <AuctionPriceRow label='즉시 구매가' price={product.instantPrice} unit={product.priceUnit}
-                                   valueClassName='font-bold text-green-600 border-t border-blue-100 pt-2'/>
+                                   valueClassName='font-bold text-success border-t border-border pt-2'/>
               )}
 
-              <div className='flex justify-between items-center border-t border-blue-100 pt-2'>
-                <span className='text-blue-gray-800 font-medium'>마감 일시:</span>
-                <span className='font-medium text-red-600'>{formatDate(product.endedAt)}</span>
+              <div className='flex justify-between items-center border-t border-border pt-2'>
+                <span className='text-font-main font-medium'>마감 일시:</span>
+                <span className='font-medium text-danger'>{formatDate(product.endedAt)}</span>
               </div>
             </div>
         )}

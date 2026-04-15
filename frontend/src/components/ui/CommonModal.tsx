@@ -24,23 +24,23 @@ const CommonModal: FC<CommonModalProps> = ({
                                              bodyClassName = ''
                                            }) => {
   return (
-      <Dialog open={open} handler={handleOpen} size={size} className='overflow-hidden'>
-        <DialogHeader className='justify-between border-b border-gray-200'>
-          <Typography variant='h5' color='blue-gray'>
+      <Dialog open={open} handler={handleOpen} size={size} className='overflow-hidden bg-surface dark:bg-surface'>
+        <DialogHeader className='justify-between border-b border-border'>
+          <Typography variant='h5' className='text-font-main'>
             {title}
           </Typography>
           <XMarkIcon
-              className='h-5 w-5 cursor-pointer text-gray-500 hover:text-gray-900'
+              className='h-5 w-5 cursor-pointer text-font-sub hover:text-font-main'
               onClick={handleOpen}
           />
         </DialogHeader>
 
-        <DialogBody className={`p-0 ${bodyClassName}`}>
+        <DialogBody className={`p-0 text-font-main ${bodyClassName}`}>
           {children}
         </DialogBody>
 
         {footer && (
-            <DialogFooter className='border-t border-gray-200 bg-gray-50/50'>
+            <DialogFooter className='border-t border-border bg-background/50'>
               {footer}
             </DialogFooter>
         )}

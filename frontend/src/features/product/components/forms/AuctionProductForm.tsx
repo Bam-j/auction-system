@@ -31,6 +31,10 @@ const AuctionProductForm = () => {
                 error={!!errors.ended_at}
                 containerProps={{className: 'min-w-[72px]'}}
                 crossOrigin=''
+                className='dark:text-font-main'
+                labelProps={{
+                  className: 'dark:text-font-sub',
+                }}
                 {...register('ended_at', {
                   required: '경매 마감일을 입력해주세요.',
                   validate: (value) => {
@@ -40,7 +44,7 @@ const AuctionProductForm = () => {
                 })}
             />
             {errors.ended_at && (
-                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.ended_at.message}</p>
+                <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.ended_at.message}</p>
             )}
           </div>
           <div>
@@ -50,13 +54,17 @@ const AuctionProductForm = () => {
                 min='0'
                 error={!!errors.start_price}
                 crossOrigin=''
+                className='dark:text-font-main'
+                labelProps={{
+                  className: 'dark:text-font-sub',
+                }}
                 {...register('start_price', {
                   required: '시작가를 입력해주세요.',
                   min: {value: 0, message: '0 이상이어야 합니다.'},
                 })}
             />
             {errors.start_price && (
-                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.start_price.message}</p>
+                <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.start_price.message}</p>
             )}
           </div>
         </div>
@@ -69,13 +77,17 @@ const AuctionProductForm = () => {
                 min='1'
                 error={!!errors.min_bid_increment}
                 crossOrigin=''
+                className='dark:text-font-main'
+                labelProps={{
+                  className: 'dark:text-font-sub',
+                }}
                 {...register('min_bid_increment', {
                   required: '최소 입찰 단위를 입력해주세요.',
                   min: {value: 1, message: '1 이상이어야 합니다.'},
                 })}
             />
             {errors.min_bid_increment && (
-                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.min_bid_increment.message}</p>
+                <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.min_bid_increment.message}</p>
             )}
           </div>
           <div>
@@ -85,18 +97,22 @@ const AuctionProductForm = () => {
                 min='0'
                 error={!!errors.instant_purchase_price}
                 crossOrigin=''
+                className='dark:text-font-main'
+                labelProps={{
+                  className: 'dark:text-font-sub',
+                }}
                 {...register('instant_purchase_price', {
                   min: {value: 0, message: '0 이상이어야 합니다.'},
                 })}
             />
             {errors.instant_purchase_price && (
-                <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.instant_purchase_price.message}</p>
+                <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.instant_purchase_price.message}</p>
             )}
           </div>
         </div>
 
-        <div className='border border-gray-300 rounded-lg p-4'>
-          <Typography variant='small' color='blue-gray' className='mb-2 font-bold'>
+        <div className='border border-border rounded-lg p-4 bg-background/30'>
+          <Typography variant='small' className='mb-2 font-bold text-font-main'>
             경매/입찰 화폐 단위
           </Typography>
           <div className='flex flex-wrap gap-4'>
@@ -107,6 +123,10 @@ const AuctionProductForm = () => {
                     value={unit.value}
                     color='blue'
                     crossOrigin=''
+                    className='dark:border-border'
+                    labelProps={{
+                      className: 'dark:text-font-main'
+                    }}
                     {...register('price_unit')}
                 />
             ))}

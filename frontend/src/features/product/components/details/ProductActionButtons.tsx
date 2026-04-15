@@ -96,7 +96,7 @@ const ProductActionButtons = ({
               fullWidth
               variant='gradient'
               color={isHighestBidder ? 'gray' : 'blue'}
-              className='h-14 text-lg flex-1 shadow-lg shadow-blue-200/50'
+              className='h-14 text-lg flex-1 shadow-lg dark:shadow-none'
               onClick={handleBid}
               disabled={isHighestBidder}
           >
@@ -123,7 +123,7 @@ const ProductActionButtons = ({
                   fullWidth
                   variant='gradient'
                   color='green'
-                  className='h-14 text-lg flex-1 shadow-lg shadow-green-200/50'
+                  className='h-14 text-lg flex-1 shadow-lg dark:shadow-none'
                   onClick={handleBuyNow}
               >
                 <div className='flex flex-col items-center leading-tight'>
@@ -148,7 +148,10 @@ const ProductActionButtons = ({
               max={product.stock || 1}
               value={purchaseAmount}
               onChange={(e) => setPurchaseAmount(e.target.value)}
-              className='!text-lg !font-bold text-center placeholder:text-blue-gray-200'
+              className='!text-lg !font-bold text-center dark:text-font-main'
+              labelProps={{
+                className: 'dark:text-font-sub',
+              }}
               containerProps={{className: 'min-w-0'}}
               crossOrigin=''
           />

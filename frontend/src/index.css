@@ -3,8 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* 라이트 모드 Palette */
+    --color-background: #FAFAFA;
+    --color-surface: #FFFFFF;
+    
+    --color-font-main: #444444;
+    --color-font-sub: #888888;
+    --color-font-muted: #BDBDBD;
+    
+    --color-border: #E5E7EB;
+  }
+
+  .dark {
+    /* 다크 모드 Palette */
+    --color-background: #121212;
+    --color-surface: #1E1E1E;
+    
+    --color-font-main: #E2E8F0;
+    --color-font-sub: #94A3B8;
+    --color-font-muted: #64748B;
+    
+    --color-border: #334155;
+  }
+
   body {
-    @apply text-font-main;
+    @apply bg-background text-font-main transition-colors duration-300;
   }
 }
 

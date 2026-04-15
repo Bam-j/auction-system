@@ -27,18 +27,18 @@ const AdminDashboard = () => {
   return (
       <div className='space-y-6'>
         <div className='flex items-center gap-3 mb-2'>
-          <PresentationChartBarIcon className='h-8 w-8 text-blue-500'/>
-          <Typography variant='h4' color='blue-gray'>
+          <PresentationChartBarIcon className='h-8 w-8 text-primary'/>
+          <Typography variant='h4' className='text-font-main'>
             활동 통계 대시보드
           </Typography>
         </div>
 
-        <Card className='shadow-sm border border-gray-200'>
+        <Card className='shadow-sm border border-border bg-surface transition-colors duration-300'>
           <Tabs value={activeTab}>
             <TabsHeader
-                className='bg-transparent p-0 border-b border-gray-100 rounded-none'
+                className='bg-transparent p-0 border-b border-border rounded-none'
                 indicatorProps={{
-                  className: 'bg-transparent border-b-2 border-blue-500 shadow-none rounded-none',
+                  className: 'bg-transparent border-b-2 border-primary shadow-none rounded-none',
                 }}
             >
               {tabs.map(({label, value, icon: Icon}) => (
@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                       value={value}
                       onClick={() => setActiveTab(value)}
                       className={`py-4 transition-colors ${
-                          activeTab === value ? 'text-blue-500 font-bold' : 'text-gray-500'
+                          activeTab === value ? 'text-primary font-bold' : 'text-font-sub'
                       }`}
                   >
                     <div className='flex items-center gap-2'>
@@ -65,12 +65,12 @@ const AdminDashboard = () => {
 
               {(activeTab !== 'users' && activeTab !== 'products' && activeTab !== 'auctions' && activeTab !== 'fixed-sales') && (
                   <div
-                      className='min-h-[400px] flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50'>
+                      className='min-h-[400px] flex items-center justify-center border-2 border-dashed border-border rounded-xl bg-background/50'>
                     <div className='text-center'>
-                      <Typography variant='h5' color='blue-gray' className='mb-2'>
+                      <Typography variant='h5' className='mb-2 text-font-main'>
                         {tabs.find((t) => t.value === activeTab)?.label} 통계 뷰
                       </Typography>
-                      <Typography color='gray'>
+                      <Typography className='text-font-sub'>
                         QueryDSL을 통한 데이터 분석 결과가 여기에 표시될 예정입니다.
                       </Typography>
                     </div>

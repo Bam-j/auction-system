@@ -13,15 +13,13 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({size = 'medium', color = 'blue
   };
 
   const colorClasses = {
-    blue: 'border-blue-200 border-t-blue-600',
-    gray: 'border-gray-200 border-t-gray-600',
+    blue: 'border-border border-t-primary',
+    gray: 'border-border border-t-font-muted',
   };
 
   return (
       <div className='flex justify-center items-center p-8'>
-        <div
-            className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-spin`}
-        ></div>
+        <div className={`${sizeClasses[size]} ${colorClasses[color]} rounded-full animate-spin`}></div>
       </div>
   );
 };

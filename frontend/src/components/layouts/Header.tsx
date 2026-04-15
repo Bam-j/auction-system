@@ -7,6 +7,7 @@ import {PlusIcon} from '@heroicons/react/24/outline';
 // 절대 경로 모듈
 import {logoutUser} from '@/features/auth/api/authApi';
 import NotificationDropdown from '@/features/notification/components/NotificationDropdown.jsx';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 import useAuthStore from '@/stores/useAuthStore';
 import {toast} from '@/utils/swalUtils';
 
@@ -27,8 +28,8 @@ const Header: FC = () => {
   };
 
   return (
-      <Navbar className='mx-auto w-full px-4 py-3 rounded-none shadow-md bg-white border-none'>
-        <div className='flex items-center justify-between text-blue-gray-900'>
+      <Navbar className='mx-auto w-full px-4 py-3 rounded-none shadow-md bg-surface border-none'>
+        <div className='flex items-center justify-between text-font-main'>
           <Link to='/'>
             <Typography
                 variant='h5'
@@ -39,6 +40,8 @@ const Header: FC = () => {
           </Link>
 
           <div className='flex items-center gap-2'>
+            <ThemeToggle/>
+
             {!user ? (
                 <Button
                     className='bg-primary text-font-white whitespace-nowrap'

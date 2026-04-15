@@ -32,13 +32,16 @@ const CommonProductForm = () => {
           <Input
               label='상품명'
               size='lg'
-              className='!text-lg'
+              className='!text-lg dark:text-font-main'
+              labelProps={{
+                className: 'dark:text-font-sub',
+              }}
               error={!!errors.product_name}
               crossOrigin=''
               {...register('product_name', {required: '상품명을 입력해주세요.'})}
           />
           {errors.product_name && (
-              <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.product_name.message}</p>
+              <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.product_name.message}</p>
           )}
         </div>
         <div>
@@ -53,9 +56,16 @@ const CommonProductForm = () => {
                       value={field.value}
                       onChange={(val) => field.onChange(val)}
                       error={!!errors.category}
+                      className='dark:text-font-main'
+                      labelProps={{
+                        className: 'dark:text-font-sub',
+                      }}
+                      menuProps={{
+                        className: 'dark:bg-surface dark:border-border dark:text-font-main',
+                      }}
                   >
                     {CATEGORIES.map((cat) => (
-                        <Option key={cat} value={cat}>
+                        <Option key={cat} value={cat} className='dark:hover:bg-primary/20'>
                           {translateCategory(cat)}
                         </Option>
                     ))}
@@ -63,7 +73,7 @@ const CommonProductForm = () => {
               )}
           />
           {errors.category && (
-              <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.category.message}</p>
+              <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.category.message}</p>
           )}
         </div>
       </div>

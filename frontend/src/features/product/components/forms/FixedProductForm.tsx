@@ -18,13 +18,17 @@ const FixedProductForm = () => {
               label='판매 가격 (에메랄드/블록/주화)'
               error={!!errors.price}
               crossOrigin=''
+              className='dark:text-font-main'
+              labelProps={{
+                className: 'dark:text-font-sub',
+              }}
               {...register('price', {
                 required: '가격을 입력해주세요.',
                 min: {value: 0, message: '가격은 0 이상이어야 합니다.'},
               })}
           />
           {errors.price && (
-              <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.price.message}</p>
+              <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.price.message}</p>
           )}
         </div>
         <div>
@@ -34,13 +38,17 @@ const FixedProductForm = () => {
               min='1'
               error={!!errors.stock}
               crossOrigin=''
+              className='dark:text-font-main'
+              labelProps={{
+                className: 'dark:text-font-sub',
+              }}
               {...register('stock', {
                 required: '재고를 입력해주세요.',
                 min: {value: 1, message: '재고는 1개 이상이어야 합니다.'},
               })}
           />
           {errors.stock && (
-              <p className='mt-1 text-xs text-red-500 ml-1'>⚠️ {errors.stock.message}</p>
+              <p className='mt-1 text-xs text-danger ml-1'>⚠️ {errors.stock.message}</p>
           )}
         </div>
       </div>

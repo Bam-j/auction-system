@@ -52,7 +52,7 @@ const CommonTable: FC<CommonTableProps> = ({title, headers, children, pagination
 
   return (
       <Card
-          className='h-full w-full shadow-sm border border-gray-200'
+          className='h-full w-full shadow-sm border border-border bg-surface transition-colors duration-300'
           placeholder={undefined}
           onPointerEnterCapture={undefined}
           onPointerLeaveCapture={undefined}
@@ -60,14 +60,14 @@ const CommonTable: FC<CommonTableProps> = ({title, headers, children, pagination
         <CardHeader
             floated={false}
             shadow={false}
-            className='rounded-none'
+            className='rounded-none bg-surface'
             placeholder={undefined}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
         >
           <div className='flex items-center justify-between gap-8 mb-2'>
             <div>
-              <Typography variant='h5' color='blue-gray'>
+              <Typography variant='h5' className='text-font-main'>
                 {title}
               </Typography>
             </div>
@@ -86,7 +86,7 @@ const CommonTable: FC<CommonTableProps> = ({title, headers, children, pagination
               {headers.map((head) => (
                   <th
                       key={head}
-                      className={`border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 ${onSort ? 'cursor-pointer hover:bg-blue-gray-100/50 transition-colors' : ''}`}
+                      className={`border-y border-border bg-primary/5 p-4 ${onSort ? 'cursor-pointer hover:bg-primary/10 transition-colors' : ''}`}
                       onClick={() => handleHeaderClick(head)}
                   >
                     <div className='flex items-center'>
@@ -111,7 +111,7 @@ const CommonTable: FC<CommonTableProps> = ({title, headers, children, pagination
 
         {pagination && (
             <CardFooter
-                className='flex items-center justify-center border-t border-blue-gray-50 p-4'
+                className='flex items-center justify-center border-t border-border p-4 bg-background/50'
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}

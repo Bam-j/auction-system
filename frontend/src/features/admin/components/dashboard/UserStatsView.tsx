@@ -46,17 +46,21 @@ const UserStatsView = () => {
       <div className='space-y-6'>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
           {statsSummary.map((stat) => (
-              <Card key={stat.label} className='shadow-sm border border-gray-100'>
+              <Card key={stat.label} className='shadow-sm border border-border bg-surface'>
                 <CardBody className='flex items-center gap-4 p-4'>
                   <div
-                      className={`p-3 rounded-lg bg-${stat.color === 'gray' ? 'blue-gray' : stat.color}-50 text-${stat.color === 'gray' ? 'blue-gray' : stat.color}-500`}>
+                      className={`p-3 rounded-lg ${
+                        stat.color === 'blue' ? 'bg-primary/10 text-primary' :
+                        stat.color === 'red' ? 'bg-danger/10 text-danger' :
+                        'bg-font-muted/10 text-font-muted'
+                      }`}>
                     <stat.icon className='h-6 w-6'/>
                   </div>
                   <div>
-                    <Typography variant='small' color='gray' className='font-normal'>
+                    <Typography variant='small' className='font-normal text-font-sub'>
                       오늘의 {stat.label}
                     </Typography>
-                    <Typography variant='h4' color='blue-gray'>
+                    <Typography variant='h4' className='text-font-main'>
                       {stat.value}명
                     </Typography>
                   </div>
@@ -66,17 +70,17 @@ const UserStatsView = () => {
         </div>
 
         <div className='flex justify-between items-center'>
-          <Typography variant='h5' color='blue-gray'>
+          <Typography variant='h5' className='text-font-main'>
             회원 가입 및 상태 변경 추이
           </Typography>
-          <ButtonGroup size='sm' variant='outlined' color='blue-gray'>
-            <Button className={period === 1 ? 'bg-gray-100' : ''} onClick={() => setPeriod(1)}>일일</Button>
-            <Button className={period === 7 ? 'bg-gray-100' : ''} onClick={() => setPeriod(7)}>7일</Button>
-            <Button className={period === 30 ? 'bg-gray-100' : ''} onClick={() => setPeriod(30)}>30일</Button>
+          <ButtonGroup size='sm' variant='outlined' className='dark:border-border'>
+            <Button className={period === 1 ? 'bg-primary/10 text-primary' : 'dark:text-font-main'} onClick={() => setPeriod(1)}>일일</Button>
+            <Button className={period === 7 ? 'bg-primary/10 text-primary' : 'dark:text-font-main'} onClick={() => setPeriod(7)}>7일</Button>
+            <Button className={period === 30 ? 'bg-primary/10 text-primary' : 'dark:text-font-main'} onClick={() => setPeriod(30)}>30일</Button>
           </ButtonGroup>
         </div>
 
-        <Card className='shadow-sm border border-gray-200'>
+        <Card className='shadow-sm border border-border bg-surface'>
           <CardBody className='h-[450px] p-4'>
             <ResponsiveContainer width='100%' height='100%'>
               <ComposedChart
@@ -88,11 +92,18 @@ const UserStatsView = () => {
                     left: 20,
                   }}
               >
-                <CartesianGrid stroke='#f5f5f5' vertical={false}/>
-                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}}/>
-                <YAxis/>
+                <CartesianGrid stroke='var(--color-border)' vertical={false} opacity={0.5}/>
+                <XAxis dataKey='date' scale='point' padding={{left: 10, right: 10}} stroke='var(--color-font-sub)' fontSize={12}/>
+                <YAxis stroke='var(--color-font-sub)' fontSize={12}/>
                 <Tooltip
-                    contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                    contentStyle={{
+                      backgroundColor: 'var(--color-surface)',
+                      borderRadius: '8px',
+                      border: '1px solid var(--color-border)',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      color: 'var(--color-font-main)'
+                    }}
+                    itemStyle={{ color: 'var(--color-font-main)' }}
                 />
                 <Legend verticalAlign='top' height={36}/>
                 <Bar dataKey='newUsers' name='신규 가입' barSize={30} fill='#3b82f6' radius={[4, 4, 0, 0]}/>

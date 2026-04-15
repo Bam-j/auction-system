@@ -15,22 +15,22 @@ const SideNavLayout: FC<SideNavLayoutProps> = ({title, menuItems}) => {
   return (
       <div className='flex flex-col md:flex-row gap-6 w-full min-h-[600px]'>
         <aside className='w-full md:w-64 shrink-0'>
-          <Card className='h-full w-full p-4 shadow-sm border border-gray-200'>
+          <Card className='h-full w-full p-4 shadow-sm border border-border bg-surface transition-colors duration-300'>
             <div className='mb-4 p-2'>
-              <Typography variant='h5' color='blue-gray'>
+              <Typography variant='h5' className='text-font-main'>
                 {title}
               </Typography>
             </div>
-            <List>
+            <List className='p-0'>
               {menuItems.map(({name, path, icon: Icon}) => (
                   <NavLink to={path} key={name} end>
                     {({isActive}) => (
                         <ListItem
                             className={`${
                                 isActive
-                                    ? 'bg-blue-50 text-blue-600 focus:bg-blue-50 active:bg-blue-50'
-                                    : 'hover:bg-gray-100 focus:bg-gray-100'
-                            }`}
+                                    ? 'bg-primary/10 text-primary focus:bg-primary/20 active:bg-primary/20'
+                                    : 'hover:bg-primary/5 text-font-sub focus:bg-primary/5'
+                            } transition-colors`}
                             selected={isActive}
                         >
                           {Icon && (
@@ -56,7 +56,7 @@ const SideNavLayout: FC<SideNavLayoutProps> = ({title, menuItems}) => {
           </Card>
         </aside>
 
-        <main className='flex-1 bg-white p-6 border border-gray-200 rounded-xl shadow-sm'>
+        <main className='flex-1 bg-surface p-6 border border-border rounded-xl shadow-sm transition-colors duration-300'>
           <Outlet/>
         </main>
       </div>

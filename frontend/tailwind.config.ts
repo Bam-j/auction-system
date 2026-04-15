@@ -2,6 +2,7 @@ import type {Config} from 'tailwindcss';
 import withMT from '@material-tailwind/react/utils/withMT';
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
@@ -30,9 +31,9 @@ const config: Config = {
           dark: '#E11D48',
         },
         font: {
-          main: '#444444',
-          sub: '#888888',
-          muted: '#BDBDBD',
+          main: 'var(--color-font-main)',
+          sub: 'var(--color-font-sub)',
+          muted: 'var(--color-font-muted)',
           blue: '#3F99F5',
           dark_blue: '#2566A7',
           white: '#F9F9F9',
@@ -40,8 +41,9 @@ const config: Config = {
           warning: '#F59E0B',
           success: '#10B981',
         },
-        background: '#FAFAFA',
-        surface: '#FFFFFF',
+        background: 'var(--color-background)',
+        surface: 'var(--color-surface)',
+        border: 'var(--color-border)',
       },
     },
   },

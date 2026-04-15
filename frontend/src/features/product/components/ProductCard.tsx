@@ -34,7 +34,7 @@ const ProductCard = ({product}: ProductCardProps) => {
   const isInstantBuy = currentStatus === 'INSTANT_BUY';
 
   return (
-      <Card className='w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer'>
+      <Card className='w-full shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer bg-surface border border-border'>
         <CardHeader floated={false} className='h-40 overflow-hidden relative'>
           <img
               src={getFullImageUrl(product.imageUrl) || defaultImage}
@@ -56,15 +56,15 @@ const ProductCard = ({product}: ProductCardProps) => {
         </CardHeader>
 
         <CardBody className='p-4 text-center'>
-          <Typography variant='h6' color='blue-gray' className='mb-1 truncate font-bold'>
+          <Typography variant='h6' className='mb-1 truncate font-bold text-font-main'>
             {product.title}
           </Typography>
 
           <div className='flex flex-col gap-1 items-center justify-center min-h-[60px]'>
-            <Typography color='blue' className='font-black text-lg'>
+            <Typography className='font-black text-lg text-primary'>
               {product.type === 'AUCTION' ? (
                   <span className='flex flex-col items-center'>
-                <span className='text-[10px] uppercase tracking-tighter opacity-70 leading-none'>
+                <span className='text-[10px] uppercase tracking-tighter text-font-sub leading-none'>
                   {isInstantBuy
                       ? '판매 방식'
                       : statusInfo.text === '경매마감' ||
@@ -74,7 +74,7 @@ const ProductCard = ({product}: ProductCardProps) => {
                           : '현재 최고가'}
                 </span>
                     {isInstantBuy ? (
-                        <span className='text-orange-700'>즉시 구매</span>
+                        <span className='text-orange-700 dark:text-orange-400'>즉시 구매</span>
                     ) : (
                         <span>
                     {Number(product.price).toLocaleString()}{' '}
@@ -86,7 +86,7 @@ const ProductCard = ({product}: ProductCardProps) => {
               </span>
               ) : (
                   <span className='flex flex-col items-center'>
-                <span className='text-[10px] uppercase tracking-tighter opacity-70 leading-none'>
+                <span className='text-[10px] uppercase tracking-tighter text-font-sub leading-none'>
                   판매 가격
                 </span>
                 <span>
@@ -101,12 +101,12 @@ const ProductCard = ({product}: ProductCardProps) => {
 
             <div className='min-h-[15px]'>
               {product.type !== 'AUCTION' ? (
-                  <Typography variant='small' className='text-[11px] text-blue-gray-500 font-medium'>
+                  <Typography variant='small' className='text-[11px] text-font-sub font-medium'>
                     남은 수량: {product.stock != null ? `${product.stock}개` : '정보없음'}
                   </Typography>
               ) : (
                   product.endedAt && (
-                      <Typography color='red' className='text-[10px] font-bold animate-pulse'>
+                      <Typography className='text-[10px] font-bold animate-pulse text-danger'>
                         마감: {new Date(product.endedAt).toLocaleDateString()}
                       </Typography>
                   )
@@ -115,8 +115,8 @@ const ProductCard = ({product}: ProductCardProps) => {
           </div>
         </CardBody>
 
-        <CardFooter className='pt-0 pb-4 px-4 border-t border-gray-100 flex justify-between items-center mt-auto'>
-          <Typography className='text-xs text-blue-700'>판매자: {product.seller}</Typography>
+        <CardFooter className='pt-0 pb-4 px-4 border-t border-border flex justify-between items-center mt-auto'>
+          <Typography className='text-xs text-primary'>판매자: {product.seller}</Typography>
         </CardFooter>
       </Card>
   );

@@ -102,8 +102,8 @@ const SignupForm: React.FC = () => {
   };
 
   return (
-      <Card className='w-96 shadow-lg bg-white'>
-        <Typography variant='h3' color='blue' className='mt-6 mb-2 grid h-16 place-items-center font-bold'>
+      <Card className='w-96 shadow-lg bg-surface border border-border'>
+        <Typography variant='h3' className='mt-6 mb-2 grid h-16 place-items-center font-bold text-primary'>
           회원가입
         </Typography>
 
@@ -116,6 +116,10 @@ const SignupForm: React.FC = () => {
                     size='lg'
                     error={!!errors.username}
                     crossOrigin={undefined}
+                    className='dark:text-font-main'
+                    labelProps={{
+                      className: 'dark:text-font-sub',
+                    }}
                     {...register('username', {
                       required: '아이디를 입력해주세요.',
                       pattern: {
@@ -129,7 +133,7 @@ const SignupForm: React.FC = () => {
                     variant='outlined'
                     size='sm'
                     color='blue'
-                    className='shrink-0'
+                    className='shrink-0 dark:border-border dark:text-primary'
                     onClick={handleCheckUsername}
                     disabled={!username || !!errors.username}
                 >
@@ -155,6 +159,10 @@ const SignupForm: React.FC = () => {
                     size='lg'
                     error={!!errors.nickname}
                     crossOrigin={undefined}
+                    className='dark:text-font-main'
+                    labelProps={{
+                      className: 'dark:text-font-sub',
+                    }}
                     {...register('nickname', {
                       required: '닉네임을 입력해주세요.',
                       pattern: {
@@ -168,7 +176,7 @@ const SignupForm: React.FC = () => {
                     variant='outlined'
                     size='sm'
                     color='blue'
-                    className='shrink-0'
+                    className='shrink-0 dark:border-border dark:text-primary'
                     onClick={handleCheckNickname}
                     disabled={!nickname || !!errors.nickname}
                 >
@@ -194,6 +202,10 @@ const SignupForm: React.FC = () => {
                   type='password'
                   error={!!errors.password}
                   crossOrigin={undefined}
+                  className='dark:text-font-main'
+                  labelProps={{
+                    className: 'dark:text-font-sub',
+                  }}
                   {...register('password', {
                     required: '비밀번호를 입력해주세요.',
                     pattern: {
@@ -216,6 +228,10 @@ const SignupForm: React.FC = () => {
                   type='password'
                   error={!!errors.confirmPassword}
                   crossOrigin={undefined}
+                  className='dark:text-font-main'
+                  labelProps={{
+                    className: 'dark:text-font-sub',
+                  }}
                   {...register('confirmPassword', {
                     required: '비밀번호 확인을 입력해주세요.',
                     validate: (value) => value === watch('password') || VALIDATION_MESSAGES.confirmPassword,
@@ -232,7 +248,7 @@ const SignupForm: React.FC = () => {
             <Button variant='gradient' fullWidth type='submit' color='blue'>
               가입하기
             </Button>
-            <Typography variant='small' className='mt-6 flex justify-center text-blue-gray-500'>
+            <Typography variant='small' className='mt-6 flex justify-center text-font-sub'>
               이미 계정이 있으신가요?
               <Link to='/login'>
                 <Typography as='span' variant='small' color='blue' className='ml-1 font-bold cursor-pointer hover:underline'>

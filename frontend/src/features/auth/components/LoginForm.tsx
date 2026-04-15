@@ -49,8 +49,8 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
 
   return (
       <>
-        <Card className='w-96 shadow-lg bg-white'>
-          <Typography variant='h3' color='blue' className='mt-6 mb-2 grid h-16 place-items-center font-bold'>
+        <Card className='w-96 shadow-lg bg-surface border border-border'>
+          <Typography variant='h3' className='mt-6 mb-2 grid h-16 place-items-center font-bold text-primary'>
             로그인
           </Typography>
 
@@ -62,6 +62,10 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
                     label='아이디'
                     error={!!errors.username}
                     crossOrigin={undefined}
+                    className='dark:text-font-main'
+                    labelProps={{
+                      className: 'dark:text-font-sub',
+                    }}
                     {...register('username', {required: '아이디를 입력해주세요.'})}
                 />
                 {errors.username && (
@@ -77,6 +81,10 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
                     label='비밀번호'
                     error={!!errors.password}
                     crossOrigin={undefined}
+                    className='dark:text-font-main'
+                    labelProps={{
+                      className: 'dark:text-font-sub',
+                    }}
                     {...register('password', {required: '비밀번호를 입력해주세요.'})}
                 />
                 {errors.password && (
@@ -92,7 +100,7 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
                 로그인
               </Button>
 
-              <Typography variant='small' className='mt-6 flex justify-center text-blue-gray-500'>
+              <Typography variant='small' className='mt-6 flex justify-center text-font-sub'>
                 계정이 없으신가요?
                 <Link to='/signup'>
                   <Typography as='span' variant='small' color='blue'
@@ -102,10 +110,10 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
                 </Link>
               </Typography>
 
-              <div className='flex justify-center border-t border-gray-200 pt-4 mt-4'>
-                <Typography variant='small' className='text-gray-600 font-normal'>
+              <div className='flex justify-center border-t border-border pt-4 mt-4'>
+                <Typography variant='small' className='text-font-sub font-normal'>
                   아이디 또는 비밀번호를 잊으셨나요?{' '}
-                  <span className='text-blue-500 font-bold cursor-pointer hover:underline ml-1'
+                  <span className='text-primary font-bold cursor-pointer hover:underline ml-1'
                         onClick={handleOpenContact}>
                   문의하기
                 </span>
@@ -122,14 +130,14 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
             size='xs'
             footer={
               <div className='flex justify-end w-full'>
-                <Button variant='gradient' color='blue-gray' onClick={handleOpenContact}>
+                <Button variant='gradient' color='blue-gray' onClick={handleOpenContact} className='dark:bg-blue-gray-800'>
                   닫기
                 </Button>
               </div>
             }
         >
           <div className='py-4 text-center'>
-            <Typography className='text-gray-800 font-medium'>
+            <Typography className='text-font-main font-medium'>
               공식 디스코드 문의 티켓으로 문의해주세요.
             </Typography>
             <Typography className='mt-2'>
@@ -137,7 +145,7 @@ const LoginForm: React.FC<LoginFormProps> = ({onLoginSuccess}) => {
                   href='https://discord.gg/QZF8HHZk'
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='text-blue-500 font-bold hover:underline'
+                  className='text-primary font-bold hover:underline'
               >
                 공식 디스코드 바로가기
               </a>
