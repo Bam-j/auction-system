@@ -1,0 +1,11 @@
+.gradle
+build/
+out/
+.idea
+*.log
+.env
+.env.local
+.DS_Store
+uploads/
+### Testing
+src/test/
